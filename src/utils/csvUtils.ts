@@ -1,5 +1,5 @@
+import { VendorKey } from '@/constants/vendors';
 import moment from 'moment';
-import { VendorKey, vendors } from '~/constants/vendors';
 
 export function generateCSV(skus: string[], tags: string): string {
   const headers = ['Variant SKU', 'Tags', 'Tags Command'];

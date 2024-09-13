@@ -66,7 +66,7 @@ export function processHoshinoFile(content: string[][], test = false) {
 }
 
 export function processSfmFile(
-  content: { ITEM: string; BRAND: string; QTY: string }[],
+  content: { [key: string]: string }[],
   test = false
 ) {
   const filteredOutBrands = excludedBrands.sfm ?? [];

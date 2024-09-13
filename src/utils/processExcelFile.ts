@@ -4,7 +4,7 @@ import {
   processHoshinoFile,
   processSabianFile,
 } from './vendorProcesses';
-import type { FileObj } from '~/types/fileTypes';
+import { FileObj } from '@/types/fileTypes';
 
 export const processExcelFile = async (file: FileObj, test = false) => {
   const { vendor } = file;
@@ -48,7 +48,7 @@ export const processExcelFile = async (file: FileObj, test = false) => {
 const readExcel = (
   file: File,
   sheetIndexes: number[] = [0]
-): Promise<any[]> => {
+): Promise<string[][]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -68,7 +68,7 @@ const readExcel = (
 
         sheetData.push(...jsonData);
       });
-      resolve(sheetData);
+      resolve(sheetData as string[][]);
     };
     reader.onerror = (error) => reject(error);
     reader.readAsArrayBuffer(file);

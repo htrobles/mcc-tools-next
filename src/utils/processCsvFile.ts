@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
-import type { FileObj } from '~/types/fileTypes';
 import { processSfmFile } from './vendorProcesses';
+import { FileObj } from '@/types/fileTypes';
 
 export const processCsvFile = async (file: FileObj, test = false) => {
   const { vendor } = file;
@@ -24,7 +24,9 @@ export const processCsvFile = async (file: FileObj, test = false) => {
   return products;
 };
 
-export const readFileAsText = (file: File): Promise<any[]> => {
+export const readFileAsText = (
+  file: File
+): Promise<{ [key: string]: string }[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -33,7 +35,7 @@ export const readFileAsText = (file: File): Promise<any[]> => {
 
       Papa.parse(text, {
         complete: (results) => {
-          resolve(results.data);
+          resolve(results.data as { [key: string]: string }[]);
         },
         error: (error: Error) => {
           reject(error);

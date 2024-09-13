@@ -16,10 +16,7 @@ import {
 import { processCsvFile } from '@/utils/processCsvFile';
 import { processExcelFile } from '@/utils/processExcelFile';
 import { processInventoryFile } from '@/utils/processInventoryFile';
-import { Metadata } from 'next';
 import { useCallback } from 'react';
-
-// export const metadata: Metadata = { title: 'MCC Tools | Supplier Master List' };
 
 export default function SupplierMasterFeedPage() {
   const { files, addFiles, clearFiles, deleteFile, deleteFiles, updateVendor } =
@@ -138,7 +135,7 @@ export default function SupplierMasterFeedPage() {
         }
       }
     },
-    [addFiles]
+    [addFiles, toast]
   );
 
   return (
