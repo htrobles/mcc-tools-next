@@ -1,4 +1,4 @@
-import type { VendorKey } from "~/constants/vendors";
+import { VendorKey } from '@/constants/vendors';
 
 export interface FileObj extends File {
   vendor?: VendorKey;
