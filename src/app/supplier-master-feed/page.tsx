@@ -167,7 +167,7 @@ export default function SupplierMasterFeedPage() {
           </ol>
           <p className="text-sm italic">
             If there are other brands that you want to exclude, please contact
-            Hector to update the excluded brands list.
+            admin to update the excluded brands list.
           </p>
         </div>
         <div className="px-10 space-y-5">
