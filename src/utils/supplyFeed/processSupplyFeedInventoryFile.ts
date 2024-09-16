@@ -2,9 +2,13 @@ import { FileObj } from '@/types/fileTypes';
 import { checkBrandValidity } from './helpers';
 import excludedBrands from '@/constants/excludedBrands';
 import { VendorKey } from '@/constants/vendors';
+import { readInventoryFile } from '../fileProcessors';
 
-export const processInventoryFile = async (file: FileObj, test = false) => {
-  const content = await readFileAsText(file);
+export const processSupplyFeedInventoryFile = async (
+  file: FileObj,
+  test = false
+) => {
+  const content = await readInventoryFile(file);
 
   if (!file.vendor) {
     throw new Error('All files should have vendors.');
@@ -35,20 +39,4 @@ export const processInventoryFile = async (file: FileObj, test = false) => {
   }, [] as string[]);
 
   return products;
-};
-
-export const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      resolve(e.target?.result as string);
-    };
-
-    reader.onerror = (error) => {
-      reject(error);
-    };
-
-    reader.readAsText(file);
-  });
 };

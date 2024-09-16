@@ -10,12 +10,13 @@ import { FileObj } from '@/types/fileTypes';
 import {
   downloadCSV,
   downloadTestCsv,
-  generateCSV,
+  generateSupplyFeedCsv,
   generateTestCsv,
-} from '@/utils/csvUtils';
-import { processCsvFile } from '@/utils/processCsvFile';
-import { processExcelFile } from '@/utils/processExcelFile';
-import { processInventoryFile } from '@/utils/processInventoryFile';
+} from '@/utils/supplyFeed/csvUtils';
+import { processSupplyFeedCsvFile } from '@/utils/supplyFeed/processSupplyFeedCsvFile';
+import { processSupplyFeedExcelFile } from '@/utils/supplyFeed/processSupplyFeedExcelFile';
+import { processSupplyFeedInventoryFile } from '@/utils/supplyFeed/processSupplyFeedInventoryFile';
+import moment from 'moment';
 import { useCallback } from 'react';
 
 export default function SupplierMasterFeedPage() {
@@ -36,19 +37,21 @@ export default function SupplierMasterFeedPage() {
       await Promise.all(
         files.map(async (file) => {
           if (file.name.endsWith('.inventory')) {
-            skus.push(...(await processInventoryFile(file)));
+            skus.push(...(await processSupplyFeedInventoryFile(file)));
           }
           if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
-            skus.push(...(await processExcelFile(file)));
+            skus.push(...(await processSupplyFeedExcelFile(file)));
           }
           if (file.name.endsWith('.csv')) {
-            skus.push(...(await processCsvFile(file)));
+            skus.push(...(await processSupplyFeedCsvFile(file)));
           }
         })
       );
 
-      const csvContent = generateCSV(skus, 'supplier');
-      downloadCSV(csvContent);
+      const csvContent = generateSupplyFeedCsv(skus, 'supplier');
+      const date = moment(new Date()).format('YYYYMMDD');
+
+      downloadCSV(csvContent, `MasterSuppliesFeed-${date}.csv`);
     } catch (error) {
       if (error instanceof Error) {
         toast({
@@ -77,13 +80,13 @@ export default function SupplierMasterFeedPage() {
       let data;
 
       if (file.name.endsWith('.inventory')) {
-        data = await processInventoryFile(file, true);
+        data = await processSupplyFeedInventoryFile(file, true);
       }
       if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
-        data = await processExcelFile(file, true);
+        data = await processSupplyFeedExcelFile(file, true);
       }
       if (file.name.endsWith('.csv')) {
-        data = await processCsvFile(file, true);
+        data = await processSupplyFeedCsvFile(file, true);
       }
 
       if (!data) return;
@@ -171,7 +174,6 @@ export default function SupplierMasterFeedPage() {
           </p>
         </div>
         <div className="px-10 space-y-5">
-          {/* <FileUpload addFiles={handleAddFiles} /> */}
           <FileUpload addFiles={handleAddFiles} />
           <div className="border rounded bg-white">
             <FileList
