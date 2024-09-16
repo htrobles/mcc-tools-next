@@ -154,12 +154,12 @@ export default function SupplierMasterFeedPage() {
           <ol className="list-decimal ml-10">
             <li>
               <p>
-                Add files you wish process by clicking the file dropzone or
+                Add files you wish to process by clicking the file dropzone or
                 dragging files into it.
               </p>
             </li>
             <li>
-              <p>Select vendors for each file</p>
+              <p>Select vendors for each file.</p>
             </li>
             <li>
               <p>Click Process.</p>
