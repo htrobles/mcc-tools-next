@@ -6,7 +6,7 @@ import PageLayout from '@/components/PageLayout';
 import { Button } from '@/components/ui/button';
 import { VendorKey } from '@/constants/vendors';
 import { useToast } from '@/hooks/use-toast';
-import useFiles from '@/hooks/useFiles';
+import useSupplierFiles from '@/hooks/useSupplierFiles';
 import { FileObj } from '@/types/fileTypes';
 import {
   downloadCSV,
@@ -22,7 +22,7 @@ import { useCallback } from 'react';
 
 export default function SupplierMasterFeedPage() {
   const { files, addFiles, clearFiles, deleteFile, deleteFiles, updateVendor } =
-    useFiles();
+    useSupplierFiles();
   const { toast } = useToast();
 
   const handleClickProcess = async () => {
@@ -166,8 +166,8 @@ export default function SupplierMasterFeedPage() {
             admin to update the excluded brands list.
           </p>
         </div>
-        <div className="px-10 space-y-5">
-          <FileUpload addFiles={handleAddFiles} />
+        <div className="lg:px-10 space-y-5">
+          <FileUpload addFiles={handleAddFiles} multiple />
           <div className="border rounded bg-white">
             <FileList
               files={files}

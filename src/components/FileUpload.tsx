@@ -1,20 +1,33 @@
 'use client';
 
+import { processError } from '@/utils/helpers';
 import React, { useCallback, useRef } from 'react';
 
 interface FileUploadProps {
   addFiles: (files: File[]) => void;
+  multiple?: boolean;
 }
 
-export default function FileUpload({ addFiles }: FileUploadProps) {
+export default function FileUpload({
+  addFiles,
+  multiple = false,
+}: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      const files = Array.from(event.dataTransfer.files);
+      try {
+        event.preventDefault();
+        const files = Array.from(event.dataTransfer.files);
 
-      addFiles(files);
+        if (!multiple && files.length > 1) {
+          throw new Error('Only 1 file can be accepted.');
+        }
+
+        addFiles(files);
+      } catch (error) {
+        processError('Error adding file.', error);
+      }
     },
     [addFiles]
   );
@@ -49,7 +62,7 @@ export default function FileUpload({ addFiles }: FileUploadProps) {
       <input
         ref={fileInputRef}
         type="file"
-        multiple
+        multiple={multiple}
         className="hidden"
         onChange={onFileSelect}
       />
