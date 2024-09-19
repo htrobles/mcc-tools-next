@@ -4,6 +4,9 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import moment from 'moment';
 import { Toaster } from '@/components/ui/toaster';
+import { useCallback } from 'react';
+import { useRouter } from 'next/router';
+import PageHeader from '@/components/PageHeader';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -31,9 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
       >
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden bg-gray-50">
           <Sidebar />
-          <div className="w-full overflow-auto p-5 bg-gray-50">{children}</div>
+          <div className="w-full overflow-auto">
+            {/* <PageHeader /> */}
+            {children}
+          </div>
         </div>
         <footer className="bg-black text-white p-4">
           © {moment().format('YYYY')} Music City Canada | Developed and

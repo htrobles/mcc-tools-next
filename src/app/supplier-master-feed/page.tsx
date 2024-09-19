@@ -2,6 +2,7 @@
 
 import { FileList } from '@/components/FileList';
 import FileUpload from '@/components/FileUpload';
+import PageLayout from '@/components/PageLayout';
 import { Button } from '@/components/ui/button';
 import { VendorKey } from '@/constants/vendors';
 import { useToast } from '@/hooks/use-toast';
@@ -142,15 +143,7 @@ export default function SupplierMasterFeedPage() {
   );
 
   return (
-    <div className="container mx-auto py-4">
-      <div className="mb-5 pb-4 border-b">
-        <h1>Master Supplies Feed Tool</h1>
-        <p>
-          This tool creates a Master Supplies Feed CSV file using the data from
-          the suppliers.
-        </p>
-      </div>
-
+    <PageLayout>
       <div>
         <div className="mb-5 space-y-2">
           <h4>Instructions:</h4>
@@ -194,6 +187,6 @@ export default function SupplierMasterFeedPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
