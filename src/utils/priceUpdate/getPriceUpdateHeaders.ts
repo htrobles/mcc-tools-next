@@ -5,7 +5,7 @@
 //   | 'defaultPrice'
 //   | 'defaultCost';
 
-const validHeaders = [
+export const validHeaders = [
   {
     key: 'manufacturerSku',
     label: 'Manufacturer SKU',
@@ -16,28 +16,39 @@ const validHeaders = [
       'PART NUMBER',
       // Taylor
       'Stockcode',
+      // Music Nomad
+      'Item Number',
     ],
   },
-  // Retail Price - Highest price we can go
+  // Retail Price - Highest price we can go. Ignore if missing
   {
     key: 'msrp',
     label: 'MSRP',
     values: [
-      // Black Magic
+      // Black Magic, Music Nomad
       'Retail Price',
     ],
   },
   {
+    // NOTE:If there is no sale, should be the same as default price
     key: 'salePrice',
     label: 'Sale Price',
-    values: ['MAP Price'],
+    values: [
+      //   // Black Magic, Music Nomad
+      //   'MAP Price',
+      //   // Gerr Audio
+      //   'PRICE',
+      // Music Nomad
+      'Promo MAP',
+      'Sale Price',
+    ],
   },
   {
     key: 'defaultPrice',
     label: 'Default Price',
     values: [
-      // Black Magic
-      'Retail Price',
+      // Black Magic, Music Nomad
+      'MAP Price',
       // Gerr Audio
       'PRICE',
       // Taylor
@@ -52,7 +63,14 @@ const validHeaders = [
       'Dealer Price  (Pricing UOM)',
       // Gerr Audio
       'DEALER PRICE',
+      // Music Nomad
+      ' Dealer Price  (Pricing UOM)',
     ],
+  },
+  {
+    key: 'addTags',
+    label: 'Add Tags',
+    values: [],
   },
 ];
 
@@ -76,7 +94,7 @@ export type PriceUpdateHeader = {
 export default function getPriceUpdateHeaders(content: string[][]) {
   const topRow = content[0];
 
-  const result: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
+  const headers: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
     const validHeader = validHeaders.find((header) =>
       header.values.includes(value)
     );
@@ -95,18 +113,17 @@ export default function getPriceUpdateHeaders(content: string[][]) {
     }
   }, [] as { index: number; value: string; key: string; label: string }[]);
 
-  if (!result.find((r) => r.key === 'defaultPrice')) {
-    const header = result.find(({ key }) => key === 'msrp');
-    if (!header) {
-      return;
-    }
+  if (!headers.find((r) => r.key === 'salePrice')) {
+    const header = headers.find(({ key }) => key === 'defaultPrice');
 
-    result.splice(-1, 0, {
-      ...header,
-      key: 'defaultPrice',
-      label: 'Default Price',
-    });
+    if (header) {
+      headers.splice(-1, 0, {
+        ...header,
+        key: 'salePrice',
+        label: 'Sale Price',
+      });
+    }
   }
 
-  return result;
+  return headers;
 }

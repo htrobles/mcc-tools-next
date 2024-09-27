@@ -61,7 +61,10 @@ export const readExcelFile = (
       sheetIndexes.forEach((sheetIndex, i) => {
         const sheetName = workbook.SheetNames[sheetIndex];
         const worksheet = workbook.Sheets[sheetName];
-        let jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        let jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: 1,
+          rawNumbers: true,
+        });
 
         if (i !== 0) {
           jsonData = jsonData.slice(1);

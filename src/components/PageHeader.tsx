@@ -1,7 +1,7 @@
 'use client';
 
 import routes from '@/constants/routes';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 
 export default function PageHeader() {
@@ -18,7 +18,7 @@ export default function PageHeader() {
 
   useEffect(() => {
     getPageDetails();
-  }, [path]);
+  }, [getPageDetails, path]);
 
   return (
     <div className="h-[80px] p-5 bg-black">

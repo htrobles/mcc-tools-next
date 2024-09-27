@@ -4,9 +4,6 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import moment from 'moment';
 import { Toaster } from '@/components/ui/toaster';
-import { useCallback } from 'react';
-import { useRouter } from 'next/router';
-import PageHeader from '@/components/PageHeader';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',

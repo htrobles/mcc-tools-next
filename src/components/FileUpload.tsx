@@ -29,7 +29,7 @@ export default function FileUpload({
         processError('Error adding file.', error);
       }
     },
-    [addFiles]
+    [addFiles, multiple]
   );
 
   const onFileSelect = useCallback(

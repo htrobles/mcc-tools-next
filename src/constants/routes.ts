@@ -1,4 +1,4 @@
-export default [
+const routes = [
   {
     key: 'supplier-master-feed',
     path: '/supplier-master-feed',
@@ -13,3 +13,5 @@ export default [
     description: 'This tool is used to update product prices',
   },
 ];
+
+export default routes;

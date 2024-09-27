@@ -18,7 +18,7 @@ export default function Sidebar() {
       <div className="p-4">
         <ul>
           {routes.map(({ path, title }) => (
-            <li>
+            <li key={path}>
               <a href={path} className="font-semibold">
                 {title}
               </a>
