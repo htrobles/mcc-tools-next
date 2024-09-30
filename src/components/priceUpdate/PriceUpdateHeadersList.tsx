@@ -19,44 +19,47 @@ export default function PriceUpdateHeadersList() {
   if (!rawHeaders?.length) return null;
 
   return (
-    <div className="border rounded bg-white grow">
-      <Table title="Selected Columns">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Original Column Name</TableHead>
-            <TableHead>Output Name</TableHead>
-            <TableHead>Delete</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {selectedHeaders?.map((h) => (
-            <TableRow key={`${h.value}-${h.label}`}>
-              <TableCell>{h.value}</TableCell>
-              <TableCell>{h.label}</TableCell>
-              <TableCell>
-                <Button
-                  variant="destructive"
-                  onClick={() => removeSelectedHeader(h.label)}
-                >
-                  Remove
-                </Button>
+    <div className="space-y-1">
+      <h5>Columns</h5>
+      <div className="border rounded bg-white grow">
+        <Table title="Selected Columns">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Output Column Name</TableHead>
+              <TableHead>Original Column Name</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {selectedHeaders?.map((h) => (
+              <TableRow key={`${h.value}-${h.label}`}>
+                <TableCell>{h.label}</TableCell>
+                <TableCell>{h.value}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="destructive"
+                    onClick={() => removeSelectedHeader(h.label)}
+                  >
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={3} className="text-center">
+                <Popover>
+                  <PopoverTrigger className="w-full">
+                    + Add new column
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <AddPriceUpdateHeaderForm />
+                  </PopoverContent>
+                </Popover>
               </TableCell>
             </TableRow>
-          ))}
-          <TableRow>
-            <TableCell colSpan={3} className="text-center">
-              <Popover>
-                <PopoverTrigger className="w-full">
-                  + Add new column
-                </PopoverTrigger>
-                <PopoverContent>
-                  <AddPriceUpdateHeaderForm />
-                </PopoverContent>
-              </Popover>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

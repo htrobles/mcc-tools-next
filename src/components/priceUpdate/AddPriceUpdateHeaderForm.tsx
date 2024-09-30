@@ -82,11 +82,11 @@ export default function AddPriceUpdateHeaderForm() {
         </Select>
       </div>
       <div className="space-y-2">
-        <label htmlFor="label">Label</label>
+        <label htmlFor="label">Output Column Name</label>
         <Input
           className="w-full"
           name="label"
-          placeholder="Enter column label"
+          placeholder="Enter output column name"
           value={form.label}
           onChange={handleLabelChange}
           required

@@ -24,6 +24,8 @@ interface PriceUpdateContextType {
   selectedHeaders: PriceUpdateHeader[] | undefined;
   addSelectedHeader: (input: AddSelectedHeaderInput) => void;
   removeSelectedHeader: (label: string) => void;
+  note: string;
+  setNote: (value: string) => void;
 }
 
 export interface AddSelectedHeaderInput {
@@ -46,6 +48,7 @@ export const PriceUpdateContextProvider = ({
   const [rawHeaders, setRawHeaders] = useState<Partial<PriceUpdateHeader>[]>();
   const [selectedHeaders, setSelectedHeaders] = useState<PriceUpdateHeader[]>();
   const [content, setContent] = useState<string[][]>();
+  const [note, setNote] = useState<string>('');
 
   const addFile = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -120,6 +123,10 @@ export const PriceUpdateContextProvider = ({
             output?.push('on-sale');
           }
 
+          if (note) {
+            output.push(note);
+          }
+
           return output?.join(',');
         });
 
@@ -127,6 +134,10 @@ export const PriceUpdateContextProvider = ({
 
         if (isSale) {
           headerRowColumns.push('Add Tags');
+        }
+
+        if (note) {
+          headerRowColumns.push('Note');
         }
 
         const headerRow = headerRowColumns.join(',');
@@ -181,6 +192,8 @@ export const PriceUpdateContextProvider = ({
         selectedHeaders,
         addSelectedHeader,
         removeSelectedHeader,
+        note,
+        setNote,
       }}
     >
       {children}
