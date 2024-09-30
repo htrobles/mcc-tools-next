@@ -5,6 +5,32 @@
 //   | 'defaultPrice'
 //   | 'defaultCost';
 
+export const headerStrings = [
+  'item',
+  'number',
+  'part',
+  'stock',
+  'code',
+  'msrp',
+  'retail',
+  'price',
+  'sale',
+  'promo',
+  'map',
+  'default',
+  'dealer',
+  'pricing',
+  'cost',
+];
+
+export function containsSubstring(str: string): boolean {
+  const lowerCaseStr = str.toLowerCase();
+
+  return headerStrings.some((substring) =>
+    lowerCaseStr.includes(substring.toLowerCase())
+  );
+}
+
 export const validHeaders = [
   {
     key: 'manufacturerSku',

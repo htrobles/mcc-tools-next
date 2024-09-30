@@ -3,6 +3,7 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Button } from '../ui/button';
 import { FileObj } from '@/types/fileTypes';
+import PriceUpdateHeadersList from './PriceUpdateHeadersList';
 
 interface PriceUpdateStep1Props {
   onAddFile: ChangeEventHandler<HTMLInputElement>;
@@ -25,7 +26,7 @@ export default function PriceUpdateStep1({
       <ol className="list-decimal ml-8">
         <li>Select supplier file.</li>
         <li>Toggle Sale On if the price update is for a sale.</li>
-        <li>Download the initial file and proceed to next step.</li>
+        <li>Download the initial file and upload it to Lightspeed.</li>
       </ol>
       <Input
         type="file"
@@ -42,6 +43,9 @@ export default function PriceUpdateStep1({
           className="mr-2"
         />
         <label htmlFor="is-sale">Sale</label>
+      </div>
+      <div className="border rounded bg-white">
+        {/* <PriceUpdateHeadersList /> */}
       </div>
       <div className="space-x-2 text-right">
         <Button onClick={onProcessFile} disabled={!file}>
