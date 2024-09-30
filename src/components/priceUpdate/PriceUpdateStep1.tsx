@@ -3,6 +3,7 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Button } from '../ui/button';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
+import PriceUpdateHeadersList from './PriceUpdateHeadersList';
 
 export default function PriceUpdateStep1() {
   const { file, addFile, isSale, setIsSale, processFile } = usePriceUpdate();
@@ -31,9 +32,7 @@ export default function PriceUpdateStep1() {
         />
         <label htmlFor="is-sale">Sale</label>
       </div>
-      <div className="border rounded bg-white">
-        {/* <PriceUpdateHeadersList /> */}
-      </div>
+      <PriceUpdateHeadersList />
       <div className="space-x-2 text-right">
         <Button onClick={() => processFile()} disabled={!file}>
           Download Initial File

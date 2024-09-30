@@ -2,10 +2,11 @@ import React, { createContext, useCallback, useState, ReactNode } from 'react';
 
 import { FileObj } from '@/types/fileTypes';
 import { readExcelFile } from '@/utils/fileProcessors';
-import getPriceUpdateHeaders, {
+import {
+  getPriceUpdateHeaders,
   containsSubstring,
   PriceUpdateHeader,
-} from '@/utils/priceUpdate/getPriceUpdateHeaders';
+} from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
 
@@ -19,8 +20,15 @@ interface PriceUpdateContextType {
   setIsSale: React.Dispatch<React.SetStateAction<boolean>>;
   processFile: (type?: 'initial' | 'error') => Promise<void>;
   errorFile: FileObj | null | undefined;
-  rawHeaders: PriceUpdateHeader[] | undefined;
+  rawHeaders: Partial<PriceUpdateHeader>[] | undefined;
   selectedHeaders: PriceUpdateHeader[] | undefined;
+  addSelectedHeader: (input: AddSelectedHeaderInput) => void;
+  removeSelectedHeader: (label: string) => void;
+}
+
+export interface AddSelectedHeaderInput {
+  index: number;
+  label: string;
 }
 
 export const PriceUpdateContext = createContext<
@@ -35,7 +43,7 @@ export const PriceUpdateContextProvider = ({
   const [file, setFile] = useState<FileObj | null>();
   const [errorFile, setErrorFile] = useState<FileObj | null>();
   const [isSale, setIsSale] = useState(false);
-  const [rawHeaders, setRawHeaders] = useState<PriceUpdateHeader[]>();
+  const [rawHeaders, setRawHeaders] = useState<Partial<PriceUpdateHeader>[]>();
   const [selectedHeaders, setSelectedHeaders] = useState<PriceUpdateHeader[]>();
   const [content, setContent] = useState<string[][]>();
 
@@ -63,7 +71,7 @@ export const PriceUpdateContextProvider = ({
         r.find((value) => containsSubstring(value))
       );
 
-      let headers = processedFile[headerRowIndex].map((value, index) => ({
+      const headers = processedFile[headerRowIndex].map((value, index) => ({
         index,
         value,
       }));
@@ -73,12 +81,6 @@ export const PriceUpdateContextProvider = ({
         .filter((row) => row.length);
 
       const recommendedHeaders = getPriceUpdateHeaders(content);
-      headers = headers.filter(
-        ({ value }) =>
-          !recommendedHeaders.find((r) => {
-            return r.value === value;
-          })
-      );
 
       setContent(content);
       setRawHeaders(headers);
@@ -92,10 +94,12 @@ export const PriceUpdateContextProvider = ({
     async (type: 'initial' | 'error' = 'initial') => {
       try {
         if (!content) {
-          throw new Error('No file found', { cause: '' });
+          throw new Error('No file found');
         }
 
-        const headers = getPriceUpdateHeaders(content);
+        if (!selectedHeaders) {
+          throw new Error('Please add headers neeaded to create the file');
+        }
 
         const columnIndexes = selectedHeaders?.map(({ index }) => index);
 
@@ -119,7 +123,7 @@ export const PriceUpdateContextProvider = ({
           return output?.join(',');
         });
 
-        const headerRowColumns = headers?.map((header) => header.label);
+        const headerRowColumns = selectedHeaders.map((header) => header.label);
 
         if (isSale) {
           headerRowColumns.push('Add Tags');
@@ -140,6 +144,30 @@ export const PriceUpdateContextProvider = ({
     [content, isSale]
   );
 
+  const addSelectedHeader = (input: AddSelectedHeaderInput) => {
+    const { index, label } = input;
+
+    if (!rawHeaders) return;
+
+    if (selectedHeaders?.find((s) => s.label === label)) {
+      throw new Error('Column with same output name already exists.', {
+        cause: 'Duplicate output name.',
+      });
+    }
+
+    const newHeader = { ...rawHeaders[index], label } as PriceUpdateHeader;
+
+    setSelectedHeaders([...(selectedHeaders || []), newHeader]);
+  };
+
+  const removeSelectedHeader = (label: string) => {
+    const newSelectedHeaders = selectedHeaders?.filter(
+      (h) => h.label !== label
+    );
+
+    setSelectedHeaders(newSelectedHeaders);
+  };
+
   return (
     <PriceUpdateContext.Provider
       value={{
@@ -151,6 +179,8 @@ export const PriceUpdateContextProvider = ({
         errorFile,
         rawHeaders,
         selectedHeaders,
+        addSelectedHeader,
+        removeSelectedHeader,
       }}
     >
       {children}

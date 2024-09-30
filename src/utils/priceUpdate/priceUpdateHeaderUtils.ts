@@ -114,10 +114,10 @@ export type PriceUpdateHeader = {
   index: number;
   value: string;
   key?: ValidHeaderKey;
-  label?: string;
+  label: string;
 };
 
-export default function getPriceUpdateHeaders(content: string[][]) {
+export function getPriceUpdateHeaders(content: string[][]) {
   const topRow = content[0];
 
   const headers: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
