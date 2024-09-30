@@ -113,8 +113,8 @@ export type ValidHeaderKey = (typeof validHeaders)[number]['key'];
 export type PriceUpdateHeader = {
   index: number;
   value: string;
-  key: ValidHeaderKey;
-  label: string;
+  key?: ValidHeaderKey;
+  label?: string;
 };
 
 export default function getPriceUpdateHeaders(content: string[][]) {

@@ -1,23 +1,41 @@
-'use client';
+import React, { createContext, useCallback, useState, ReactNode } from 'react';
 
 import { FileObj } from '@/types/fileTypes';
-import { useCallback, useState } from 'react';
-import { toast } from './use-toast';
 import { readExcelFile } from '@/utils/fileProcessors';
 import getPriceUpdateHeaders, {
   containsSubstring,
   PriceUpdateHeader,
-  validHeaders,
 } from '@/utils/priceUpdate/getPriceUpdateHeaders';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
 
-export default function usePriceUpdateFiles() {
+interface PriceUpdateContextType {
+  file: FileObj | null | undefined;
+  addFile: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    isErrorFile?: boolean
+  ) => Promise<void>;
+  isSale: boolean;
+  setIsSale: React.Dispatch<React.SetStateAction<boolean>>;
+  processFile: (type?: 'initial' | 'error') => Promise<void>;
+  errorFile: FileObj | null | undefined;
+  rawHeaders: PriceUpdateHeader[] | undefined;
+  selectedHeaders: PriceUpdateHeader[] | undefined;
+}
+
+export const PriceUpdateContext = createContext<
+  PriceUpdateContextType | undefined
+>(undefined);
+
+export const PriceUpdateContextProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [file, setFile] = useState<FileObj | null>();
   const [errorFile, setErrorFile] = useState<FileObj | null>();
   const [isSale, setIsSale] = useState(false);
-  const [rawHeaders, setRawHeaders] =
-    useState<{ index: number; value: string }[]>();
+  const [rawHeaders, setRawHeaders] = useState<PriceUpdateHeader[]>();
   const [selectedHeaders, setSelectedHeaders] = useState<PriceUpdateHeader[]>();
   const [content, setContent] = useState<string[][]>();
 
@@ -69,21 +87,6 @@ export default function usePriceUpdateFiles() {
       processError('Error adding file', error);
     }
   };
-
-  const deleteFile = () => {
-    setFile(null);
-  };
-
-  //   const updateVendor = (fileName: string, vendor: VendorKey) => {
-  //     const newFiles = [...files];
-  //     const selectedFile = newFiles.find((file) => file.name === fileName);
-
-  //     if (selectedFile) {
-  //       selectedFile.vendor = vendor;
-  //     }
-
-  //     setFiles(newFiles);
-  //   };
 
   const processFile = useCallback(
     async (type: 'initial' | 'error' = 'initial') => {
@@ -137,15 +140,20 @@ export default function usePriceUpdateFiles() {
     [content, isSale]
   );
 
-  return {
-    file,
-    addFile,
-    deleteFile,
-    isSale,
-    setIsSale,
-    processFile,
-    errorFile,
-    rawHeaders,
-    selectedHeaders,
-  };
-}
+  return (
+    <PriceUpdateContext.Provider
+      value={{
+        file,
+        addFile,
+        isSale,
+        setIsSale,
+        processFile,
+        errorFile,
+        rawHeaders,
+        selectedHeaders,
+      }}
+    >
+      {children}
+    </PriceUpdateContext.Provider>
+  );
+};

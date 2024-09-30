@@ -1,19 +1,10 @@
-import React, { ChangeEventHandler } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { FileObj } from '@/types/fileTypes';
+import usePriceUpdate from '@/hooks/usePriceUpdate';
 
-interface PriceUpdateStep2Props {
-  onAddErrorFile: ChangeEventHandler<HTMLInputElement>;
-  errorFile: FileObj | null | undefined;
-  onProcessErrorFile: () => void;
-}
+export default function PriceUpdateStep2() {
+  const { addFile, errorFile, processFile } = usePriceUpdate();
 
-export default function PriceUpdateStep2({
-  onAddErrorFile,
-  onProcessErrorFile,
-  errorFile,
-}: PriceUpdateStep2Props) {
   return (
     <div className="lg:px-10 space-y-5 border-b py-10 pointer-events-none">
       <h3>Select Error File</h3>
@@ -25,12 +16,12 @@ export default function PriceUpdateStep2({
       <Input
         type="file"
         placeholder="Select a file"
-        onChange={onAddErrorFile}
+        onChange={(file) => addFile(file, true)}
         className="cursor-pointer"
       />
 
       <div className="space-x-2 text-right">
-        <Button onClick={onProcessErrorFile} disabled={!errorFile}>
+        <Button onClick={() => processFile('error')} disabled={!errorFile}>
           Download Error Free File
         </Button>
       </div>
