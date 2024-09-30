@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from 'react';
 
 import { FileObj } from '@/types/fileTypes';
-import { readExcelFile } from '@/utils/fileProcessors';
+import { readCsvFile, readExcelFile } from '@/utils/fileProcessors';
 import {
   getPriceUpdateHeaders,
   containsSubstring,
@@ -9,24 +9,6 @@ import {
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
-
-interface PriceUpdateContextType {
-  file: FileObj | null | undefined;
-  addFile: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    isErrorFile?: boolean
-  ) => Promise<void>;
-  isSale: boolean;
-  setIsSale: React.Dispatch<React.SetStateAction<boolean>>;
-  processFile: (type?: 'initial' | 'error') => Promise<void>;
-  errorFile: FileObj | null | undefined;
-  rawHeaders: Partial<PriceUpdateHeader>[] | undefined;
-  selectedHeaders: PriceUpdateHeader[] | undefined;
-  addSelectedHeader: (input: AddSelectedHeaderInput) => void;
-  removeSelectedHeader: (label: string) => void;
-  note: string;
-  setNote: (value: string) => void;
-}
 
 export interface AddSelectedHeaderInput {
   index: number;
@@ -36,6 +18,41 @@ export interface AddSelectedHeaderInput {
 export const PriceUpdateContext = createContext<
   PriceUpdateContextType | undefined
 >(undefined);
+
+export type ErrorAction = 'update' | 'delete';
+
+interface ErrorRowType {
+  sku: string;
+  error: string;
+  action?: ErrorAction;
+  updatedSku?: string;
+}
+
+interface UpdateErrorRowInput {
+  sku: string;
+  action: ErrorAction;
+  updatedSku?: string;
+}
+
+interface PriceUpdateContextType {
+  file?: FileObj | null;
+  addFile: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    isErrorFile?: boolean
+  ) => Promise<void>;
+  isSale: boolean;
+  setIsSale: React.Dispatch<React.SetStateAction<boolean>>;
+  processFile: (type?: 'initial' | 'error') => Promise<void>;
+  errorFile?: FileObj | null;
+  rawHeaders?: Partial<PriceUpdateHeader>[];
+  selectedHeaders?: PriceUpdateHeader[];
+  addSelectedHeader: (input: AddSelectedHeaderInput) => void;
+  removeSelectedHeader: (label: string) => void;
+  note?: string;
+  setNote: (value: string) => void;
+  errorRows?: ErrorRowType[];
+  updateErrorRow: (input: UpdateErrorRowInput) => void;
+}
 
 export const PriceUpdateContextProvider = ({
   children,
@@ -49,6 +66,8 @@ export const PriceUpdateContextProvider = ({
   const [selectedHeaders, setSelectedHeaders] = useState<PriceUpdateHeader[]>();
   const [content, setContent] = useState<string[][]>();
   const [note, setNote] = useState<string>('');
+  // Error
+  const [errorRows, setErrorRows] = useState<ErrorRowType[]>();
 
   const addFile = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -68,92 +87,109 @@ export const PriceUpdateContextProvider = ({
         throw new Error('No file found', { cause: '' });
       }
 
-      const processedFile = await readExcelFile(newFile);
+      if (isErrorFile) {
+        const processedFile = await readCsvFile(newFile);
+        const newErrorRows = processedFile
+          .filter((row) => !!row['Errors'])
+          .map((row) => {
+            const error = row['Errors'];
+            const sku = row['Manufacturer SKU'];
 
-      const headerRowIndex = processedFile.findIndex((r) =>
-        r.find((value) => containsSubstring(value))
-      );
+            return { error, sku };
+          });
 
-      const headers = processedFile[headerRowIndex].map((value, index) => ({
-        index,
-        value,
-      }));
+        setErrorRows(newErrorRows);
+      } else {
+        const processedFile = await readExcelFile(newFile);
 
-      const content = processedFile
-        .slice(headerRowIndex)
-        .filter((row) => row.length);
+        const headerRowIndex = processedFile.findIndex((r) =>
+          r.find((value) => containsSubstring(value))
+        );
 
-      const recommendedHeaders = getPriceUpdateHeaders(content);
+        const headers = processedFile[headerRowIndex].map((value, index) => ({
+          index,
+          value,
+        }));
 
-      setContent(content);
-      setRawHeaders(headers);
-      setSelectedHeaders(recommendedHeaders);
+        const rawContent = processedFile
+          .slice(headerRowIndex)
+          .filter((row) => row.length);
+
+        const recommendedHeaders = getPriceUpdateHeaders(rawContent);
+
+        setContent(rawContent);
+
+        setRawHeaders(headers);
+        setSelectedHeaders(recommendedHeaders);
+      }
     } catch (error) {
       processError('Error adding file', error);
     }
   };
 
-  const processFile = useCallback(
-    async (type: 'initial' | 'error' = 'initial') => {
-      try {
-        if (!content) {
-          throw new Error('No file found');
-        }
+  const processFile = async (type: 'initial' | 'error' = 'initial') => {
+    try {
+      if (!content) {
+        throw new Error('No file found');
+      }
 
-        if (!selectedHeaders) {
-          throw new Error('Please add headers neeaded to create the file');
-        }
+      if (type === 'error' && (!content || !errorRows)) {
+        throw new Error('Supplier file and error file is required.');
+      }
 
-        const columnIndexes = selectedHeaders?.map(({ index }) => index);
+      if (!selectedHeaders) {
+        throw new Error('Please add headers neeaded to create the file');
+      }
 
-        // If type is error, remove problem rows
+      const columnIndexes = selectedHeaders?.map(({ index }) => index);
 
-        const rows = content.slice(1).map((row) => {
-          const output = columnIndexes?.map((i) => {
-            const cell = row[i];
+      // If type is error, remove problem rows
+      console.log(errorRows);
 
-            if (isNaN(parseFloat(cell))) {
-              return row[i];
-            } else {
-              return parseFloat(cell).toFixed(2);
-            }
-          });
+      const rows = content.slice(1).map((row) => {
+        const output = columnIndexes?.map((i) => {
+          const cell = row[i];
 
-          if (isSale) {
-            output?.push('on-sale');
+          if (isNaN(parseFloat(cell))) {
+            return row[i];
+          } else {
+            return parseFloat(cell).toFixed(2);
           }
-
-          if (note) {
-            output.push(note);
-          }
-
-          return output?.join(',');
         });
 
-        const headerRowColumns = selectedHeaders.map((header) => header.label);
-
         if (isSale) {
-          headerRowColumns.push('Add Tags');
+          output?.push('on-sale');
         }
 
         if (note) {
-          headerRowColumns.push('Note');
+          output.push(note);
         }
 
-        const headerRow = headerRowColumns.join(',');
+        return output?.join(',');
+      });
 
-        const entries = [headerRow, ...rows].join('\n');
+      const headerRowColumns = selectedHeaders.map((header) => header.label);
 
-        downloadCSV(entries, 'price-update-test');
-      } catch (error) {
-        processError(
-          `Error processing ${type === 'error' ? 'error' : 'supplier'} file`,
-          error
-        );
+      if (isSale) {
+        headerRowColumns.push('Add Tags');
       }
-    },
-    [content, isSale]
-  );
+
+      if (note) {
+        headerRowColumns.push('Notes');
+      }
+
+      const headerRow = headerRowColumns.join(',');
+
+      const entries = [headerRow, ...rows].join('\n');
+
+      downloadCSV(entries, 'price-update-test');
+    } catch (error) {
+      processError(
+        `Error processing ${type === 'error' ? 'error' : 'supplier'} file`,
+        error
+      );
+    }
+  };
 
   const addSelectedHeader = (input: AddSelectedHeaderInput) => {
     const { index, label } = input;
@@ -179,6 +215,22 @@ export const PriceUpdateContextProvider = ({
     setSelectedHeaders(newSelectedHeaders);
   };
 
+  const updateErrorRow = (input: UpdateErrorRowInput) => {
+    if (!errorRows) return;
+
+    const { sku, action, updatedSku } = input;
+    const updatedErrorRows = [...errorRows];
+
+    const errorRow = updatedErrorRows?.find((error) => error.sku === sku);
+
+    if (errorRow) {
+      errorRow.action = action;
+      errorRow.updatedSku = updatedSku;
+    }
+
+    setErrorRows(updatedErrorRows);
+  };
+
   return (
     <PriceUpdateContext.Provider
       value={{
@@ -194,6 +246,8 @@ export const PriceUpdateContextProvider = ({
         removeSelectedHeader,
         note,
         setNote,
+        errorRows,
+        updateErrorRow,
       }}
     >
       {children}

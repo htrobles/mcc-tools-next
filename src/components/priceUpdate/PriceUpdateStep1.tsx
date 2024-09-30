@@ -19,7 +19,7 @@ export default function PriceUpdateStep1() {
           columns if needed.
         </li>
         <li>Toggle Sale switch ON if the price update is for a sale.</li>
-        <li>Optional: Add note which will be added to all product rows</li>
+        <li>Optional: Add notes which will be added to all product rows</li>
         <li>Download the initial file and upload it to Lightspeed.</li>
       </ol>
       <Input
@@ -29,31 +29,35 @@ export default function PriceUpdateStep1() {
         className="cursor-pointer"
       />
       <PriceUpdateHeadersList />
-      <div className="flex items-center">
-        <Switch
-          id="is-sale"
-          disabled={!file}
-          checked={isSale}
-          onCheckedChange={setIsSale}
-          className="mr-2"
-        />
-        <label htmlFor="is-sale">Sale</label>
-      </div>
-      <div>
-        <label htmlFor="notes">Add Note (optional)</label>
-        <Input
-          placeholder="Enter note"
-          className="bg-white"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          disabled={!file}
-        />
-      </div>
-      <div className="space-x-2 text-right">
-        <Button onClick={() => processFile()} disabled={!file}>
-          Generate Initial File
-        </Button>
-      </div>
+      {!!file && (
+        <div className="border-t py-4 space-y-5">
+          <div className="flex items-center">
+            <Switch
+              id="is-sale"
+              disabled={!file}
+              checked={isSale}
+              onCheckedChange={setIsSale}
+              className="mr-2"
+            />
+            <label htmlFor="is-sale">Sale</label>
+          </div>
+          <div>
+            <label htmlFor="notes">Add Notes (optional)</label>
+            <Input
+              placeholder="Enter note"
+              className="bg-white"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              disabled={!file}
+            />
+          </div>
+          <div className="space-x-2 text-right">
+            <Button onClick={() => processFile()} disabled={!file}>
+              Generate Initial File
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
