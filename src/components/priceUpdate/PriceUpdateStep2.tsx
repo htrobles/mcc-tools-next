@@ -3,7 +3,6 @@ import { Button } from '../ui/button';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { twMerge } from 'tailwind-merge';
 import PriceUpdateErrorList from './PriceUpdateErrorList';
-import { ExitIcon } from '@radix-ui/react-icons';
 
 export default function PriceUpdateStep2() {
   const { addFile, errorFile, processFile, file, deleteErrorFile } =
