@@ -8,7 +8,7 @@ export default function PriceUpdateStep2() {
   const { addFile, errorFile, processFile, file, errorRows } = usePriceUpdate();
 
   const containerClasses = twMerge(
-    'lg:px-10 space-y-5 border-b py-10',
+    'lg:px-10 space-y-5 mb-10',
     !file ? 'pointer-events-none' : ''
   );
 

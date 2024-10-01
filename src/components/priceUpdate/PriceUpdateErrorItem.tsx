@@ -47,7 +47,7 @@ export default function PriceUpdateErrorItem({
         </Button>
       </TableCell>
       <TableCell>
-        <Input placeholder="Enter valid SKU" disabled={action !== 'update'} />
+        <Input placeholder="Enter System ID" disabled={action !== 'update'} />
       </TableCell>
     </TableRow>
   );

@@ -10,7 +10,7 @@ export default function PriceUpdateStep1() {
     usePriceUpdate();
 
   return (
-    <div className="lg:px-10 space-y-5 border-b pb-10">
+    <div className="lg:px-10 space-y-5 mb-10">
       <h3>Upload Supplier File</h3>
       <ol className="list-decimal ml-8">
         <li>Select supplier file.</li>

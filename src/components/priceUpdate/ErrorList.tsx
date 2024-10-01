@@ -22,7 +22,7 @@ export default function ErrorList() {
             <TableHead>Manufacturer SKU</TableHead>
             <TableHead>Error</TableHead>
             <TableHead>Actions</TableHead>
-            <TableHead>Updated SKU</TableHead>
+            <TableHead>System ID</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
