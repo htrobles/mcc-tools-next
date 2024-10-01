@@ -6,8 +6,16 @@ import usePriceUpdate from '@/hooks/usePriceUpdate';
 import PriceUpdateHeadersList from './PriceUpdateHeadersList';
 
 export default function PriceUpdateStep1() {
-  const { file, addFile, isSale, setIsSale, processFile, note, setNote } =
-    usePriceUpdate();
+  const {
+    file,
+    addFile,
+    isSale,
+    setIsSale,
+    processFile,
+    note,
+    setNote,
+    deleteInitialFile,
+  } = usePriceUpdate();
 
   return (
     <div className="lg:px-10 space-y-5 mb-10">
@@ -22,12 +30,26 @@ export default function PriceUpdateStep1() {
         <li>Optional: Add notes which will be added to all product rows</li>
         <li>Download the initial file and upload it to Lightspeed.</li>
       </ol>
-      <Input
-        type="file"
-        placeholder="Select a file"
-        onChange={addFile}
-        className="cursor-pointer"
-      />
+      {!!file ? (
+        <div>
+          {file.name}
+          <Button
+            variant="outline"
+            className="ml-2"
+            size="sm"
+            onClick={deleteInitialFile}
+          >
+            Clear
+          </Button>
+        </div>
+      ) : (
+        <Input
+          type="file"
+          placeholder="Select a file"
+          onChange={addFile}
+          className="cursor-pointer"
+        />
+      )}
       <PriceUpdateHeadersList />
       {!!file && (
         <div className="border-t py-4 space-y-5">

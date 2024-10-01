@@ -6,10 +6,12 @@ import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { PriceUpdateErrorRowType } from './PriceUpdateContextProvider';
 
 export default function PriceUpdateErrorItem({
-  sku,
-  error,
-  toDelete,
-}: PriceUpdateErrorRowType) {
+  errorRow,
+}: {
+  errorRow: PriceUpdateErrorRowType;
+}) {
+  const { sku, error, toDelete, description } = errorRow;
+
   const { updateErrorRow } = usePriceUpdate();
 
   const handleUpdateAction = () => {
@@ -18,7 +20,8 @@ export default function PriceUpdateErrorItem({
 
   return (
     <TableRow key={sku}>
-      <TableCell>{sku}</TableCell>
+      <TableCell className="font-bold">{sku}</TableCell>
+      <TableCell>{description}</TableCell>
       <TableCell className="text-destructive">{error}</TableCell>
       <TableCell>
         <Button

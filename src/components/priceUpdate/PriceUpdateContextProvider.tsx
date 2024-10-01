@@ -6,6 +6,7 @@ import {
   getPriceUpdateHeaders,
   containsSubstring,
   PriceUpdateHeader,
+  DESCRIPTION_LABELS,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
@@ -22,6 +23,7 @@ export const PriceUpdateContext = createContext<
 export interface PriceUpdateErrorRowType {
   sku: string;
   error: string;
+  description?: string;
   toDelete?: boolean;
 }
 
@@ -48,6 +50,8 @@ interface PriceUpdateContextType {
   setNote: (value: string) => void;
   errorRows?: PriceUpdateErrorRowType[];
   updateErrorRow: (input: UpdateErrorRowInput) => void;
+  deleteErrorFile: () => void;
+  deleteInitialFile: () => void;
 }
 
 export const PriceUpdateContextProvider = ({
@@ -85,13 +89,34 @@ export const PriceUpdateContextProvider = ({
 
       if (isErrorFile) {
         const processedFile = await readCsvFile(newFile);
+
+        const descriptionIndex = rawHeaders?.findIndex((h) => {
+          if (h.value) {
+            return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
+          }
+        });
+
+        const rawSkuIndex = selectedHeaders?.find(
+          (h) =>
+            h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
+        )?.index;
+
         const newErrorRows = processedFile
           .filter((row) => !!row['Errors'])
           .map((row) => {
             const error = row['Errors'];
             const sku = row['Manufacturer SKU'];
 
-            return { error, sku };
+            let description = '';
+
+            if (rawSkuIndex && descriptionIndex) {
+              const productRow = content?.find((r) => r[rawSkuIndex] === sku);
+              description = productRow ? productRow[descriptionIndex] : '';
+            }
+
+            console.log(description);
+
+            return { error, sku, description };
           });
 
         setErrorRows(newErrorRows);
@@ -242,6 +267,22 @@ export const PriceUpdateContextProvider = ({
     setErrorRows(updatedErrorRows);
   };
 
+  const deleteErrorFile = () => {
+    setErrorFile(null);
+    setErrorRows(undefined);
+  };
+
+  const deleteInitialFile = () => {
+    setFile(null);
+    setContent(undefined);
+    setErrorFile(undefined);
+    setErrorRows(undefined);
+    setIsSale(false);
+    setNote('');
+    setRawHeaders(undefined);
+    setSelectedHeaders(undefined);
+  };
+
   return (
     <PriceUpdateContext.Provider
       value={{
@@ -259,6 +300,8 @@ export const PriceUpdateContextProvider = ({
         setNote,
         errorRows,
         updateErrorRow,
+        deleteErrorFile,
+        deleteInitialFile,
       }}
     >
       {children}

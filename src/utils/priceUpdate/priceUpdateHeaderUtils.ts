@@ -100,6 +100,15 @@ export const validHeaders = [
   },
 ];
 
+export const DESCRIPTION_LABELS = [
+  // Taylor
+  'model',
+  // Music Nomad, Black Magic, Gerr Audio
+  'description',
+  // Rolls
+  'english description',
+];
+
 export type ValidHeaderKey = (typeof validHeaders)[number]['key'];
 
 // for (const key in validHeaders) {
@@ -122,7 +131,7 @@ export function getPriceUpdateHeaders(content: string[][]) {
 
   const headers: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
     const validHeader = validHeaders.find((header) =>
-      header.values.includes(value)
+      header.values.map((v) => v.toLowerCase()).includes(value.toLowerCase())
     );
     if (validHeader) {
       return [

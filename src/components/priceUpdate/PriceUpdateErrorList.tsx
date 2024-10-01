@@ -20,13 +20,14 @@ export default function PriceUpdateErrorList() {
         <TableHeader>
           <TableRow>
             <TableHead>Manufacturer SKU</TableHead>
+            <TableHead>Description</TableHead>
             <TableHead>Error</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {errorRows.map(({ sku, error, toDelete }) => (
-            <PriceUpdateErrorItem sku={sku} error={error} toDelete={toDelete} />
+          {errorRows.map((errorRow) => (
+            <PriceUpdateErrorItem key={errorRow.sku} errorRow={errorRow} />
           ))}
         </TableBody>
       </Table>
