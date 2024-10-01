@@ -8,6 +8,7 @@ import {
 } from '../ui/table';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import PriceUpdateErrorItem from './PriceUpdateErrorItem';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 export default function PriceUpdateErrorList() {
   const { errorRows } = usePriceUpdate();
@@ -25,11 +26,13 @@ export default function PriceUpdateErrorList() {
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {errorRows.map((errorRow) => (
-            <PriceUpdateErrorItem key={errorRow.sku} errorRow={errorRow} />
-          ))}
-        </TableBody>
+        <TooltipProvider>
+          <TableBody>
+            {errorRows.map((errorRow) => (
+              <PriceUpdateErrorItem key={errorRow.sku} errorRow={errorRow} />
+            ))}
+          </TableBody>
+        </TooltipProvider>
       </Table>
     </div>
   );

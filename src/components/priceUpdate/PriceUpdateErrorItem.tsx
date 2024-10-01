@@ -4,6 +4,11 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { PriceUpdateErrorRowType } from './PriceUpdateContextProvider';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function PriceUpdateErrorItem({
   errorRow,
@@ -18,10 +23,30 @@ export default function PriceUpdateErrorItem({
     updateErrorRow({ sku, toDelete: !toDelete });
   };
 
+  const copyToClipboard = (value: string) => {
+    navigator.clipboard.writeText(value);
+  };
+
   return (
     <TableRow key={sku}>
-      <TableCell className="font-bold">{sku}</TableCell>
-      <TableCell>{description}</TableCell>
+      <TableCell className="font-bold">
+        <Tooltip>
+          <TooltipTrigger onClick={() => copyToClipboard(sku)}>
+            {sku}
+          </TooltipTrigger>
+          <TooltipContent>Click to copy</TooltipContent>
+        </Tooltip>
+      </TableCell>
+      <TableCell>
+        <Tooltip>
+          <TooltipTrigger
+            onClick={() => description && copyToClipboard(description)}
+          >
+            {description}
+          </TooltipTrigger>
+          <TooltipContent>Click to copy</TooltipContent>
+        </Tooltip>
+      </TableCell>
       <TableCell className="text-destructive">{error}</TableCell>
       <TableCell>
         <Button
