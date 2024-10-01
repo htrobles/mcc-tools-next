@@ -4,7 +4,7 @@ import { VendorKey } from '@/constants/vendors';
 import { FileObj } from '@/types/fileTypes';
 import { useCallback, useState } from 'react';
 
-export default function useFiles() {
+export default function useSupplierFiles() {
   const [files, setFiles] = useState<FileObj[]>([]);
 
   const addFiles = useCallback(

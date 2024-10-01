@@ -2,10 +2,11 @@
 
 import { FileList } from '@/components/FileList';
 import FileUpload from '@/components/FileUpload';
+import PageLayout from '@/components/PageLayout';
 import { Button } from '@/components/ui/button';
 import { VendorKey } from '@/constants/vendors';
 import { useToast } from '@/hooks/use-toast';
-import useFiles from '@/hooks/useFiles';
+import useSupplierFiles from '@/hooks/useSupplierFiles';
 import { FileObj } from '@/types/fileTypes';
 import {
   downloadCSV,
@@ -21,7 +22,7 @@ import { useCallback } from 'react';
 
 export default function SupplierMasterFeedPage() {
   const { files, addFiles, clearFiles, deleteFile, deleteFiles, updateVendor } =
-    useFiles();
+    useSupplierFiles();
   const { toast } = useToast();
 
   const handleClickProcess = async () => {
@@ -142,15 +143,7 @@ export default function SupplierMasterFeedPage() {
   );
 
   return (
-    <div className="container mx-auto py-4">
-      <div className="mb-5 pb-4 border-b">
-        <h1>Master Supplies Feed Tool</h1>
-        <p>
-          This tool creates a Master Supplies Feed CSV file using the data from
-          the suppliers.
-        </p>
-      </div>
-
+    <PageLayout>
       <div>
         <div className="mb-5 space-y-2">
           <h4>Instructions:</h4>
@@ -173,8 +166,8 @@ export default function SupplierMasterFeedPage() {
             admin to update the excluded brands list.
           </p>
         </div>
-        <div className="px-10 space-y-5">
-          <FileUpload addFiles={handleAddFiles} />
+        <div className="lg:px-10 space-y-5">
+          <FileUpload addFiles={handleAddFiles} multiple />
           <div className="border rounded bg-white">
             <FileList
               files={files}
@@ -194,6 +187,6 @@ export default function SupplierMasterFeedPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
