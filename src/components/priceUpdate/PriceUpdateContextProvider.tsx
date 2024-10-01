@@ -19,19 +19,15 @@ export const PriceUpdateContext = createContext<
   PriceUpdateContextType | undefined
 >(undefined);
 
-export type ErrorAction = 'update' | 'delete';
-
-interface ErrorRowType {
+export interface PriceUpdateErrorRowType {
   sku: string;
   error: string;
-  action?: ErrorAction;
-  updatedSku?: string;
+  toDelete?: boolean;
 }
 
 interface UpdateErrorRowInput {
   sku: string;
-  action: ErrorAction;
-  updatedSku?: string;
+  toDelete?: boolean;
 }
 
 interface PriceUpdateContextType {
@@ -50,7 +46,7 @@ interface PriceUpdateContextType {
   removeSelectedHeader: (label: string) => void;
   note?: string;
   setNote: (value: string) => void;
-  errorRows?: ErrorRowType[];
+  errorRows?: PriceUpdateErrorRowType[];
   updateErrorRow: (input: UpdateErrorRowInput) => void;
 }
 
@@ -67,7 +63,7 @@ export const PriceUpdateContextProvider = ({
   const [content, setContent] = useState<string[][]>();
   const [note, setNote] = useState<string>('');
   // Error
-  const [errorRows, setErrorRows] = useState<ErrorRowType[]>();
+  const [errorRows, setErrorRows] = useState<PriceUpdateErrorRowType[]>();
 
   const addFile = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -144,9 +140,25 @@ export const PriceUpdateContextProvider = ({
       const columnIndexes = selectedHeaders?.map(({ index }) => index);
 
       // If type is error, remove problem rows
-      console.log(errorRows);
+      const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
+        if (toDelete) {
+          return [...prev, sku];
+        } else {
+          return prev;
+        }
+      }, [] as string[]);
+      console.log(excludedSkus);
 
-      const rows = content.slice(1).map((row) => {
+      const skuIndex = selectedHeaders.find(
+        ({ key, label }) =>
+          key === 'manufacturerSku' || label === 'Manufacturer SKU'
+      )?.index;
+
+      const rows = content.slice(1).reduce((prev, row) => {
+        if (skuIndex && excludedSkus?.find((sku) => sku === row[skuIndex])) {
+          return prev;
+        }
+
         const output = columnIndexes?.map((i) => {
           const cell = row[i];
 
@@ -165,8 +177,8 @@ export const PriceUpdateContextProvider = ({
           output.push(note);
         }
 
-        return output?.join(',');
-      });
+        return [...prev, output?.join(',')];
+      }, [] as string[]);
 
       const headerRowColumns = selectedHeaders.map((header) => header.label);
 
@@ -218,14 +230,13 @@ export const PriceUpdateContextProvider = ({
   const updateErrorRow = (input: UpdateErrorRowInput) => {
     if (!errorRows) return;
 
-    const { sku, action, updatedSku } = input;
+    const { sku, toDelete } = input;
     const updatedErrorRows = [...errorRows];
 
     const errorRow = updatedErrorRows?.find((error) => error.sku === sku);
 
     if (errorRow) {
-      errorRow.action = action;
-      errorRow.updatedSku = updatedSku;
+      errorRow.toDelete = toDelete;
     }
 
     setErrorRows(updatedErrorRows);

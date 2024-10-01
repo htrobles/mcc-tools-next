@@ -52,7 +52,11 @@ export default function PriceUpdateStep1() {
             />
           </div>
           <div className="space-x-2 text-right">
-            <Button onClick={() => processFile()} disabled={!file}>
+            <Button
+              variant="outline"
+              onClick={() => processFile()}
+              disabled={!file}
+            >
               Generate Initial File
             </Button>
           </div>

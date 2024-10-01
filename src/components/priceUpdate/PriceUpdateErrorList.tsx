@@ -9,7 +9,7 @@ import {
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import PriceUpdateErrorItem from './PriceUpdateErrorItem';
 
-export default function ErrorList() {
+export default function PriceUpdateErrorList() {
   const { errorRows } = usePriceUpdate();
 
   if (!errorRows) return null;
@@ -21,13 +21,12 @@ export default function ErrorList() {
           <TableRow>
             <TableHead>Manufacturer SKU</TableHead>
             <TableHead>Error</TableHead>
-            <TableHead>Actions</TableHead>
-            <TableHead>System ID</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {errorRows.map(({ sku, error, action }) => (
-            <PriceUpdateErrorItem sku={sku} error={error} action={action} />
+          {errorRows.map(({ sku, error, toDelete }) => (
+            <PriceUpdateErrorItem sku={sku} error={error} toDelete={toDelete} />
           ))}
         </TableBody>
       </Table>

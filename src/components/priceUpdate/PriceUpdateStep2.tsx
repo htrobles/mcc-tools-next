@@ -2,7 +2,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { twMerge } from 'tailwind-merge';
-import ErrorList from './ErrorList';
+import PriceUpdateErrorList from './PriceUpdateErrorList';
 
 export default function PriceUpdateStep2() {
   const { addFile, errorFile, processFile, file, errorRows } = usePriceUpdate();
@@ -26,10 +26,14 @@ export default function PriceUpdateStep2() {
         onChange={(file) => addFile(file, true)}
         className="cursor-pointer"
       />
-      <ErrorList />
+      <PriceUpdateErrorList />
       <div className="space-x-2 text-right">
-        <Button onClick={() => processFile('error')} disabled={!errorFile}>
-          Download Error Free File
+        <Button
+          variant="outline"
+          onClick={() => processFile('error')}
+          disabled={!errorFile}
+        >
+          Generate Final File
         </Button>
       </div>
     </div>

@@ -5,7 +5,7 @@ import usePriceUpdate from '@/hooks/usePriceUpdate';
 
 interface PriceUpdateFooterNavProps {
   step: number;
-  onUpdateStep: (number) => void;
+  onUpdateStep: (step: number) => void;
 }
 
 export default function PriceUpdateFooterNav({

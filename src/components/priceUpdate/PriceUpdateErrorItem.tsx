@@ -1,53 +1,35 @@
 import React from 'react';
 import { TableCell, TableRow } from '../ui/table';
 import { Button } from '../ui/button';
-import { ErrorAction } from './PriceUpdateContextProvider';
 import { Input } from '../ui/input';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
-
-interface PriceUpdateErrorItemProps {
-  sku: string;
-  error: string;
-  action?: ErrorAction;
-}
+import { PriceUpdateErrorRowType } from './PriceUpdateContextProvider';
 
 export default function PriceUpdateErrorItem({
   sku,
   error,
-  action,
-}: PriceUpdateErrorItemProps) {
+  toDelete,
+}: PriceUpdateErrorRowType) {
   const { updateErrorRow } = usePriceUpdate();
 
-  const handleUpdateAction = (newAction: ErrorAction) => {
-    updateErrorRow({ sku, action: newAction });
+  const handleUpdateAction = () => {
+    updateErrorRow({ sku, toDelete: !toDelete });
   };
 
   return (
     <TableRow key={sku}>
       <TableCell>{sku}</TableCell>
       <TableCell className="text-destructive">{error}</TableCell>
-      <TableCell className="flex gap-1 flex-wrap">
+      <TableCell>
         <Button
-          variant={action === 'update' ? 'default' : 'outline'}
+          variant={toDelete ? 'destructive' : 'outline'}
           size="sm"
-          className="grow"
-          value="update"
-          onClick={(e) => handleUpdateAction('update')}
-        >
-          Update SKU
-        </Button>
-        <Button
-          variant={action === 'delete' ? 'destructive' : 'outline'}
-          size="sm"
-          className="grow"
+          className="w-full"
           value="delete"
-          onClick={() => handleUpdateAction('delete')}
+          onClick={handleUpdateAction}
         >
           Remove
         </Button>
-      </TableCell>
-      <TableCell>
-        <Input placeholder="Enter System ID" disabled={action !== 'update'} />
       </TableCell>
     </TableRow>
   );
