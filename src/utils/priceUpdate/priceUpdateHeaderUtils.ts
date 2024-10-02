@@ -33,7 +33,13 @@ export function containsSubstring(str: string): boolean {
   );
 }
 
-export const validHeaders = [
+interface ValidHeaderType {
+  key: ValidHeaderKey;
+  label: string;
+  values: string[];
+}
+
+export const validHeaders: ValidHeaderType[] = [
   {
     key: 'manufacturerSku',
     label: 'Manufacturer SKU',
@@ -128,7 +134,13 @@ export const DESCRIPTION_LABELS = [
   'english description',
 ];
 
-export type ValidHeaderKey = (typeof validHeaders)[number]['key'];
+export type ValidHeaderKey =
+  | 'manufacturerSku'
+  | 'msrp'
+  | 'salePrice'
+  | 'defaultPrice'
+  | 'defaultCost'
+  | 'addTags';
 
 // for (const key in validHeaders) {
 //   if (Object.prototype.hasOwnProperty.call(validHeaders, key)) {
@@ -148,24 +160,27 @@ export type PriceUpdateHeader = {
 export function getPriceUpdateHeaders(content: string[][]) {
   const topRow = content[0];
 
-  const headers: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
-    const cleanedValue = value.trim().toLowerCase();
+  const headers: PriceUpdateHeader[] = topRow.reduce<PriceUpdateHeader[]>(
+    (prev, value, index) => {
+      const cleanedValue = value.trim().toLowerCase();
 
-    const validHeader = validHeaderMap[cleanedValue];
-    if (validHeader) {
-      return [
-        ...prev,
-        {
+      const validHeader = validHeaderMap[cleanedValue];
+
+      if (validHeader) {
+        const curr: PriceUpdateHeader = {
           index,
           value,
           key: validHeader.key as ValidHeaderKey,
           label: validHeader.label,
-        },
-      ];
-    } else {
+        };
+
+        return [...prev, curr];
+      }
+
       return prev;
-    }
-  }, [] as { index: number; value: string; key: string; label: string }[]);
+    },
+    []
+  );
 
   if (!headers.find((r) => r.key === 'salePrice')) {
     const header = headers.find(({ key }) => key === 'defaultPrice');
