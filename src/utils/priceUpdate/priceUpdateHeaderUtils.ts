@@ -24,6 +24,8 @@ export const headerStrings = [
 ];
 
 export function containsSubstring(str: string): boolean {
+  if (!str) return false;
+
   const lowerCaseStr = str.toLowerCase();
 
   return headerStrings.some((substring) =>
@@ -37,13 +39,15 @@ export const validHeaders = [
     label: 'Manufacturer SKU',
     values: [
       // Black Magic
-      'Item Number',
+      'item number',
       // Gerr Audio
-      'PART NUMBER',
+      'part number',
       // Taylor
-      'Stockcode',
+      'stockcode',
       // Music Nomad
-      'Item Number',
+      'item number',
+      // VOX
+      'model',
     ],
   },
   // Retail Price - Highest price we can go. Ignore if missing
@@ -52,7 +56,9 @@ export const validHeaders = [
     label: 'MSRP',
     values: [
       // Black Magic, Music Nomad
-      'Retail Price',
+      'retail price',
+      // Vox
+      'msrp',
     ],
   },
   {
@@ -65,8 +71,8 @@ export const validHeaders = [
       //   // Gerr Audio
       //   'PRICE',
       // Music Nomad
-      'Promo MAP',
-      'Sale Price',
+      'promo map',
+      'sale price',
     ],
   },
   {
@@ -74,11 +80,13 @@ export const validHeaders = [
     label: 'Default Price',
     values: [
       // Black Magic, Music Nomad
-      'MAP Price',
+      'map price',
       // Gerr Audio
-      'PRICE',
+      'price',
       // Taylor
-      'MAP (CAD)',
+      'map (cad)',
+      // VOX
+      'map',
     ],
   },
   {
@@ -86,11 +94,13 @@ export const validHeaders = [
     label: 'Default Cost',
     values: [
       // Black Magic
-      'Dealer Price  (Pricing UOM)',
+      'dealer price  (pricing uom)',
       // Gerr Audio
-      'DEALER PRICE',
+      'dealer price',
       // Music Nomad
-      ' Dealer Price  (Pricing UOM)',
+      'dealer price  (pricing uom)',
+      // VOX
+      'dealer',
     ],
   },
   {
@@ -99,6 +109,15 @@ export const validHeaders = [
     values: [],
   },
 ];
+
+export const validHeaderMap: { [key: string]: { key: string; label: string } } =
+  {};
+
+validHeaders.forEach(({ key, label, values }) => {
+  values.forEach((v) => {
+    validHeaderMap[v] = { key, label };
+  });
+});
 
 export const DESCRIPTION_LABELS = [
   // Taylor
@@ -130,9 +149,9 @@ export function getPriceUpdateHeaders(content: string[][]) {
   const topRow = content[0];
 
   const headers: PriceUpdateHeader[] = topRow.reduce((prev, value, index) => {
-    const validHeader = validHeaders.find((header) =>
-      header.values.map((v) => v.toLowerCase()).includes(value.toLowerCase())
-    );
+    const cleanedValue = value.trim().toLowerCase();
+
+    const validHeader = validHeaderMap[cleanedValue];
     if (validHeader) {
       return [
         ...prev,

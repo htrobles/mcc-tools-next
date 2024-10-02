@@ -3,11 +3,7 @@ import { TableCell, TableRow } from '../ui/table';
 import { Button } from '../ui/button';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { PriceUpdateErrorRowType } from './PriceUpdateContextProvider';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { CopyIcon } from '@radix-ui/react-icons';
 
 export default function PriceUpdateErrorItem({
   errorRow,
@@ -28,23 +24,19 @@ export default function PriceUpdateErrorItem({
 
   return (
     <TableRow key={sku}>
-      <TableCell className="font-bold">
-        <Tooltip>
-          <TooltipTrigger onClick={() => copyToClipboard(sku)}>
-            {sku}
-          </TooltipTrigger>
-          <TooltipContent>Click to copy</TooltipContent>
-        </Tooltip>
+      <TableCell
+        className="font-bold gap-1 items-center group cursor-pointer"
+        onClick={() => description && copyToClipboard(sku)}
+      >
+        {sku}
+        <CopyIcon className="invisible group-hover:visible inline ml-1" />
       </TableCell>
-      <TableCell>
-        <Tooltip>
-          <TooltipTrigger
-            onClick={() => description && copyToClipboard(description)}
-          >
-            {description}
-          </TooltipTrigger>
-          <TooltipContent>Click to copy</TooltipContent>
-        </Tooltip>
+      <TableCell
+        onClick={() => description && copyToClipboard(description)}
+        className="group"
+      >
+        {description}
+        <CopyIcon className="invisible group-hover:visible inline ml-1" />
       </TableCell>
       <TableCell className="text-destructive">{error}</TableCell>
       <TableCell>
