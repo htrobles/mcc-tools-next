@@ -202,19 +202,18 @@ export const PriceUpdateContextProvider = ({
           return prev;
         }
 
-        let defaultPrice: string;
+        let defaultPrice: number;
 
         const output = columnIndexes?.map((i) => {
-          let cell = row[i];
+          let cell: string | number = row[i];
 
           if (
             i === defaultPriceIndex &&
             defaultCostIndex &&
             (!cell || isNaN(Number(cell)))
           ) {
-            cell = (Number(row[defaultCostIndex]) * costMultiplier).toFixed(2);
+            cell = Number(row[defaultCostIndex]) * costMultiplier;
             defaultPrice = cell;
-            console.log(row[columnIndexes[0]]);
           } else if (
             i === salePriceIndex &&
             (!cell || isNaN(Number(cell))) &&
@@ -223,13 +222,11 @@ export const PriceUpdateContextProvider = ({
             if (defaultPrice) {
               cell = defaultPrice;
             } else {
-              cell = (Number(row[defaultCostIndex]) * costMultiplier).toFixed(
-                2
-              );
+              cell = Number(row[defaultCostIndex]) * costMultiplier;
             }
           }
 
-          return cell;
+          return isNaN(Number(cell)) ? cell : Number(cell).toFixed(2);
         });
 
         if (isSale) {
