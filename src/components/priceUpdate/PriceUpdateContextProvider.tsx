@@ -7,6 +7,7 @@ import {
   PriceUpdateHeader,
   DESCRIPTION_LABELS,
   validHeaderMap,
+  validHeaders,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
@@ -130,9 +131,15 @@ export const PriceUpdateContextProvider = ({
           value,
         }));
 
+        const rawSkuIndex = headers?.find((h) =>
+          validHeaders
+            .find((h) => h.key === 'manufacturerSku')
+            ?.values.includes(h?.value?.trim().toLowerCase())
+        )?.index;
+
         const rawContent = processedFile
           .slice(headerRowIndex)
-          .filter((row) => row.length);
+          .filter((row) => row.length && row[rawSkuIndex as number]);
 
         const recommendedHeaders = getPriceUpdateHeaders(rawContent);
 
@@ -171,7 +178,6 @@ export const PriceUpdateContextProvider = ({
           return prev;
         }
       }, [] as string[]);
-      console.log(excludedSkus);
 
       const skuIndex = selectedHeaders.find(
         ({ key, label }) =>
