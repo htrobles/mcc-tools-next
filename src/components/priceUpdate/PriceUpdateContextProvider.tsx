@@ -4,9 +4,9 @@ import { FileObj } from '@/types/fileTypes';
 import { readCsvFile, readExcelFile } from '@/utils/fileProcessors';
 import {
   getPriceUpdateHeaders,
-  containsSubstring,
   PriceUpdateHeader,
   DESCRIPTION_LABELS,
+  validHeaderMap,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
@@ -101,7 +101,7 @@ export const PriceUpdateContextProvider = ({
             h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
         )?.index;
 
-        const newErrorRows = processedFile
+        const newErrorRows: PriceUpdateErrorRowType[] = processedFile
           .filter((row) => !!row['Errors'])
           .map((row) => {
             const error = row['Errors'];
@@ -114,9 +114,7 @@ export const PriceUpdateContextProvider = ({
               description = productRow ? productRow[descriptionIndex] : '';
             }
 
-            console.log(description);
-
-            return { error, sku, description };
+            return { error, sku, description, toDelete: true };
           });
 
         setErrorRows(newErrorRows);
@@ -124,7 +122,7 @@ export const PriceUpdateContextProvider = ({
         const processedFile = await readExcelFile(newFile);
 
         const headerRowIndex = processedFile.findIndex((r) =>
-          r.find((value) => containsSubstring(value))
+          r.find((cell) => cell && validHeaderMap[cell.trim().toLowerCase()])
         );
 
         const headers = processedFile[headerRowIndex].map((value, index) => ({
@@ -144,6 +142,7 @@ export const PriceUpdateContextProvider = ({
         setSelectedHeaders(recommendedHeaders);
       }
     } catch (error) {
+      console.log(error);
       processError('Error adding file', error);
     }
   };

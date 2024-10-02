@@ -26,9 +26,10 @@ export default function PriceUpdateStep2() {
           products in Lightspeed.
         </li>
         <li>
-          If you are unable to update the product SKU in Lightspeed, toggle the{' '}
-          <strong>Remove</strong> action for the product. You might need to add
-          the product in the system.
+          The products in the generated list will be removed from the final
+          output file. If you wish to include certain products from the error
+          list, toggle the <strong>Remove</strong> action off for those
+          products.
         </li>
         <li>Generate the final file and upload it to Lightspeed.</li>
       </ol>
