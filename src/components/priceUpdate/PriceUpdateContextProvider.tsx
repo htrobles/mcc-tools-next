@@ -53,6 +53,8 @@ interface PriceUpdateContextType {
   updateErrorRow: (input: UpdateErrorRowInput) => void;
   deleteErrorFile: () => void;
   deleteInitialFile: () => void;
+  costMultiplier: number;
+  setCostMultiplier: (value: number) => void;
 }
 
 export const PriceUpdateContextProvider = ({
@@ -67,6 +69,8 @@ export const PriceUpdateContextProvider = ({
   const [selectedHeaders, setSelectedHeaders] = useState<PriceUpdateHeader[]>();
   const [content, setContent] = useState<string[][]>();
   const [note, setNote] = useState<string>('');
+  const [costMultiplier, setCostMultiplier] = useState(1.4);
+
   // Error
   const [errorRows, setErrorRows] = useState<PriceUpdateErrorRowType[]>();
 
@@ -168,8 +172,6 @@ export const PriceUpdateContextProvider = ({
         throw new Error('Please add headers neeaded to create the file');
       }
 
-      const columnIndexes = selectedHeaders?.map(({ index }) => index);
-
       // If type is error, remove problem rows
       const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
         if (toDelete) {
@@ -184,19 +186,50 @@ export const PriceUpdateContextProvider = ({
           key === 'manufacturerSku' || label === 'Manufacturer SKU'
       )?.index;
 
+      const columnIndexes = selectedHeaders?.map(({ index }) => index);
+      const defaultPriceIndex = selectedHeaders.find(
+        ({ key }) => key === 'defaultPrice'
+      )?.index;
+      const salePriceIndex = selectedHeaders.find(
+        ({ key }) => key === 'salePrice'
+      )?.index;
+      const defaultCostIndex = selectedHeaders.find(
+        ({ key }) => key === 'defaultCost'
+      )?.index;
+
       const rows = content.slice(1).reduce((prev, row) => {
         if (skuIndex && excludedSkus?.find((sku) => sku === row[skuIndex])) {
           return prev;
         }
 
-        const output = columnIndexes?.map((i) => {
-          const cell = row[i];
+        let defaultPrice: string;
 
-          if (isNaN(parseFloat(cell))) {
-            return row[i];
-          } else {
-            return parseFloat(cell).toFixed(2);
+        const output = columnIndexes?.map((i) => {
+          let cell = row[i];
+
+          if (
+            i === defaultPriceIndex &&
+            defaultCostIndex &&
+            (!cell || isNaN(Number(cell)))
+          ) {
+            cell = (Number(row[defaultCostIndex]) * costMultiplier).toFixed(2);
+            defaultPrice = cell;
+            console.log(row[columnIndexes[0]]);
+          } else if (
+            i === salePriceIndex &&
+            (!cell || isNaN(Number(cell))) &&
+            defaultCostIndex
+          ) {
+            if (defaultPrice) {
+              cell = defaultPrice;
+            } else {
+              cell = (Number(row[defaultCostIndex]) * costMultiplier).toFixed(
+                2
+              );
+            }
           }
+
+          return cell;
         });
 
         if (isSale) {
@@ -307,6 +340,8 @@ export const PriceUpdateContextProvider = ({
         updateErrorRow,
         deleteErrorFile,
         deleteInitialFile,
+        costMultiplier,
+        setCostMultiplier,
       }}
     >
       {children}

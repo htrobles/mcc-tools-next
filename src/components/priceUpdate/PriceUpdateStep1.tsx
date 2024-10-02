@@ -15,6 +15,8 @@ export default function PriceUpdateStep1() {
     note,
     setNote,
     deleteInitialFile,
+    costMultiplier,
+    setCostMultiplier,
   } = usePriceUpdate();
 
   return (
@@ -63,15 +65,31 @@ export default function PriceUpdateStep1() {
             />
             <label htmlFor="is-sale">Sale</label>
           </div>
-          <div>
-            <label htmlFor="notes">Add Notes (optional)</label>
-            <Input
-              placeholder="Enter note"
-              className="bg-white"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              disabled={!file}
-            />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label htmlFor="notes">Add Notes (optional)</label>
+              <Input
+                placeholder="Enter note"
+                className="bg-white"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                disabled={!file}
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="costMultiplier">
+                Cost Multiplier (If Sale Price is absent)
+              </label>
+              <Input
+                placeholder="Enter multiplier value"
+                className="bg-white"
+                type="number"
+                min={1}
+                step={0.01}
+                value={costMultiplier}
+                onChange={(e) => setCostMultiplier(Number(e.target.value))}
+              />
+            </div>
           </div>
           <div className="space-x-2 text-right">
             <Button
