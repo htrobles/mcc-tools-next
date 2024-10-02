@@ -4,7 +4,6 @@ import { FileObj } from '@/types/fileTypes';
 import { readCsvFile, readExcelFile } from '@/utils/fileProcessors';
 import {
   getPriceUpdateHeaders,
-  containsSubstring,
   PriceUpdateHeader,
   DESCRIPTION_LABELS,
   validHeaderMap,
