@@ -255,13 +255,6 @@ export const PriceUpdateContextProvider = ({
           return isNaN(Number(cell)) ? cell : Number(cell).toFixed(2);
         });
 
-        console.log({
-          defaultCostIndex,
-          salePriceIndex,
-          defaultPriceIndex,
-          selectedHeaders,
-        });
-
         if (!defaultPriceIndex && defaultCostIndex) {
           const cell = Number(row[defaultCostIndex]) * costMultiplier;
           defaultPrice = cell;
