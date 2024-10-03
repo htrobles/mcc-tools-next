@@ -8,7 +8,6 @@ import {
   DESCRIPTION_LABELS,
   validHeaderMap,
   validHeaders,
-  ValidHeaderKey,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';

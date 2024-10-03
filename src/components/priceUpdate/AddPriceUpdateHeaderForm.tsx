@@ -7,14 +7,12 @@ import {
   SelectValue,
 } from '../ui/select';
 import usePriceUpdate from '@/hooks/usePriceUpdate';
-import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { processError } from '@/utils/helpers';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -31,12 +29,9 @@ import {
   validHeaders,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 
-let COLUMN_NAMES: { [key: string]: string } = {};
+const COLUMN_NAMES: { [key: string]: string } = {};
 
 validHeaders.forEach(({ key, label }) => {
-  console.log(key);
-  console.log(COLUMN_NAMES[key], label);
-
   COLUMN_NAMES[key] = label;
 });
 
@@ -71,8 +66,6 @@ export default function AddPriceUpdateHeaderForm() {
     const parsedValue = parseInt(value);
 
     if (isNaN(parsedValue) || !rawHeaders) return;
-
-    const foundHeader = rawHeaders[parsedValue];
 
     setForm({
       index: parsedValue,
@@ -114,20 +107,16 @@ export default function AddPriceUpdateHeaderForm() {
       </div>
       <div className="space-y-2">
         <label htmlFor="label">Output Column Name</label>
-        {/* <Input
-          className="w-full"
-          name="label"
-          placeholder="Enter output column name"
-          value={form.label}
-          onChange={handleLabelChange}
-          required
-        /> */}
         <ColumnSelect
           value={form.key as ValidHeaderKey}
           onChange={handleLabelChange}
         />
       </div>
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={!form.index || !form.key}
+      >
         + Add
       </Button>
     </form>
