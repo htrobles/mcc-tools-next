@@ -136,7 +136,7 @@ export const PriceUpdateContextProvider = ({
             ?.values.includes(h?.value?.trim().toLowerCase());
         })?.index;
 
-        if (!rawSkuIndex) {
+        if (rawSkuIndex === undefined) {
           throw new Error('Unable to find column for Manufacturer SKU');
         }
 
