@@ -8,14 +8,10 @@ import {
   DESCRIPTION_LABELS,
   validHeaderMap,
   validHeaders,
+  ValidHeaderKey,
 } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
-
-export interface AddSelectedHeaderInput {
-  index: number;
-  label: string;
-}
 
 export const PriceUpdateContext = createContext<
   PriceUpdateContextType | undefined
@@ -45,7 +41,7 @@ interface PriceUpdateContextType {
   errorFile?: FileObj | null;
   rawHeaders?: Partial<PriceUpdateHeader>[];
   selectedHeaders?: PriceUpdateHeader[];
-  addSelectedHeader: (input: AddSelectedHeaderInput) => void;
+  addSelectedHeader: (input: PriceUpdateHeader) => void;
   removeSelectedHeader: (label: string) => void;
   note?: string;
   setNote: (value: string) => void;
@@ -172,6 +168,15 @@ export const PriceUpdateContextProvider = ({
         throw new Error('Please add headers neeaded to create the file');
       }
 
+      if (
+        !selectedHeaders.find((h) => h.label === validHeaders[0].label) ||
+        !selectedHeaders.find((h) => h.label === validHeaders[4].label)
+      ) {
+        throw new Error(
+          'Manufacturer SKU and Default Cost columns are required.'
+        );
+      }
+
       // If type is error, remove problem rows
       const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
         if (toDelete) {
@@ -263,7 +268,7 @@ export const PriceUpdateContextProvider = ({
     }
   };
 
-  const addSelectedHeader = (input: AddSelectedHeaderInput) => {
+  const addSelectedHeader = (input: PriceUpdateHeader) => {
     const { index, label } = input;
 
     if (!rawHeaders) return;

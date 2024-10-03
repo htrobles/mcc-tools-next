@@ -9,27 +9,59 @@ import {
 import usePriceUpdate from '@/hooks/usePriceUpdate';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { AddSelectedHeaderInput } from './PriceUpdateContextProvider';
 import { processError } from '@/utils/helpers';
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
+import { cn } from '@/lib/utils';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  PriceUpdateHeader,
+  ValidHeaderKey,
+  validHeaders,
+} from '@/utils/priceUpdate/priceUpdateHeaderUtils';
+
+let COLUMN_NAMES: { [key: string]: string } = {};
+
+validHeaders.forEach(({ key, label }) => {
+  console.log(key);
+  console.log(COLUMN_NAMES[key], label);
+
+  COLUMN_NAMES[key] = label;
+});
 
 export default function AddPriceUpdateHeaderForm() {
   const { rawHeaders, addSelectedHeader } = usePriceUpdate();
-  const [form, setForm] = useState<{ index?: number; label?: string }>({
-    index: undefined,
-    label: '',
-  });
+  const [form, setForm] = useState<{ index?: number; key?: string }>({});
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     try {
-      if (form.index === undefined || !form.label) return;
+      const { index, key } = form;
+      if (index === undefined || !key) return;
 
-      addSelectedHeader(form as AddSelectedHeaderInput);
-      setForm({
-        index: undefined,
-        label: '',
-      });
+      if (!rawHeaders) return;
+
+      const input: PriceUpdateHeader = {
+        index,
+        key: key as ValidHeaderKey,
+        value: rawHeaders[index].value as string,
+        label: COLUMN_NAMES[key],
+      };
+
+      addSelectedHeader(input);
+      setForm({});
     } catch (error) {
       processError('Error adding column', error);
     }
@@ -43,15 +75,14 @@ export default function AddPriceUpdateHeaderForm() {
     const foundHeader = rawHeaders[parsedValue];
 
     setForm({
-      label: foundHeader.value,
       index: parsedValue,
     });
   };
 
-  const handleLabelChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleLabelChange = (key: ValidHeaderKey) => {
     setForm({
       ...form,
-      label: e.target.value,
+      key,
     });
   };
 
@@ -83,18 +114,77 @@ export default function AddPriceUpdateHeaderForm() {
       </div>
       <div className="space-y-2">
         <label htmlFor="label">Output Column Name</label>
-        <Input
+        {/* <Input
           className="w-full"
           name="label"
           placeholder="Enter output column name"
           value={form.label}
           onChange={handleLabelChange}
           required
+        /> */}
+        <ColumnSelect
+          value={form.key as ValidHeaderKey}
+          onChange={handleLabelChange}
         />
       </div>
       <Button type="submit" className="w-full">
         + Add
       </Button>
     </form>
+  );
+}
+
+function ColumnSelect({
+  value,
+  onChange,
+}: {
+  value: ValidHeaderKey;
+  onChange: (key: ValidHeaderKey) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="justify-between w-full"
+        >
+          {value
+            ? validHeaders.find((header) => header.key === value)?.label
+            : 'Select framework...'}
+          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search column name..." className="h-9" />
+          <CommandList>
+            <CommandGroup>
+              {validHeaders.map((header) => (
+                <CommandItem
+                  key={header.key}
+                  value={header.key}
+                  onSelect={() => {
+                    onChange(header.key);
+                    setOpen(false);
+                  }}
+                >
+                  {header.label}
+                  <CheckIcon
+                    className={cn(
+                      'ml-auto h-4 w-4',
+                      value === header.key ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

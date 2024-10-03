@@ -33,13 +33,14 @@ export function containsSubstring(str: string): boolean {
   );
 }
 
-interface ValidHeaderType {
-  key: ValidHeaderKey;
-  label: string;
+export interface ValidHeaderType {
+  label: RequiredHeaderLabel | string;
   values: string[];
 }
 
-export const validHeaders: ValidHeaderType[] = [
+export type RequiredHeaderLabel = 'Manufacturer SKU' | 'Default Cost';
+
+export const validHeaders: (ValidHeaderType & { key: ValidHeaderKey })[] = [
   {
     key: 'manufacturerSku',
     label: 'Manufacturer SKU',
@@ -109,11 +110,6 @@ export const validHeaders: ValidHeaderType[] = [
       'dealer',
     ],
   },
-  {
-    key: 'addTags',
-    label: 'Add Tags',
-    values: [],
-  },
 ];
 
 export const validHeaderMap: { [key: string]: { key: string; label: string } } =
@@ -139,8 +135,7 @@ export type ValidHeaderKey =
   | 'msrp'
   | 'salePrice'
   | 'defaultPrice'
-  | 'defaultCost'
-  | 'addTags';
+  | 'defaultCost';
 
 // for (const key in validHeaders) {
 //   if (Object.prototype.hasOwnProperty.call(validHeaders, key)) {
