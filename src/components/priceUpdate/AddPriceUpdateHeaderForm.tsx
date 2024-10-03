@@ -154,13 +154,16 @@ function ColumnSelect({
         >
           {value
             ? validHeaders.find((header) => header.key === value)?.label
-            : 'Select framework...'}
+            : 'Select output column name...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search column name..." className="h-9" />
+          <CommandInput
+            placeholder="Search output column name..."
+            className="h-9"
+          />
           <CommandList>
             <CommandGroup>
               {validHeaders.map((header) => (
