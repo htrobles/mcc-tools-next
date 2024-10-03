@@ -55,6 +55,7 @@ export const validHeaders: (ValidHeaderType & { key: ValidHeaderKey })[] = [
       'item number',
       // VOX
       'model',
+      'manufacturer sku',
     ],
   },
   // Retail Price - Highest price we can go. Ignore if missing

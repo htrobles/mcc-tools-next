@@ -130,11 +130,15 @@ export const PriceUpdateContextProvider = ({
           value,
         }));
 
-        const rawSkuIndex = headers?.find((h) =>
-          validHeaders
+        const rawSkuIndex = headers?.find((h) => {
+          return validHeaders
             .find((h) => h.key === 'manufacturerSku')
-            ?.values.includes(h?.value?.trim().toLowerCase())
-        )?.index;
+            ?.values.includes(h?.value?.trim().toLowerCase());
+        })?.index;
+
+        if (!rawSkuIndex) {
+          throw new Error('Unable to find column for Manufacturer SKU');
+        }
 
         const rawContent = processedFile
           .slice(headerRowIndex)
