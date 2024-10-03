@@ -12,11 +12,6 @@ import {
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
 
-export interface AddSelectedHeaderInput {
-  index: number;
-  label: string;
-}
-
 export const PriceUpdateContext = createContext<
   PriceUpdateContextType | undefined
 >(undefined);
@@ -45,7 +40,7 @@ interface PriceUpdateContextType {
   errorFile?: FileObj | null;
   rawHeaders?: Partial<PriceUpdateHeader>[];
   selectedHeaders?: PriceUpdateHeader[];
-  addSelectedHeader: (input: AddSelectedHeaderInput) => void;
+  addSelectedHeader: (input: PriceUpdateHeader) => void;
   removeSelectedHeader: (label: string) => void;
   note?: string;
   setNote: (value: string) => void;
@@ -172,6 +167,15 @@ export const PriceUpdateContextProvider = ({
         throw new Error('Please add headers neeaded to create the file');
       }
 
+      if (
+        !selectedHeaders.find((h) => h.label === validHeaders[0].label) ||
+        !selectedHeaders.find((h) => h.label === validHeaders[4].label)
+      ) {
+        throw new Error(
+          'Manufacturer SKU and Default Cost columns are required.'
+        );
+      }
+
       // If type is error, remove problem rows
       const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
         if (toDelete) {
@@ -197,12 +201,34 @@ export const PriceUpdateContextProvider = ({
         ({ key }) => key === 'defaultCost'
       )?.index;
 
+      // HEADERS
+      const headerRowColumns = selectedHeaders.map((header) => header.label);
+
+      if (!defaultPriceIndex) {
+        headerRowColumns.push('Default Price');
+      }
+
+      if (!salePriceIndex) {
+        headerRowColumns.push('Sale Price');
+      }
+
+      if (isSale) {
+        headerRowColumns.push('Add Tags');
+      }
+
+      if (note) {
+        headerRowColumns.push('Notes');
+      }
+
+      const headerRow = headerRowColumns.join(',');
+
+      // ROWS
       const rows = content.slice(1).reduce((prev, row) => {
         if (skuIndex && excludedSkus?.find((sku) => sku === row[skuIndex])) {
           return prev;
         }
 
-        let defaultPrice: number;
+        let defaultPrice: number | undefined;
 
         const output = columnIndexes?.map((i) => {
           let cell: string | number = row[i];
@@ -229,6 +255,23 @@ export const PriceUpdateContextProvider = ({
           return isNaN(Number(cell)) ? cell : Number(cell).toFixed(2);
         });
 
+        if (!defaultPriceIndex && defaultCostIndex) {
+          const cell = Number(row[defaultCostIndex]) * costMultiplier;
+          defaultPrice = cell;
+          output.push(cell);
+        }
+
+        if (!salePriceIndex) {
+          let cell;
+          if (defaultPrice) {
+            cell = defaultPrice;
+            output.push(cell);
+          } else if (defaultCostIndex) {
+            cell = Number(row[defaultCostIndex]) * costMultiplier;
+            output.push(cell);
+          }
+        }
+
         if (isSale) {
           output?.push('on-sale');
         }
@@ -239,18 +282,6 @@ export const PriceUpdateContextProvider = ({
 
         return [...prev, output?.join(',')];
       }, [] as string[]);
-
-      const headerRowColumns = selectedHeaders.map((header) => header.label);
-
-      if (isSale) {
-        headerRowColumns.push('Add Tags');
-      }
-
-      if (note) {
-        headerRowColumns.push('Notes');
-      }
-
-      const headerRow = headerRowColumns.join(',');
 
       const entries = [headerRow, ...rows].join('\n');
 
@@ -263,8 +294,8 @@ export const PriceUpdateContextProvider = ({
     }
   };
 
-  const addSelectedHeader = (input: AddSelectedHeaderInput) => {
-    const { index, label } = input;
+  const addSelectedHeader = (input: PriceUpdateHeader) => {
+    const { index, label, key } = input;
 
     if (!rawHeaders) return;
 
@@ -274,7 +305,7 @@ export const PriceUpdateContextProvider = ({
       });
     }
 
-    const newHeader = { ...rawHeaders[index], label } as PriceUpdateHeader;
+    const newHeader = { ...rawHeaders[index], label, key } as PriceUpdateHeader;
 
     setSelectedHeaders([...(selectedHeaders || []), newHeader]);
   };
