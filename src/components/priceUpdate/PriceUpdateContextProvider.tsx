@@ -91,7 +91,7 @@ export const PriceUpdateContextProvider = ({
         const processedFile = await readCsvFile(newFile);
 
         const descriptionIndex = rawHeaders?.findIndex((h) => {
-          if (h.value) {
+          if (h?.value) {
             return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
           }
         });
@@ -102,7 +102,7 @@ export const PriceUpdateContextProvider = ({
         )?.index;
 
         const newErrorRows: PriceUpdateErrorRowType[] = processedFile
-          .filter((row) => !!row['Errors'])
+          .filter((row) => !!row['Errors'] && !!row['Manufacturer SKU'])
           .map((row) => {
             const error = row['Errors'];
             const sku = row['Manufacturer SKU'];
