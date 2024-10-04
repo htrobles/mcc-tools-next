@@ -18,3 +18,5 @@ export interface ValidHeaderType {
 }
 
 export type RequiredHeaderLabel = 'Manufacturer SKU' | 'Default Cost';
+
+export type NewProductHeaderKey = ValidHeaderKey | 'brand' | 'vendor' | 'title';
