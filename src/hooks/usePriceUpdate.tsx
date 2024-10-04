@@ -108,7 +108,8 @@ export default function usePriceUpdate() {
           throw new Error('No file found', { cause: '' });
         }
 
-        const processedFile = await readCsvFile(newFile);
+        // const processedFile = await readCsvFile(newFile);
+        const processedFile = await readExcelFile(newFile);
 
         const descriptionIndex = rawHeaders?.findIndex((h) => {
           if (h?.value) {
@@ -121,11 +122,30 @@ export default function usePriceUpdate() {
             h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
         )?.index;
 
+        const errorIndex = processedFile[0].findIndex(
+          (cell) => cell === 'Errors'
+        );
+        const skuIndex = processedFile[0].findIndex(
+          (cell) => cell === 'Manufacturer SKU'
+        );
+
+        if (errorIndex < 0) {
+          throw new Error(
+            'Errors column not found. Please submit a valid error file'
+          );
+        }
+
+        if (skuIndex < 0) {
+          throw new Error(
+            'Manufacturer SKU column not found. Please submit a valid error file'
+          );
+        }
+
         const newErrorRows: PriceUpdateErrorRowType[] = processedFile
-          .filter((row) => !!row['Errors'] && !!row['Manufacturer SKU'])
+          .filter((row) => !!row[errorIndex] && !!row[skuIndex])
           .map((row) => {
-            const error = row['Errors'];
-            const sku = row['Manufacturer SKU'];
+            const error = row[errorIndex];
+            const sku = row[skuIndex];
 
             let description = '';
 
