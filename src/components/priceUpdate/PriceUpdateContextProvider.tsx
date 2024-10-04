@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useCallback } from 'react';
 
 import { FileObj } from '@/types/fileTypes';
 import { readCsvFile, readExcelFile } from '@/utils/fileProcessors';
@@ -30,13 +30,12 @@ interface UpdateErrorRowInput {
 
 interface PriceUpdateContextType {
   file?: FileObj | null;
-  addFile: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    isErrorFile?: boolean
-  ) => Promise<void>;
+  addInitialFile: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  addErrorFile: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   isSale: boolean;
   setIsSale: React.Dispatch<React.SetStateAction<boolean>>;
-  processFile: (type?: 'initial' | 'error') => Promise<void>;
+  processInitialFle: () => void;
+  processErrorFile: () => void;
   errorFile?: FileObj | null;
   rawHeaders?: Partial<PriceUpdateHeader>[];
   selectedHeaders?: PriceUpdateHeader[];
@@ -69,56 +68,18 @@ export const PriceUpdateContextProvider = ({
   // Error
   const [errorRows, setErrorRows] = useState<PriceUpdateErrorRowType[]>();
 
-  const addFile = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    isErrorFile = false
-  ) => {
-    try {
-      const files = Array.from(event.target.files || []);
-      const newFile = files[0];
+  const addInitialFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      try {
+        const files = Array.from(event.target.files || []);
+        const newFile = files[0];
 
-      if (isErrorFile) {
-        setErrorFile(files[0]);
-      } else {
         setFile(files[0]);
-      }
 
-      if (!newFile) {
-        throw new Error('No file found', { cause: '' });
-      }
+        if (!newFile) {
+          throw new Error('No file found', { cause: '' });
+        }
 
-      if (isErrorFile) {
-        const processedFile = await readCsvFile(newFile);
-
-        const descriptionIndex = rawHeaders?.findIndex((h) => {
-          if (h?.value) {
-            return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
-          }
-        });
-
-        const rawSkuIndex = selectedHeaders?.find(
-          (h) =>
-            h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
-        )?.index;
-
-        const newErrorRows: PriceUpdateErrorRowType[] = processedFile
-          .filter((row) => !!row['Errors'] && !!row['Manufacturer SKU'])
-          .map((row) => {
-            const error = row['Errors'];
-            const sku = row['Manufacturer SKU'];
-
-            let description = '';
-
-            if (rawSkuIndex && descriptionIndex) {
-              const productRow = content?.find((r) => r[rawSkuIndex] === sku);
-              description = productRow ? productRow[descriptionIndex] : '';
-            }
-
-            return { error, sku, description, toDelete: true };
-          });
-
-        setErrorRows(newErrorRows);
-      } else {
         const processedFile = await readExcelFile(newFile);
 
         const headerRowIndex = processedFile.findIndex((r) =>
@@ -150,21 +111,70 @@ export const PriceUpdateContextProvider = ({
 
         setRawHeaders(headers);
         setSelectedHeaders(recommendedHeaders);
+      } catch (error) {
+        console.log(error);
+        processError('Error adding file', error);
       }
-    } catch (error) {
-      console.log(error);
-      processError('Error adding file', error);
-    }
-  };
+    },
+    []
+  );
 
-  const processFile = async (type: 'initial' | 'error' = 'initial') => {
-    try {
+  const addErrorFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      try {
+        const files = Array.from(event.target.files || []);
+        const newFile = files[0];
+
+        setErrorFile(files[0]);
+
+        if (!newFile) {
+          throw new Error('No file found', { cause: '' });
+        }
+
+        const processedFile = await readCsvFile(newFile);
+
+        const descriptionIndex = rawHeaders?.findIndex((h) => {
+          if (h?.value) {
+            return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
+          }
+        });
+
+        const rawSkuIndex = selectedHeaders?.find(
+          (h) =>
+            h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
+        )?.index;
+
+        const newErrorRows: PriceUpdateErrorRowType[] = processedFile
+          .filter((row) => !!row['Errors'] && !!row['Manufacturer SKU'])
+          .map((row) => {
+            const error = row['Errors'];
+            const sku = row['Manufacturer SKU'];
+
+            let description = '';
+
+            if (rawSkuIndex && descriptionIndex) {
+              const productRow = content?.find((r) => r[rawSkuIndex] === sku);
+              description = productRow ? productRow[descriptionIndex] : '';
+            }
+
+            return { error, sku, description, toDelete: true };
+          });
+
+        setErrorRows(newErrorRows);
+      } catch (error) {
+        console.log(error);
+        processError('Error adding file', error);
+      }
+    },
+    [content, rawHeaders, selectedHeaders]
+  );
+
+  const createEntries = useCallback(
+    (options: { skuIndex?: number; excludedSkus?: string[] } = {}) => {
+      const { skuIndex, excludedSkus } = options;
+
       if (!content) {
         throw new Error('No file found');
-      }
-
-      if (type === 'error' && (!content || !errorRows)) {
-        throw new Error('Supplier file and error file is required.');
       }
 
       if (!selectedHeaders) {
@@ -179,20 +189,6 @@ export const PriceUpdateContextProvider = ({
           'Manufacturer SKU and Default Cost columns are required.'
         );
       }
-
-      // If type is error, remove problem rows
-      const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
-        if (toDelete) {
-          return [...prev, sku];
-        } else {
-          return prev;
-        }
-      }, [] as string[]);
-
-      const skuIndex = selectedHeaders.find(
-        ({ key, label }) =>
-          key === 'manufacturerSku' || label === 'Manufacturer SKU'
-      )?.index;
 
       const columnIndexes = selectedHeaders?.map(({ index }) => index);
       const defaultPriceIndex = selectedHeaders.find(
@@ -226,7 +222,6 @@ export const PriceUpdateContextProvider = ({
 
       const headerRow = headerRowColumns.join(',');
 
-      // ROWS
       const rows = content.slice(1).reduce((prev, row) => {
         if (skuIndex && excludedSkus?.find((sku) => sku === row[skuIndex])) {
           return prev;
@@ -289,60 +284,109 @@ export const PriceUpdateContextProvider = ({
 
       const entries = [headerRow, ...rows].join('\n');
 
-      downloadCSV(entries, 'price-update-test');
+      return entries;
+    },
+    [content, costMultiplier, isSale, note, selectedHeaders]
+  );
+
+  const processInitialFle = useCallback(() => {
+    try {
+      const entries = createEntries();
+
+      downloadCSV(entries, 'Price-Update-Initial');
     } catch (error) {
-      processError(
-        `Error processing ${type === 'error' ? 'error' : 'supplier'} file`,
-        error
+      processError('Error processing supplier file.', error);
+    }
+  }, [createEntries]);
+
+  const processErrorFile = useCallback(() => {
+    try {
+      if (!content || !errorRows) {
+        throw new Error('Supplier file and error file is required.');
+      }
+
+      const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
+        if (toDelete) {
+          return [...prev, sku];
+        } else {
+          return prev;
+        }
+      }, [] as string[]);
+
+      const skuIndex = selectedHeaders?.find(({ key, label }) => {
+        return key === 'manufacturerSku' || label === 'Manufacturer SKU';
+      })?.index;
+
+      if (skuIndex === undefined) {
+        throw new Error(' Manufacturer SKU column not found.');
+      }
+
+      const entries = createEntries({ skuIndex, excludedSkus });
+
+      downloadCSV(entries, 'Price-Update-Final');
+    } catch (error) {
+      processError('Error processing error file', error);
+    }
+  }, [content, createEntries, errorRows, selectedHeaders]);
+
+  const addSelectedHeader = useCallback(
+    (input: PriceUpdateHeader) => {
+      const { index, label, key } = input;
+
+      if (!rawHeaders) return;
+
+      if (selectedHeaders?.find((s) => s.label === label)) {
+        throw new Error('Column with same output name already exists.', {
+          cause: 'Duplicate output name.',
+        });
+      }
+
+      const newHeader = {
+        ...rawHeaders[index],
+        label,
+        key,
+      } as PriceUpdateHeader;
+
+      setSelectedHeaders([...(selectedHeaders || []), newHeader]);
+    },
+    [rawHeaders, selectedHeaders]
+  );
+
+  const removeSelectedHeader = useCallback(
+    (label: string) => {
+      const newSelectedHeaders = selectedHeaders?.filter(
+        (h) => h.label !== label
       );
-    }
-  };
 
-  const addSelectedHeader = (input: PriceUpdateHeader) => {
-    const { index, label, key } = input;
+      setSelectedHeaders(newSelectedHeaders);
+    },
+    [selectedHeaders]
+  );
 
-    if (!rawHeaders) return;
+  const updateErrorRow = useCallback(
+    (input: UpdateErrorRowInput) => {
+      if (!errorRows) return;
 
-    if (selectedHeaders?.find((s) => s.label === label)) {
-      throw new Error('Column with same output name already exists.', {
-        cause: 'Duplicate output name.',
-      });
-    }
+      const { sku, toDelete } = input;
+      const updatedErrorRows = [...errorRows];
 
-    const newHeader = { ...rawHeaders[index], label, key } as PriceUpdateHeader;
+      const errorRow = updatedErrorRows?.find((error) => error.sku === sku);
 
-    setSelectedHeaders([...(selectedHeaders || []), newHeader]);
-  };
+      if (errorRow) {
+        errorRow.toDelete = toDelete;
+      }
 
-  const removeSelectedHeader = (label: string) => {
-    const newSelectedHeaders = selectedHeaders?.filter(
-      (h) => h.label !== label
-    );
+      setErrorRows(updatedErrorRows);
+    },
+    [errorRows]
+  );
 
-    setSelectedHeaders(newSelectedHeaders);
-  };
-
-  const updateErrorRow = (input: UpdateErrorRowInput) => {
-    if (!errorRows) return;
-
-    const { sku, toDelete } = input;
-    const updatedErrorRows = [...errorRows];
-
-    const errorRow = updatedErrorRows?.find((error) => error.sku === sku);
-
-    if (errorRow) {
-      errorRow.toDelete = toDelete;
-    }
-
-    setErrorRows(updatedErrorRows);
-  };
-
-  const deleteErrorFile = () => {
+  const deleteErrorFile = useCallback(() => {
     setErrorFile(null);
     setErrorRows(undefined);
-  };
+  }, []);
 
-  const deleteInitialFile = () => {
+  const deleteInitialFile = useCallback(() => {
     setFile(null);
     setContent(undefined);
     setErrorFile(undefined);
@@ -351,16 +395,18 @@ export const PriceUpdateContextProvider = ({
     setNote('');
     setRawHeaders(undefined);
     setSelectedHeaders(undefined);
-  };
+  }, []);
 
   return (
     <PriceUpdateContext.Provider
       value={{
         file,
-        addFile,
+        addInitialFile,
+        addErrorFile,
         isSale,
         setIsSale,
-        processFile,
+        processInitialFle,
+        processErrorFile,
         errorFile,
         rawHeaders,
         selectedHeaders,

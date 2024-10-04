@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import PriceUpdateErrorList from './PriceUpdateErrorList';
 
 export default function PriceUpdateStep2() {
-  const { addFile, errorFile, processFile, file, deleteErrorFile } =
+  const { addErrorFile, errorFile, processErrorFile, file, deleteErrorFile } =
     usePriceUpdate();
 
   const containerClasses = twMerge(
@@ -49,7 +49,7 @@ export default function PriceUpdateStep2() {
         <Input
           type="file"
           placeholder="Select a file"
-          onChange={(file) => addFile(file, true)}
+          onChange={addErrorFile}
           className="cursor-pointer"
         />
       )}
@@ -57,7 +57,7 @@ export default function PriceUpdateStep2() {
       <div className="space-x-2 text-right">
         <Button
           variant="outline"
-          onClick={() => processFile('error')}
+          onClick={processErrorFile}
           disabled={!errorFile}
         >
           Generate Final File

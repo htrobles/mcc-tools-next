@@ -8,10 +8,10 @@ import PriceUpdateHeadersList from './PriceUpdateHeadersList';
 export default function PriceUpdateStep1() {
   const {
     file,
-    addFile,
+    addInitialFile,
     isSale,
     setIsSale,
-    processFile,
+    processInitialFle,
     note,
     setNote,
     deleteInitialFile,
@@ -48,7 +48,7 @@ export default function PriceUpdateStep1() {
         <Input
           type="file"
           placeholder="Select a file"
-          onChange={addFile}
+          onChange={addInitialFile}
           className="cursor-pointer"
         />
       )}
@@ -94,7 +94,7 @@ export default function PriceUpdateStep1() {
           <div className="space-x-2 text-right">
             <Button
               variant="outline"
-              onClick={() => processFile()}
+              onClick={processInitialFle}
               disabled={!file}
             >
               Generate Initial File
