@@ -1,4 +1,4 @@
-import { PriceUpdateHeader, ValidHeaderKey } from './priceUpdateHeaderUtils';
+import { PriceUpdateHeader, ValidHeaderKey } from '@/types/priceUpdateTypes';
 
 export function getPriceUpdateField(input: {
   key: ValidHeaderKey;

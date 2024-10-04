@@ -23,15 +23,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  PriceUpdateHeader,
-  ValidHeaderKey,
-  validHeaders,
-} from '@/utils/priceUpdate/priceUpdateHeaderUtils';
+import { VALID_HEADERS } from '@/constants/priceUpdates/priceUpdateConstants';
+import { PriceUpdateHeader, ValidHeaderKey } from '@/types/priceUpdateTypes';
 
 const COLUMN_NAMES: { [key: string]: string } = {};
 
-validHeaders.forEach(({ key, label }) => {
+VALID_HEADERS.forEach(({ key, label }) => {
   COLUMN_NAMES[key] = label;
 });
 
@@ -142,7 +139,7 @@ function ColumnSelect({
           className="justify-between w-full"
         >
           {value
-            ? validHeaders.find((header) => header.key === value)?.label
+            ? VALID_HEADERS.find((header) => header.key === value)?.label
             : 'Select output column name...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -155,7 +152,7 @@ function ColumnSelect({
           />
           <CommandList>
             <CommandGroup>
-              {validHeaders.map((header) => (
+              {VALID_HEADERS.map((header) => (
                 <CommandItem
                   key={header.key}
                   value={header.key}
