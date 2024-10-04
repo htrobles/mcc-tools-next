@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 
-import { readCsvFile, readExcelFile } from '@/utils/fileProcessors';
+import { readExcelFile } from '@/utils/fileProcessors';
 import {
   getPriceUpdateHeaders,
   PriceUpdateHeader,
