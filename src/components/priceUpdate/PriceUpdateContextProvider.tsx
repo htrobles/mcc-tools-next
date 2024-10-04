@@ -1,17 +1,19 @@
 import React, { createContext, useState, ReactNode } from 'react';
 
 import { FileObj } from '@/types/fileTypes';
-import { PriceUpdateHeader } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
+import { PriceUpdateHeader } from '@/types/priceUpdateTypes';
 
 export const PriceUpdateContext = createContext<
   PriceUpdateContextType | undefined
 >(undefined);
 
+export type PriceUpdateErrorAction = 'add-product' | 'remove' | 'ignore';
+
 export interface PriceUpdateErrorRowType {
   sku: string;
   error: string;
   description?: string;
-  toDelete?: boolean;
+  action?: PriceUpdateErrorAction;
 }
 
 interface PriceUpdateContextType {

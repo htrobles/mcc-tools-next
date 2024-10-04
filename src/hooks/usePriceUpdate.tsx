@@ -1,23 +1,24 @@
 import React, { useCallback, useContext } from 'react';
 
 import { readExcelFile } from '@/utils/fileProcessors';
-import {
-  getPriceUpdateHeaders,
-  PriceUpdateHeader,
-  DESCRIPTION_LABELS,
-  validHeaderMap,
-  validHeaders,
-} from '@/utils/priceUpdate/priceUpdateHeaderUtils';
+import { getPriceUpdateHeaders } from '@/utils/priceUpdate/priceUpdateHeaderUtils';
 import { downloadCSV } from '@/utils/supplyFeed/csvUtils';
 import { processError } from '@/utils/helpers';
 import {
   PriceUpdateContext,
+  PriceUpdateErrorAction,
   PriceUpdateErrorRowType,
 } from '@/components/priceUpdate/PriceUpdateContextProvider';
+import { PriceUpdateHeader } from '@/types/priceUpdateTypes';
+import {
+  DESCRIPTION_LABELS,
+  VALID_HEADER_MAP,
+  VALID_HEADERS,
+} from '@/constants/priceUpdates/priceUpdateConstants';
 
 interface UpdateErrorRowInput {
   sku: string;
-  toDelete?: boolean;
+  action?: PriceUpdateErrorAction;
 }
 
 export default function usePriceUpdate() {
@@ -60,7 +61,7 @@ export default function usePriceUpdate() {
         const processedFile = await readExcelFile(newFile);
 
         const headerRowIndex = processedFile.findIndex((r) =>
-          r.find((cell) => cell && validHeaderMap[cell.trim().toLowerCase()])
+          r.find((cell) => cell && VALID_HEADER_MAP[cell.trim().toLowerCase()])
         );
 
         const headers = processedFile[headerRowIndex].map((value, index) => ({
@@ -69,9 +70,9 @@ export default function usePriceUpdate() {
         }));
 
         const rawSkuIndex = headers?.find((h) => {
-          return validHeaders
-            .find((h) => h.key === 'manufacturerSku')
-            ?.values.includes(h?.value?.trim().toLowerCase());
+          return VALID_HEADERS.find(
+            (h) => h.key === 'manufacturerSku'
+          )?.values.includes(h?.value?.trim().toLowerCase());
         })?.index;
 
         if (rawSkuIndex === undefined) {
@@ -111,11 +112,17 @@ export default function usePriceUpdate() {
         // const processedFile = await readCsvFile(newFile);
         const processedFile = await readExcelFile(newFile);
 
-        const descriptionIndex = rawHeaders?.findIndex((h) => {
-          if (h?.value) {
-            return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
-          }
-        });
+        let descriptionIndex = rawHeaders?.findIndex(
+          (h) => h?.value?.toLowerCase() === 'description'
+        );
+
+        if (!descriptionIndex) {
+          descriptionIndex = rawHeaders?.findIndex((h) => {
+            if (h?.value) {
+              return DESCRIPTION_LABELS.includes(h.value?.toLowerCase());
+            }
+          });
+        }
 
         const rawSkuIndex = selectedHeaders?.find(
           (h) =>
@@ -142,6 +149,7 @@ export default function usePriceUpdate() {
         }
 
         const newErrorRows: PriceUpdateErrorRowType[] = processedFile
+          .splice(1)
           .filter((row) => !!row[errorIndex] && !!row[skuIndex])
           .map((row) => {
             const error = row[errorIndex];
@@ -154,7 +162,7 @@ export default function usePriceUpdate() {
               description = productRow ? productRow[descriptionIndex] : '';
             }
 
-            return { error, sku, description, toDelete: true };
+            return { error, sku, description, action: 'add-product' };
           });
 
         setErrorRows(newErrorRows);
@@ -179,8 +187,8 @@ export default function usePriceUpdate() {
       }
 
       if (
-        !selectedHeaders.find((h) => h.label === validHeaders[0].label) ||
-        !selectedHeaders.find((h) => h.label === validHeaders[4].label)
+        !selectedHeaders.find((h) => h.label === VALID_HEADERS[0].label) ||
+        !selectedHeaders.find((h) => h.label === VALID_HEADERS[4].label)
       ) {
         throw new Error(
           'Manufacturer SKU and Default Cost columns are required.'
@@ -302,8 +310,8 @@ export default function usePriceUpdate() {
         throw new Error('Supplier file and error file is required.');
       }
 
-      const excludedSkus = errorRows?.reduce((prev, { sku, toDelete }) => {
-        if (toDelete) {
+      const excludedSkus = errorRows?.reduce((prev, { sku, action }) => {
+        if (action !== 'ignore') {
           return [...prev, sku];
         } else {
           return prev;
@@ -364,13 +372,13 @@ export default function usePriceUpdate() {
     (input: UpdateErrorRowInput) => {
       if (!errorRows) return;
 
-      const { sku, toDelete } = input;
+      const { sku, action } = input;
       const updatedErrorRows = [...errorRows];
 
       const errorRow = updatedErrorRows?.find((error) => error.sku === sku);
 
       if (errorRow) {
-        errorRow.toDelete = toDelete;
+        errorRow.action = action;
       }
 
       setErrorRows(updatedErrorRows);
