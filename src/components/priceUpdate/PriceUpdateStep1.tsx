@@ -7,7 +7,7 @@ import PriceUpdateHeadersList from './PriceUpdateHeadersList';
 
 export default function PriceUpdateStep1() {
   const {
-    file,
+    initialFile,
     addInitialFile,
     isSale,
     setIsSale,
@@ -32,9 +32,9 @@ export default function PriceUpdateStep1() {
         <li>Optional: Add notes which will be added to all product rows</li>
         <li>Download the initial file and upload it to Lightspeed.</li>
       </ol>
-      {!!file ? (
+      {!!initialFile ? (
         <div>
-          {file.name}
+          {initialFile.name}
           <Button
             variant="outline"
             className="ml-2"
@@ -53,12 +53,12 @@ export default function PriceUpdateStep1() {
         />
       )}
       <PriceUpdateHeadersList />
-      {!!file && (
+      {!!initialFile && (
         <div className="border-t py-4 space-y-5">
           <div className="flex items-center">
             <Switch
               id="is-sale"
-              disabled={!file}
+              disabled={!initialFile}
               checked={isSale}
               onCheckedChange={setIsSale}
               className="mr-2"
@@ -73,7 +73,7 @@ export default function PriceUpdateStep1() {
                 className="bg-white"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                disabled={!file}
+                disabled={!initialFile}
               />
             </div>
             <div className="flex-1">
@@ -95,7 +95,7 @@ export default function PriceUpdateStep1() {
             <Button
               variant="outline"
               onClick={processInitialFle}
-              disabled={!file}
+              disabled={!initialFile}
             >
               Generate Initial File
             </Button>

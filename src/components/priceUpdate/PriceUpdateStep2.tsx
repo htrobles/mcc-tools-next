@@ -5,12 +5,17 @@ import { twMerge } from 'tailwind-merge';
 import PriceUpdateErrorList from './PriceUpdateErrorList';
 
 export default function PriceUpdateStep2() {
-  const { addErrorFile, errorFile, processErrorFile, file, deleteErrorFile } =
-    usePriceUpdate();
+  const {
+    addErrorFile,
+    errorFile,
+    processErrorFile,
+    initialFile,
+    deleteErrorFile,
+  } = usePriceUpdate();
 
   const containerClasses = twMerge(
     'lg:px-10 space-y-5 mb-10',
-    !file ? 'pointer-events-none' : ''
+    !initialFile ? 'pointer-events-none' : ''
   );
 
   return (

@@ -12,7 +12,7 @@ export default function PriceUpdateFooterNav({
   step,
   onUpdateStep,
 }: PriceUpdateFooterNavProps) {
-  const { file } = usePriceUpdate();
+  const { initialFile } = usePriceUpdate();
 
   return (
     <div className="flex justify-between">
@@ -25,7 +25,7 @@ export default function PriceUpdateFooterNav({
       </Button>
       <Button
         className={step === 2 ? 'invisible' : ''}
-        disabled={!file}
+        disabled={!initialFile}
         onClick={() => onUpdateStep(step + 1)}
       >
         Next
