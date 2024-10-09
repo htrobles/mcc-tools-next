@@ -1,8 +1,13 @@
-import { ValidHeaderKey, ValidHeaderType } from '@/types/priceUpdateTypes';
+import {
+  PriceUpdateHeaderKey,
+  ValidHeaderType,
+} from '@/types/priceUpdateTypes';
 
-export const VALID_HEADERS: (ValidHeaderType & { key: ValidHeaderKey })[] = [
+export const VALID_HEADERS: (ValidHeaderType & {
+  key: PriceUpdateHeaderKey;
+})[] = [
   {
-    key: 'manufacturerSku',
+    key: PriceUpdateHeaderKey.MANUFACTURER_SKU,
     label: 'Manufacturer SKU',
     values: [
       // Black Magic
@@ -20,7 +25,7 @@ export const VALID_HEADERS: (ValidHeaderType & { key: ValidHeaderKey })[] = [
   },
   // Retail Price - Highest price we can go. Ignore if missing
   {
-    key: 'msrp',
+    key: PriceUpdateHeaderKey.MSRP,
     label: 'MSRP',
     values: [
       // Black Magic, Music Nomad
@@ -31,7 +36,7 @@ export const VALID_HEADERS: (ValidHeaderType & { key: ValidHeaderKey })[] = [
   },
   {
     // NOTE:If there is no sale, should be the same as default price
-    key: 'salePrice',
+    key: PriceUpdateHeaderKey.SALE_PRICE,
     label: 'Sale Price',
     values: [
       //   // Black Magic, Music Nomad
@@ -44,7 +49,7 @@ export const VALID_HEADERS: (ValidHeaderType & { key: ValidHeaderKey })[] = [
     ],
   },
   {
-    key: 'defaultPrice',
+    key: PriceUpdateHeaderKey.DEFAULT_PRICE,
     label: 'Default Price',
     values: [
       // Black Magic, Music Nomad
@@ -58,7 +63,7 @@ export const VALID_HEADERS: (ValidHeaderType & { key: ValidHeaderKey })[] = [
     ],
   },
   {
-    key: 'defaultCost',
+    key: PriceUpdateHeaderKey.DEFAULT_COST,
     label: 'Default Cost',
     values: [
       // Black Magic

@@ -24,7 +24,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { VALID_HEADERS } from '@/constants/priceUpdates/priceUpdateConstants';
-import { PriceUpdateHeader, ValidHeaderKey } from '@/types/priceUpdateTypes';
+import {
+  PriceUpdateHeader,
+  PriceUpdateHeaderKey,
+} from '@/types/priceUpdateTypes';
 
 const COLUMN_NAMES: { [key: string]: string } = {};
 
@@ -47,7 +50,7 @@ export default function AddPriceUpdateHeaderForm() {
 
       const input: PriceUpdateHeader = {
         index,
-        key: key as ValidHeaderKey,
+        key: key as PriceUpdateHeaderKey,
         value: rawHeaders[index].value as string,
         label: COLUMN_NAMES[key],
       };
@@ -69,7 +72,7 @@ export default function AddPriceUpdateHeaderForm() {
     });
   };
 
-  const handleLabelChange = (key: ValidHeaderKey) => {
+  const handleLabelChange = (key: PriceUpdateHeaderKey) => {
     setForm({
       ...form,
       key,
@@ -105,7 +108,7 @@ export default function AddPriceUpdateHeaderForm() {
       <div className="space-y-2">
         <label htmlFor="label">Output Column Name</label>
         <ColumnSelect
-          value={form.key as ValidHeaderKey}
+          value={form.key as PriceUpdateHeaderKey}
           onChange={handleLabelChange}
         />
       </div>
@@ -124,8 +127,8 @@ function ColumnSelect({
   value,
   onChange,
 }: {
-  value: ValidHeaderKey;
-  onChange: (key: ValidHeaderKey) => void;
+  value: PriceUpdateHeaderKey;
+  onChange: (key: PriceUpdateHeaderKey) => void;
 }) {
   const [open, setOpen] = React.useState(false);
 

@@ -1,7 +1,10 @@
-import { PriceUpdateHeader, ValidHeaderKey } from '@/types/priceUpdateTypes';
+import {
+  PriceUpdateHeader,
+  PriceUpdateHeaderKey,
+} from '@/types/priceUpdateTypes';
 
 export function getPriceUpdateField(input: {
-  key: ValidHeaderKey;
+  key: PriceUpdateHeaderKey;
   headers: PriceUpdateHeader[];
   row: string[];
 }) {

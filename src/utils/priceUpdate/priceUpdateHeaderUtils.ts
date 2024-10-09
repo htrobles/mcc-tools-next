@@ -1,5 +1,8 @@
 import { VALID_HEADER_MAP } from '@/constants/priceUpdates/priceUpdateConstants';
-import { PriceUpdateHeader, ValidHeaderKey } from '@/types/priceUpdateTypes';
+import {
+  PriceUpdateHeader,
+  PriceUpdateHeaderKey,
+} from '@/types/priceUpdateTypes';
 
 export const headerStrings = [
   'item',
@@ -42,7 +45,7 @@ export function getPriceUpdateHeaders(content: string[][]) {
         const curr: PriceUpdateHeader = {
           index,
           value,
-          key: validHeader.key as ValidHeaderKey,
+          key: validHeader.key as PriceUpdateHeaderKey,
           label: validHeader.label,
         };
 
@@ -54,13 +57,15 @@ export function getPriceUpdateHeaders(content: string[][]) {
     []
   );
 
-  if (!headers.find((r) => r.key === 'salePrice')) {
-    const header = headers.find(({ key }) => key === 'defaultPrice');
+  if (!headers.find((r) => r.key === PriceUpdateHeaderKey.SALE_PRICE)) {
+    const header = headers.find(
+      ({ key }) => key === PriceUpdateHeaderKey.DEFAULT_PRICE
+    );
 
     if (header) {
       headers.splice(-1, 0, {
         ...header,
-        key: 'salePrice',
+        key: PriceUpdateHeaderKey.SALE_PRICE,
         label: 'Sale Price',
       });
     }
