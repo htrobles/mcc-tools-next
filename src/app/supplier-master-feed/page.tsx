@@ -12,6 +12,7 @@ import {
   downloadCSV,
   downloadTestCsv,
   generateSupplyFeedCsv,
+  generateSupplyFeedDeleteCsv,
   generateTestCsv,
 } from '@/utils/supplyFeed/csvUtils';
 import { processSupplyFeedCsvFile } from '@/utils/supplyFeed/processSupplyFeedCsvFile';
@@ -25,7 +26,7 @@ export default function SupplierMasterFeedPage() {
     useSupplierFiles();
   const { toast } = useToast();
 
-  const handleClickProcess = async () => {
+  const handleClickProcess = async (type: 'add' | 'delete' = 'add') => {
     try {
       if (!files.length) {
         throw new Error('Please upload at least one file', {
@@ -34,6 +35,7 @@ export default function SupplierMasterFeedPage() {
       }
 
       const skus: string[] = [];
+      let prevSkus: string[] = [];
 
       await Promise.all(
         files.map(async (file) => {
@@ -44,15 +46,31 @@ export default function SupplierMasterFeedPage() {
             skus.push(...(await processSupplyFeedExcelFile(file)));
           }
           if (file.name.endsWith('.csv')) {
-            skus.push(...(await processSupplyFeedCsvFile(file)));
+            const skuList = await processSupplyFeedCsvFile(file);
+            if (file.vendor === 'mcc') {
+              prevSkus = skuList;
+            } else {
+              skus.push(...skuList);
+            }
           }
         })
       );
 
-      const csvContent = generateSupplyFeedCsv(skus, 'supplier');
       const date = moment(new Date()).format('YYYYMMDD');
 
-      downloadCSV(csvContent, `MasterSuppliesFeed-${date}.csv`);
+      if (type === 'delete') {
+        // Get missing skus from prevSku
+        const skusToDelete = prevSkus.filter((sku) => !skus.includes(sku));
+        const csvContent = generateSupplyFeedDeleteCsv(
+          skusToDelete,
+          'supplier'
+        );
+
+        downloadCSV(csvContent, `MasterSuppliesFeed-DELETE-${date}.csv`);
+      } else {
+        const csvContent = generateSupplyFeedCsv(skus, 'supplier');
+        downloadCSV(csvContent, `MasterSuppliesFeed-UPDATE-${date}.csv`);
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast({
@@ -181,8 +199,19 @@ export default function SupplierMasterFeedPage() {
             <Button onClick={clearFiles} size="lg" variant="outline">
               Clear
             </Button>
-            <Button variant="default" onClick={handleClickProcess} size="lg">
-              Process
+            <Button
+              variant="default"
+              onClick={() => handleClickProcess('delete')}
+              size="lg"
+            >
+              Generate Delete File
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => handleClickProcess('add')}
+              size="lg"
+            >
+              Generate Supplies Feed File
             </Button>
           </div>
         </div>
