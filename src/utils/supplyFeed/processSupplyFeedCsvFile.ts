@@ -1,6 +1,6 @@
 import { readCsvFile } from '../fileProcessors';
 import { FileObj } from '@/types/fileTypes';
-import { processSfmFile } from './vendorProcesses';
+import { processMccPriceUpdateFile, processSfmFile } from './vendorProcesses';
 
 export const processSupplyFeedCsvFile = async (file: FileObj, test = false) => {
   const { vendor } = file;
@@ -15,6 +15,9 @@ export const processSupplyFeedCsvFile = async (file: FileObj, test = false) => {
   switch (vendor) {
     case 'sfm':
       products = processSfmFile(content, test);
+      break;
+    case 'mcc':
+      products = processMccPriceUpdateFile(content);
       break;
     default:
       products = [];

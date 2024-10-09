@@ -11,6 +11,19 @@ export function generateSupplyFeedCsv(skus: string[], tags: string): string {
   return csvContent;
 }
 
+export function generateSupplyFeedDeleteCsv(
+  skus: string[],
+  tags: string
+): string {
+  const headers = ['Variant SKU', 'Tags', 'Tags Command'];
+
+  const rows = skus.map((sku) => [sku, tags, 'DELETE']);
+
+  const csvContent = [headers, ...rows].map((row) => row.join(',')).join('\n');
+
+  return csvContent;
+}
+
 export function generateTestCsv(entries: string[]): string {
   const csvContent = entries.join('\n');
 

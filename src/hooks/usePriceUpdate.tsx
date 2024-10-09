@@ -9,7 +9,10 @@ import {
   PriceUpdateErrorAction,
   PriceUpdateErrorRowType,
 } from '@/components/priceUpdate/PriceUpdateContextProvider';
-import { PriceUpdateHeader } from '@/types/priceUpdateTypes';
+import {
+  PriceUpdateHeader,
+  PriceUpdateHeaderKey,
+} from '@/types/priceUpdateTypes';
 import {
   DESCRIPTION_LABELS,
   VALID_HEADER_MAP,
@@ -71,7 +74,7 @@ export default function usePriceUpdate() {
 
         const rawSkuIndex = headers?.find((h) => {
           return VALID_HEADERS.find(
-            (h) => h.key === 'manufacturerSku'
+            (h) => h.key === PriceUpdateHeaderKey.MANUFACTURER_SKU
           )?.values.includes(h?.value?.trim().toLowerCase());
         })?.index;
 
@@ -126,7 +129,8 @@ export default function usePriceUpdate() {
 
         const rawSkuIndex = selectedHeaders?.find(
           (h) =>
-            h.label.toLowerCase().includes('sku') || h.key === 'manufacturerSku'
+            h.label.toLowerCase().includes('sku') ||
+            h.key === PriceUpdateHeaderKey.MANUFACTURER_SKU
         )?.index;
 
         const errorIndex = processedFile[0].findIndex(
@@ -197,13 +201,13 @@ export default function usePriceUpdate() {
 
       const columnIndexes = selectedHeaders?.map(({ index }) => index);
       const defaultPriceIndex = selectedHeaders.find(
-        ({ key }) => key === 'defaultPrice'
+        ({ key }) => key === PriceUpdateHeaderKey.DEFAULT_PRICE
       )?.index;
       const salePriceIndex = selectedHeaders.find(
-        ({ key }) => key === 'salePrice'
+        ({ key }) => key === PriceUpdateHeaderKey.SALE_PRICE
       )?.index;
       const defaultCostIndex = selectedHeaders.find(
-        ({ key }) => key === 'defaultCost'
+        ({ key }) => key === PriceUpdateHeaderKey.DEFAULT_COST
       )?.index;
 
       // HEADERS
@@ -319,7 +323,10 @@ export default function usePriceUpdate() {
       }, [] as string[]);
 
       const skuIndex = selectedHeaders?.find(({ key, label }) => {
-        return key === 'manufacturerSku' || label === 'Manufacturer SKU';
+        return (
+          key === PriceUpdateHeaderKey.MANUFACTURER_SKU ||
+          label === 'Manufacturer SKU'
+        );
       })?.index;
 
       if (skuIndex === undefined) {

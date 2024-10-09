@@ -9,7 +9,7 @@ export function processFenderFile(content: string[][], test = false) {
 
   const products = lines.reduce((prev, line) => {
     const availability = line[16];
-    const sku = line[1];
+    const sku = line[1].toString();
     const brand = line[6];
 
     const isUnavailable = availability === 'Out of Stock';
@@ -36,14 +36,14 @@ export function processSabianFile(content: string[][], test = false) {
 
   return lines.map((line) => {
     if (test) {
-      const sku = line[0];
+      const sku = line[0].toString();
       const brand = line[3];
       const stock = line[6];
 
       return [sku, brand, stock].join(',');
     }
 
-    return line[0];
+    return line[0].toString();
   });
 }
 
@@ -54,14 +54,14 @@ export function processHoshinoFile(content: string[][], test = false) {
 
   return lines.map((line) => {
     if (test) {
-      const sku = line[1];
+      const sku = line[1].toString();
       const brand = line[0];
       const availability = line[6];
 
       return [sku, brand, availability].join(',');
     }
 
-    return line[1];
+    return line[1].toString();
   });
 }
 
@@ -82,13 +82,19 @@ export function processSfmFile(
     if (isExcludedBrand || noStock) return prev;
 
     if (test) {
-      const entry = [ITEM, BRAND, QTY].join(',');
+      const entry = [ITEM.toString(), BRAND, QTY].join(',');
 
       return [...prev, entry];
     }
 
-    return [...prev, ITEM];
+    return [...prev, ITEM.toString()];
   }, [] as string[]);
 
   return products;
+}
+
+export function processMccPriceUpdateFile(
+  content: { [key: string]: string }[]
+) {
+  return content.map((c) => c['Variant SKU'].toString());
 }
