@@ -176,7 +176,17 @@ export default function SupplierMasterFeedPage() {
               <p>Select vendors for each file.</p>
             </li>
             <li>
-              <p>Click Process.</p>
+              <p>Click Generate Supplies Feed File.</p>
+            </li>
+            <li>
+              <p>
+                If you wish to create a file to delete supplier tags from
+                products that are not part of the list.
+              </p>
+              <ol className="list-disc ml-10">
+                <li>Import the previous master supply feed file.</li>
+                <li>Click Generate Delete File</li>
+              </ol>
             </li>
           </ol>
           <p className="text-sm italic">
@@ -200,7 +210,7 @@ export default function SupplierMasterFeedPage() {
               Clear
             </Button>
             <Button
-              variant="default"
+              variant="outline"
               onClick={() => handleClickProcess('delete')}
               size="lg"
             >
