@@ -61,14 +61,11 @@ export default function SupplierMasterFeedPage() {
       if (type === 'delete') {
         // Get missing skus from prevSku
         const skusToDelete = prevSkus.filter((sku) => !skus.includes(sku));
-        const csvContent = generateSupplyFeedDeleteCsv(
-          skusToDelete,
-          'supplier'
-        );
+        const csvContent = generateSupplyFeedDeleteCsv(skusToDelete);
 
         downloadCSV(csvContent, `MasterSuppliesFeed-DELETE-${date}.csv`);
       } else {
-        const csvContent = generateSupplyFeedCsv(skus, 'supplier');
+        const csvContent = generateSupplyFeedCsv(skus);
         downloadCSV(csvContent, `MasterSuppliesFeed-UPDATE-${date}.csv`);
       }
     } catch (error) {

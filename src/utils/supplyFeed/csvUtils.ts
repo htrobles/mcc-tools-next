@@ -1,23 +1,20 @@
 import { VendorKey } from '@/constants/vendors';
 import moment from 'moment';
 
-export function generateSupplyFeedCsv(skus: string[], tags: string): string {
+export function generateSupplyFeedCsv(skus: string[]): string {
   const headers = ['Variant SKU', 'Tags', 'Tags Command'];
 
-  const rows = skus.map((sku) => [sku, tags, 'MERGE']);
+  const rows = skus.map((sku) => [sku, 'supplier', 'MERGE']);
 
   const csvContent = [headers, ...rows].map((row) => row.join(',')).join('\n');
 
   return csvContent;
 }
 
-export function generateSupplyFeedDeleteCsv(
-  skus: string[],
-  tags: string
-): string {
+export function generateSupplyFeedDeleteCsv(skus: string[]): string {
   const headers = ['Variant SKU', 'Tags', 'Tags Command'];
 
-  const rows = skus.map((sku) => [sku, tags, 'DELETE']);
+  const rows = skus.map((sku) => [sku, 'supplier', 'DELETE']);
 
   const csvContent = [headers, ...rows].map((row) => row.join(',')).join('\n');
 
