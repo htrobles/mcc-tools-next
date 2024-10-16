@@ -79,6 +79,8 @@ export default function AddPriceUpdateHeaderForm() {
     });
   };
 
+  console.log(form);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-2">
@@ -115,7 +117,7 @@ export default function AddPriceUpdateHeaderForm() {
       <Button
         type="submit"
         className="w-full"
-        disabled={!form.index || !form.key}
+        disabled={form.index === undefined || form.index === null || !form.key}
       >
         + Add
       </Button>
