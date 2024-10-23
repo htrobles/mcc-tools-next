@@ -12,6 +12,13 @@ const routes = [
     title: 'Price Update',
     description: 'This tool is used to update product prices',
   },
+  {
+    key: 'product-update',
+    path: '/product-update',
+    title: 'Product Update',
+    description:
+      'This tool is used to update products that have the update tags',
+  },
 ];
 
 export default routes;
