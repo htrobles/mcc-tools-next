@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import PageLayout from '@/components/PageLayout';
 import { Input } from '@/components/ui/input';
 import useProductUpdate from '@/hooks/useProductUpdate';

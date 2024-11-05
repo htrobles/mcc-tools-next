@@ -1,0 +1,27 @@
+import jsonToCsvExport from 'json-to-csv-export';
+
+export default async function generateProductUpdateCsv(
+  products: { [key: string]: string }[]
+) {
+  const headers = [
+    { key: 'Manufacturer SKU', label: 'Manufacturer SKU' },
+    { key: 'Title', label: 'Title' },
+    { key: 'Description Text', label: 'Description Text' },
+    { key: 'Body HTML', label: 'Body HTML' },
+    { key: 'Featured Image', label: 'Featured Image' },
+    { key: 'Image', label: 'Image' },
+    { key: 'Image_1', label: 'Image' },
+    { key: 'Image_2', label: 'Image' },
+    { key: 'Image_3', label: 'Image' },
+    { key: 'Image_4', label: 'Image' },
+    { key: 'Image_5', label: 'Image' },
+    { key: 'Image_6', label: 'Image' },
+    { key: 'Image_7', label: 'Image' },
+    { key: 'Image_8', label: 'Image' },
+    { key: 'Image_9', label: 'Image' },
+    { key: 'Image_10', label: 'Image' },
+    { key: 'Image_11', label: 'Image' },
+  ];
+
+  jsonToCsvExport({ data: products, headers });
+}
