@@ -20,7 +20,11 @@ export default function PriceUpdatePage() {
       <div className="space-y-8">
         <h3>Instructions</h3>
         <ol className="list-decimal ml-8">
-          <li>Upload Lightspeed and supplier files</li>
+          <li>
+            Upload Lightspeed File. Products from Lightspeed that have update
+            tags.
+          </li>
+          <li>Upload Supplier File. Products from supplier website</li>
           <li>Generate Import File</li>
         </ol>
         <div className="max-w-[500px] mb-4">

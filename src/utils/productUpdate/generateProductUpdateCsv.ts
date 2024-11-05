@@ -23,5 +23,5 @@ export default async function generateProductUpdateCsv(
     { key: 'Image_11', label: 'Image' },
   ];
 
-  jsonToCsvExport({ data: products, headers });
+  jsonToCsvExport({ data: products, headers, filename: 'Product Update File' });
 }
