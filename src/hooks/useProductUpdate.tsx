@@ -47,19 +47,22 @@ export default function useProductUpdate() {
     const lightspeedContent = (await readCsvFile(
       lightSpeedFile
     )) as LightSpeedProductData[];
+
     const supplierContent = (await readCsvFile(supplierFile)) as {
       [key: string]: string;
     }[];
 
-    const products = supplierContent.filter((product) => {
+    const products = supplierContent.reduce((prev, product) => {
       const sku = product['Manufacturer SKU'];
 
       const foundProduct = lightspeedContent.find(
         (p) => p['Manufact. SKU'] === sku || p['Custom SKU'] === sku
       );
 
-      return !!foundProduct;
-    });
+      if (!foundProduct) return prev;
+
+      return [...prev, { ...product, 'System ID': foundProduct['System ID'] }];
+    }, [] as { [key: string]: string }[]);
 
     generateProductUpdateCsv(products);
   };

@@ -37,6 +37,7 @@ export interface ScrapedData {
 }
 
 export interface LightSpeedProductData {
+  'System ID': string;
   Brand: string;
   Category: string;
   'Custom SKU': string;
@@ -49,7 +50,6 @@ export interface LightSpeedProductData {
   Price: string;
   Qty: string;
   Season: string;
-  'System ID': string;
   Tax: string;
   'Tax Class': string;
   UPC: string;
