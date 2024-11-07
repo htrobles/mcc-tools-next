@@ -61,7 +61,15 @@ export default function useProductUpdate() {
 
       if (!foundProduct) return prev;
 
-      return [...prev, { ...product, 'System ID': foundProduct['System ID'] }];
+      return [
+        ...prev,
+        {
+          ...product,
+          'System ID': foundProduct['System ID'],
+          'Add Tags': 'add, in-stock',
+          'Replace Tags': 'Yes',
+        },
+      ];
     }, [] as { [key: string]: string }[]);
 
     generateProductUpdateCsv(products);
