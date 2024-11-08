@@ -79,8 +79,6 @@ export default function AddPriceUpdateHeaderForm() {
     });
   };
 
-  console.log(form);
-
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-2">

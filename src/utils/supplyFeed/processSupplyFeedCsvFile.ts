@@ -4,7 +4,7 @@ import { processMccPriceUpdateFile, processSfmFile } from './vendorProcesses';
 
 export const processSupplyFeedCsvFile = async (file: FileObj, test = false) => {
   const { vendor } = file;
-  const content = await readCsvFile(file);
+  const content = (await readCsvFile(file)) as { [key: string]: string }[];
 
   if (!file.vendor) {
     throw new Error('All files should have vendors.');

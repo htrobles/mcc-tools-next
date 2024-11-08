@@ -159,68 +159,66 @@ export default function SupplierMasterFeedPage() {
 
   return (
     <PageLayout>
-      <div>
-        <div className="mb-5 space-y-2">
-          <h4>Instructions:</h4>
-          <ol className="list-decimal ml-10">
-            <li>
-              <p>
-                Add files you wish to process by clicking the file dropzone or
-                dragging files into it.
-              </p>
-            </li>
-            <li>
-              <p>Select vendors for each file.</p>
-            </li>
-            <li>
-              <p>Click Generate Supplies Feed File.</p>
-            </li>
-            <li>
-              <p>
-                If you wish to create a file to delete supplier tags from
-                products that are not part of the list.
-              </p>
-              <ol className="list-disc ml-10">
-                <li>Import the previous master supply feed file.</li>
-                <li>Click Generate Delete File</li>
-              </ol>
-            </li>
-          </ol>
-          <p className="text-sm italic">
-            If there are other brands that you want to exclude, please contact
-            admin to update the excluded brands list.
-          </p>
+      <div className="mb-5 space-y-2">
+        <h4>Instructions:</h4>
+        <ol className="list-decimal ml-10">
+          <li>
+            <p>
+              Add files you wish to process by clicking the file dropzone or
+              dragging files into it.
+            </p>
+          </li>
+          <li>
+            <p>Select vendors for each file.</p>
+          </li>
+          <li>
+            <p>Click Generate Supplies Feed File.</p>
+          </li>
+          <li>
+            <p>
+              If you wish to create a file to delete supplier tags from products
+              that are not part of the list.
+            </p>
+            <ol className="list-disc ml-10">
+              <li>Import the previous master supply feed file.</li>
+              <li>Click Generate Delete File</li>
+            </ol>
+          </li>
+        </ol>
+        <p className="text-sm italic">
+          If there are other brands that you want to exclude, please contact
+          admin to update the excluded brands list.
+        </p>
+      </div>
+      <div className="space-y-5">
+        <FileUpload addFiles={handleAddFiles} multiple />
+        <div className="border rounded bg-white">
+          <FileList
+            files={files}
+            onDeleteFile={deleteFile}
+            onDeleteFiles={deleteFiles}
+            onUpdateVendor={updateVendor}
+            onTestFile={handleClickTestFile}
+          />
         </div>
-        <div className="lg:px-10 space-y-5">
-          <FileUpload addFiles={handleAddFiles} multiple />
-          <div className="border rounded bg-white">
-            <FileList
-              files={files}
-              onDeleteFile={deleteFile}
-              onDeleteFiles={deleteFiles}
-              onUpdateVendor={updateVendor}
-              onTestFile={handleClickTestFile}
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button onClick={clearFiles} size="lg" variant="outline">
-              Clear
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleClickProcess('delete')}
-              size="lg"
-            >
-              Generate Delete File
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => handleClickProcess('add')}
-              size="lg"
-            >
-              Generate Supplies Feed File
-            </Button>
-          </div>
+        <div className="flex justify-end gap-2">
+          <Button onClick={clearFiles} size="lg" variant="outline">
+            Clear
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleClickProcess('delete')}
+            size="lg"
+          >
+            Generate Delete File
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => handleClickProcess('add')}
+            size="lg"
+          >
+            Generate Supplies Feed File
+          </Button>
         </div>
       </div>
     </PageLayout>

@@ -14,7 +14,7 @@ export default function PriceUpdateStep2() {
   } = usePriceUpdate();
 
   const containerClasses = twMerge(
-    'lg:px-10 space-y-5 mb-10',
+    'space-y-5 mb-10',
     !initialFile ? 'pointer-events-none' : ''
   );
 
