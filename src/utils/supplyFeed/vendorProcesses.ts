@@ -30,21 +30,24 @@ export function processFenderFile(content: string[][], test = false) {
 }
 
 export function processSabianFile(content: string[][], test = false) {
-  const lines = content.slice(1);
+  const sliceIndex = content.findIndex((r) => r.includes('StockCode')) + 1;
+  const lines = content.slice(sliceIndex);
 
   if (!lines?.length) return [];
 
-  return lines.map((line) => {
+  return lines.reduce((prev, line) => {
+    if (!line.length) return prev;
+
     if (test) {
       const sku = line[0].toString();
       const brand = line[3];
       const stock = line[6];
 
-      return [sku, brand, stock].join(',');
+      return [...prev, [sku, brand, stock].join(',')];
     }
 
-    return line[0].toString();
-  });
+    return [...prev, line[0].toString()];
+  }, []);
 }
 
 export function processHoshinoFile(content: string[][], test = false) {
