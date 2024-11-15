@@ -66,7 +66,7 @@ export default function useProductUpdate() {
         {
           ...product,
           'System ID': foundProduct['System ID'],
-          'Add Tags': 'add, in-stock',
+          'Add Tags': 'add, instock',
           'Replace Tags': 'Yes',
         },
       ];
