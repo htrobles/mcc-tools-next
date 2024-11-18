@@ -5,7 +5,7 @@ export default async function generateProductUpdateCsv(
 ) {
   const headers = [
     { key: 'System ID', label: 'System ID' },
-    { key: 'Manufacturer SKU', label: 'Variant SKU' },
+    { key: 'Variant SKU', label: 'Variant SKU' },
     { key: 'Title', label: 'Title' },
     { key: 'Description Text', label: 'Description Text' },
     { key: 'Body HTML', label: 'Body HTML' },

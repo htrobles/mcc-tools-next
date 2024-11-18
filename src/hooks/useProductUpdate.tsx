@@ -53,13 +53,17 @@ export default function useProductUpdate() {
     }[];
 
     const products = supplierContent.reduce((prev, product) => {
-      const sku = product['Manufacturer SKU'];
+      const sku = product['Variant SKU'] || product['Manufacturer SKU'];
 
       const foundProduct = lightspeedContent.find(
-        (p) => p['Manufact. SKU'] === sku || p['Custom SKU'] === sku
+        (p) =>
+          p['Manufact. SKU'].toLowerCase() === sku.toLowerCase() ||
+          p['Custom SKU'].toLowerCase() === sku.toLowerCase()
       );
 
-      if (!foundProduct) return prev;
+      if (!foundProduct) {
+        return prev;
+      }
 
       return [
         ...prev,
