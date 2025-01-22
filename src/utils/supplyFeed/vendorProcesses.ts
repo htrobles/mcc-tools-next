@@ -55,17 +55,21 @@ export function processHoshinoFile(content: string[][], test = false) {
 
   if (!lines?.length) return [];
 
-  return lines.map((line) => {
+  return lines.reduce((prev, line) => {
+    if (!line[1]) return prev;
+
     if (test) {
-      const sku = line[1].toString();
+      const sku = line[1]?.toString();
       const brand = line[0];
       const availability = line[6];
 
-      return [sku, brand, availability].join(',');
+      const newLine = [sku, brand, availability].join(',');
+
+      return [...prev, newLine];
     }
 
-    return line[1].toString();
-  });
+    return [...prev, line[1]?.toString()];
+  }, [] as string[]);
 }
 
 export function processSfmFile(
