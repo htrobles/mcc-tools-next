@@ -1,6 +1,8 @@
 import excludedBrands from '@/constants/excludedBrands';
 import { checkBrandValidity } from './helpers';
 
+const unavailableStatuses = ['Out of Stock', 'Special Order'];
+
 export function processFenderFile(content: string[][], test = false) {
   const lines = content.slice(1);
   const filteredOutBrands = excludedBrands.fender ?? [];
@@ -12,7 +14,7 @@ export function processFenderFile(content: string[][], test = false) {
     const sku = line[1].toString();
     const brand = line[6];
 
-    const isUnavailable = availability === 'Out of Stock';
+    const isUnavailable = unavailableStatuses.includes(availability);
     const isExcludedBrand = checkBrandValidity(brand, filteredOutBrands);
 
     if (isUnavailable || isExcludedBrand) return prev;
