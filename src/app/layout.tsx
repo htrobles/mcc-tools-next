@@ -4,6 +4,7 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import moment from 'moment';
 import { Toaster } from '@/components/ui/toaster';
+import PageLayout from '@/components/PageLayout';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -35,7 +36,7 @@ export default function RootLayout({
           <Sidebar />
           <div className="w-full overflow-auto">
             {/* <PageHeader /> */}
-            {children}
+            <PageLayout>{children}</PageLayout>
           </div>
         </div>
         <footer className="bg-black text-white p-4">

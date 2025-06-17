@@ -27,7 +27,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
 }
 
 const getPageDetails = (pathName: string) => {
-  const pathKey = pathName.split('/')[1];
+  const pathKey = pathName.split('/')[1] || 'home';
 
   const pageDetails = routes.find(({ key }) => key === pathKey);
 

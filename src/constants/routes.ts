@@ -1,5 +1,12 @@
 const routes = [
   {
+    key: 'home',
+    path: '/',
+    title: 'Welcome to Music City Canada Tools',
+    description:
+      'This app provides a set of tools to manage our store easier and faster.',
+  },
+  {
     key: 'supplier-master-feed',
     path: '/supplier-master-feed',
     title: 'Supplier Master Feed',
@@ -18,6 +25,12 @@ const routes = [
     title: 'Product Update',
     description:
       'This tool is used to update products that have the update tags',
+  },
+  {
+    key: 'price-monitor',
+    path: '/price-monitor',
+    title: 'Price Monitor',
+    description: 'This tool is used to monitor competitor product prices',
   },
 ];
 
