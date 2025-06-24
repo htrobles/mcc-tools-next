@@ -2,6 +2,7 @@
 
 import { FileList } from '@/components/FileList';
 import FileUpload from '@/components/FileUpload';
+import PageContainer from '@/components/PageContainer';
 import { Button } from '@/components/ui/button';
 import { VendorKey } from '@/constants/vendors';
 import { useToast } from '@/hooks/use-toast';
@@ -157,7 +158,7 @@ export default function SupplierMasterFeedPage() {
   );
 
   return (
-    <>
+    <PageContainer>
       <div className="mb-5 space-y-2">
         <h4>Instructions:</h4>
         <ol className="list-decimal ml-10">
@@ -220,6 +221,6 @@ export default function SupplierMasterFeedPage() {
           </Button>
         </div>
       </div>
-    </>
+    </PageContainer>
   );
 }

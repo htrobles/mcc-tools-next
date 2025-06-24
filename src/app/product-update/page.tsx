@@ -4,6 +4,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import useProductUpdate from '@/hooks/useProductUpdate';
 import { Button } from '@/components/ui/button';
+import PageContainer from '@/components/PageContainer';
 
 export default function PriceUpdatePage() {
   const {
@@ -15,7 +16,7 @@ export default function PriceUpdatePage() {
   } = useProductUpdate();
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       <h3>Instructions</h3>
       <ol className="list-decimal ml-8">
         <li>
@@ -57,6 +58,6 @@ export default function PriceUpdatePage() {
           Generate Import File
         </Button>
       </div>
-    </div>
+    </PageContainer>
   );
 }
