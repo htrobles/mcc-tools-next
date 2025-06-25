@@ -10,8 +10,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import db from '@/lib/db';
-import { getProductPricematchList } from '@/lib/priceMonitor/getProductPricematchList';
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
+import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 
 export default async function PriceMonitor({
   searchParams,
@@ -21,7 +21,7 @@ export default async function PriceMonitor({
   const { page } = await searchParams;
   const pageNumber = parseInt(page || '1');
 
-  const { products, total } = await getProductPricematchList(pageNumber);
+  const { products, total } = await getPriceMonitorProducts(pageNumber);
   const totalPages = Math.ceil(total / PRICE_MONITOR_PAGE_SIZE);
 
   return (

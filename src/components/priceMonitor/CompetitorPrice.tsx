@@ -4,12 +4,12 @@ const CompetitorPrice = ({
   ourPrice,
   competitorPrice,
 }: {
-  ourPrice: number;
+  ourPrice: number | null;
   competitorPrice?: number | null;
 }) => {
   const isPriceMatch = ourPrice === competitorPrice;
-  const isPriceHigher = ourPrice > (competitorPrice ?? 0);
-  const isPriceLower = ourPrice < (competitorPrice ?? 0);
+  const isPriceHigher = ourPrice && ourPrice > (competitorPrice ?? 0);
+  const isPriceLower = ourPrice && ourPrice < (competitorPrice ?? 0);
   const isPriceMissing = !competitorPrice;
 
   return (
@@ -22,7 +22,7 @@ const CompetitorPrice = ({
         isPriceMissing && 'text-gray-500'
       )}
     >
-      ${competitorPrice ? competitorPrice?.toFixed(2) : 'N/A'}
+      ${competitorPrice ? competitorPrice.toFixed(2) : 'N/A'}
     </span>
   );
 };
