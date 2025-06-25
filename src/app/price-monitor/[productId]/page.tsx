@@ -16,7 +16,6 @@ const PriceMonitorProductPage = async ({
   const { productId } = params;
   const product = await getPriceMonitorProduct(productId);
   const competitorProducts = product?.competitorProducts;
-  console.log(product);
 
   if (!product) {
     return <div>Product not found</div>;

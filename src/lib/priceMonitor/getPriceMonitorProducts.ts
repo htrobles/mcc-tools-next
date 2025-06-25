@@ -1,12 +1,12 @@
 'use server';
 
-import { CompetitorProduct, Product } from '../../../generated/prisma';
+import { PriceMonitorProduct } from './getPriceMonitorProduct';
 import db from '../db';
 import { PRICE_MONITOR_PAGE_SIZE } from './constants';
 
 export async function getPriceMonitorProducts(
   page: number
-): Promise<{ products: Product[]; total: number }> {
+): Promise<{ products: PriceMonitorProduct[]; total: number }> {
   const products = await db.product.findMany({
     skip: (page - 1) * PRICE_MONITOR_PAGE_SIZE,
     take: PRICE_MONITOR_PAGE_SIZE,

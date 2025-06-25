@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import db from '@/lib/db';
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 
