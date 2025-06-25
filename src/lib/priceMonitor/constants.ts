@@ -1,0 +1,1 @@
+export const PRICE_MONITOR_PAGE_SIZE = 20;
