@@ -1,4 +1,4 @@
-import { Prisma } from '../../../generated/prisma';
+import { Prisma } from '@prisma/client';
 import db from '../db';
 
 const PriceMonitorProduct = Prisma.validator<Prisma.ProductDefaultArgs>()({

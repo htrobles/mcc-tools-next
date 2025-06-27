@@ -1,10 +1,8 @@
 #!/usr/bin/env tsx
 
-import { PrismaClient } from '../generated/prisma';
+import db from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import readline from 'readline';
-
-const prisma = new PrismaClient();
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -67,7 +65,7 @@ async function createUser() {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await db.user.findUnique({
       where: { email },
     });
 
@@ -109,7 +107,7 @@ async function createUser() {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Create user
-    const user = await prisma.user.create({
+    const user = await db.user.create({
       data: {
         email,
         name: name || null,
@@ -125,7 +123,7 @@ async function createUser() {
   } catch (error) {
     console.error('❌ Error creating user:', error);
   } finally {
-    await prisma.$disconnect();
+    await db.$disconnect();
     rl.close();
   }
 }
