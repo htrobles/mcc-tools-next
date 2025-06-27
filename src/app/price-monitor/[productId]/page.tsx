@@ -73,15 +73,13 @@ const ProductCard = ({
   return (
     <div className="bg-white overflow-hidden rounded-md p-2 border border-gray-200 flex flex-col">
       <div className="flex justify-center h-[200px]">
-        {product.image && (
-          <Image
-            src={product.image}
-            alt={product.title as string}
-            width={200}
-            height={200}
-            className="object-contain"
-          />
-        )}
+        <Image
+          src={product.image || '/images/img-placeholder.svg'}
+          alt={product.title || 'Image placeholder'}
+          width={200}
+          height={200}
+          className="object-contain"
+        />
       </div>
       <div className="flex flex-col justify-between grow">
         <div className="grow mb-4">
