@@ -6,13 +6,16 @@ import mccLogo from '/public/mcc-logo.png';
 import routes from '@/constants/routes';
 import { usePathname } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
+import { useSession, signOut } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const isActive = (path: string) => pathname === path;
 
   return (
-    <div className="w-[250px] border-r bg-gray-50">
+    <div className="w-[250px] border-r bg-gray-50 flex flex-col">
       <div className="p-4 border-b h-[80px]">
         <Link href="/">
           <Image
@@ -22,7 +25,7 @@ export default function Sidebar() {
           />
         </Link>
       </div>
-      <ul>
+      <ul className="flex-1">
         {routes.slice(1).map(({ path, title }) => (
           <li key={path} className="">
             <a
@@ -37,6 +40,23 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
+
+      {/* Authentication section */}
+      {session && (
+        <div className="p-4 border-t border-gray-200">
+          <div className="text-sm text-gray-600 mb-2">
+            Signed in as {session.user?.email}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => signOut()}
+            className="w-full"
+          >
+            Sign Out
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

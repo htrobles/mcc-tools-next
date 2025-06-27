@@ -11,9 +11,9 @@ import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorPro
 const PriceMonitorProductPage = async ({
   params,
 }: {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
 }) => {
-  const { productId } = params;
+  const { productId } = await params;
   const product = await getPriceMonitorProduct(productId);
   const competitorProducts = product?.competitorProducts;
 

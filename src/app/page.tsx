@@ -1,8 +1,9 @@
+import PageContainer from '@/components/PageContainer';
 import routes from '@/constants/routes';
 
 export default function Home() {
   return (
-    <div className="container mx-auto">
+    <PageContainer>
       <p>Select a tool to get started</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
@@ -21,6 +22,6 @@ export default function Home() {
           </a>
         ))}
       </div>
-    </div>
+    </PageContainer>
   );
 }
