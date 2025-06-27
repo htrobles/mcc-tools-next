@@ -3,7 +3,7 @@ import {
   getPriceMonitorProduct,
   PriceMonitorProduct,
 } from '@/lib/priceMonitor/getPriceMonitorProduct';
-import { CompetitorProduct } from '../../../../generated/prisma';
+import { CompetitorProduct } from '../../../../../generated/prisma';
 import Image from 'next/image';
 import { getStoreName } from '@/lib/priceMonitor/getStoreName';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';

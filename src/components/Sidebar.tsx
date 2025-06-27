@@ -42,21 +42,19 @@ export default function Sidebar() {
       </ul>
 
       {/* Authentication section */}
-      {session && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="text-sm text-gray-600 mb-2">
-            Signed in as {session.user?.email}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => signOut()}
-            className="w-full"
-          >
-            Sign Out
-          </Button>
+      <div className="p-4 border-t border-gray-200">
+        <div className="text-sm text-gray-600 mb-2">
+          {session ? `Logged in as ${session.user?.name}` : 'Loading profile'}
         </div>
-      )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => signOut()}
+          className="w-full"
+        >
+          Sign Out
+        </Button>
+      </div>
     </div>
   );
 }

@@ -12,6 +12,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import PageContainer from '@/components/PageContainer';
+import Image from 'next/image';
+import mccLogo from '/public/mcc-logo.png';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -44,7 +46,8 @@ export default function SignIn() {
   };
 
   return (
-    <PageContainer className="flex items-center justify-center">
+    <div className="flex flex-col h-full justify-center items-center bg-gray-50 gap-y-4">
+      <Image src={mccLogo} alt="Music City Canada" width={300} height={100} />
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
@@ -79,6 +82,6 @@ export default function SignIn() {
           </form>
         </CardContent>
       </Card>
-    </PageContainer>
+    </div>
   );
 }
