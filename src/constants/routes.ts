@@ -1,4 +1,12 @@
-const routes = [
+interface Route {
+  key: string;
+  path: string;
+  title: string;
+  description: string;
+  adminOnly?: boolean;
+}
+
+const routes: Route[] = [
   {
     key: 'home',
     path: '/',
@@ -31,6 +39,13 @@ const routes = [
     path: '/price-monitor',
     title: 'Price Monitor',
     description: 'This tool is used to monitor competitor product prices',
+  },
+  {
+    key: 'admin',
+    path: '/admin',
+    title: 'Admin Panel',
+    description: 'Administrative tools and settings',
+    adminOnly: true,
   },
 ];
 

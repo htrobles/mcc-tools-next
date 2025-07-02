@@ -39,6 +39,7 @@ export const authConfig: NextAuthConfig = {
             id: user.id,
             email: user.email,
             name: user.name,
+            role: user.role,
           };
         }
 
@@ -53,12 +54,14 @@ export const authConfig: NextAuthConfig = {
     session: async ({ session, token }: { session: any; token: any }) => {
       if (session?.user && token?.sub) {
         session.user.id = token.sub;
+        session.user.role = token.role;
       }
       return session;
     },
     jwt: async ({ user, token }: { user: any; token: any }) => {
       if (user) {
         token.uid = user.id;
+        token.role = user.role;
       }
       return token;
     },

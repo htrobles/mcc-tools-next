@@ -8,11 +8,20 @@ import { usePathname } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
+import { useMemo } from 'react';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isActive = (path: string) => pathname === path;
+
+  // Memoize the filtered routes to prevent unnecessary re-renders
+  const filteredRoutes = useMemo(() => {
+    return routes.slice(1).filter(({ adminOnly }) => {
+      // Include route if it's not admin-only or if user is admin
+      return !adminOnly || session?.user?.role === 'ADMIN';
+    });
+  }, [session?.user?.role]);
 
   return (
     <div className="w-[250px] border-r bg-gray-50 flex flex-col">
@@ -26,9 +35,9 @@ export default function Sidebar() {
         </Link>
       </div>
       <ul className="flex-1">
-        {routes.slice(1).map(({ path, title }) => (
+        {filteredRoutes.map(({ path, title }) => (
           <li key={path} className="">
-            <a
+            <Link
               href={path}
               className={twMerge(
                 'block text-gray-600 font-semibold px-4 py-2 hover:bg-gray-200 transition-all duration-300',
@@ -36,7 +45,7 @@ export default function Sidebar() {
               )}
             >
               {title}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
