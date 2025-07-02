@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { UserActions } from '@/components/userManagement/UserActions';
 
 const USERS_PAGE_SIZE = 1;
 
@@ -62,16 +62,8 @@ export default async function UserManagementPage({
                       {user.role}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Reset Password
-                    </Button>
-                    <Button variant="destructive" size="sm">
-                      Delete
-                    </Button>
+                  <TableCell>
+                    <UserActions user={user} />
                   </TableCell>
                 </TableRow>
               ))}
