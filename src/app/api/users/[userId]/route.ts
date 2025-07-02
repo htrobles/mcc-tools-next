@@ -9,13 +9,16 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
+    const { userId } = await params;
 
-    // Check if user is authenticated and is admin
-    if (!session?.user || session.user.role !== Role.ADMIN) {
+    // Check if user is authenticated and is either admin or updating their own profile
+    if (
+      !session?.user ||
+      (session.user.role !== Role.ADMIN && session.user.id !== userId)
+    ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = await params;
     const body = await request.json();
     const { name, email, role } = body;
 
@@ -39,14 +42,21 @@ export async function PATCH(
       );
     }
 
+    // Prepare update data - only allow role changes for admins
+    const updateData: any = {
+      name: name || null,
+      email,
+    };
+
+    // Only allow role updates for admins
+    if (session.user.role === Role.ADMIN) {
+      updateData.role = role || Role.USER;
+    }
+
     // Update the user
     const updatedUser = await db.user.update({
       where: { id: userId },
-      data: {
-        name: name || null,
-        email,
-        role: role || Role.USER,
-      },
+      data: updateData,
     });
 
     return NextResponse.json(updatedUser);

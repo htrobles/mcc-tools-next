@@ -67,7 +67,19 @@ export default function Sidebar({
       {/* Authentication section */}
       <div className="p-4 border-t border-gray-200">
         <div className="text-sm text-gray-600 mb-2">
-          {user ? `Logged in as ${user.name}` : 'Loading profile'}
+          {user ? (
+            <>
+              Logged in as{' '}
+              <Link
+                href="/profile"
+                className="hover:text-blue-600 hover:underline transition-colors cursor-pointer"
+              >
+                {user.name}
+              </Link>
+            </>
+          ) : (
+            'Loading profile'
+          )}
         </div>
         <Button
           variant="outline"
