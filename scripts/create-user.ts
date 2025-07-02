@@ -1,19 +1,9 @@
 #!/usr/bin/env tsx
 
 import db from '@/lib/db';
+import { Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import readline from 'readline';
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function question(prompt: string): Promise<string> {
-  return new Promise((resolve) => {
-    rl.question(prompt, resolve);
-  });
-}
+import inquirer from 'inquirer';
 
 async function validateEmail(email: string): Promise<boolean> {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,18 +45,66 @@ async function createUser() {
   try {
     console.log('=== MCC Tools User Creation Script ===\n');
 
-    // Get user input
-    const email = await question('Enter email address: ');
+    // Get user input using Inquirer
+    const answers = await (inquirer.prompt as any)([
+      {
+        type: 'input',
+        name: 'email',
+        message: 'Enter email address:',
+        validate: async (input: string) => {
+          if (!(await validateEmail(input))) {
+            return 'Please enter a valid email address';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter full name (optional):',
+      },
+      {
+        type: 'list',
+        name: 'role',
+        message: 'Select user role:',
+        choices: [
+          { name: 'User', value: Role.USER },
+          { name: 'Admin', value: Role.ADMIN },
+        ],
+        default: Role.USER,
+      },
+      {
+        type: 'password',
+        name: 'password',
+        message: 'Enter password:',
+        validate: async (input: string) => {
+          const validation = await validatePassword(input);
+          if (!validation.isValid) {
+            return `Password validation failed:\n${validation.errors.join('\n')}`;
+          }
+          return true;
+        },
+      },
+    ]);
 
-    // Validate email
-    if (!(await validateEmail(email))) {
-      console.error('❌ Invalid email format');
-      return;
-    }
+    // Get password confirmation separately
+    await (inquirer.prompt as any)([
+      {
+        type: 'password',
+        name: 'passwordConfirmation',
+        message: 'Confirm password:',
+        validate: (input: string) => {
+          if (input !== answers.password) {
+            return 'Passwords do not match';
+          }
+          return true;
+        },
+      },
+    ]);
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
-      where: { email },
+      where: { email: answers.email },
     });
 
     if (existingUser) {
@@ -74,44 +112,17 @@ async function createUser() {
       return;
     }
 
-    const name = await question('Enter full name (optional): ');
-
-    let password: string;
-    let passwordConfirmation: string;
-
-    do {
-      password = await question('Enter password: ');
-
-      const passwordValidation = await validatePassword(password);
-
-      if (!passwordValidation.isValid) {
-        console.error('❌ Password validation failed:');
-        passwordValidation.errors.forEach((error) =>
-          console.error(`   - ${error}`)
-        );
-        continue;
-      }
-
-      passwordConfirmation = await question('Confirm password: ');
-
-      if (password !== passwordConfirmation) {
-        console.error('❌ Passwords do not match');
-        continue;
-      }
-
-      break;
-    } while (true);
-
     // Hash password
     const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(answers.password, saltRounds);
 
     // Create user
     const user = await db.user.create({
       data: {
-        email,
-        name: name || null,
+        email: answers.email,
+        name: answers.name || null,
         password: hashedPassword,
+        role: answers.role,
       },
     });
 
@@ -119,12 +130,12 @@ async function createUser() {
     console.log(`   ID: ${user.id}`);
     console.log(`   Email: ${user.email}`);
     console.log(`   Name: ${user.name || 'Not provided'}`);
+    console.log(`   Role: ${user.role}`);
     console.log('\nThe user can now sign in to the application.');
   } catch (error) {
     console.error('❌ Error creating user:', error);
   } finally {
     await db.$disconnect();
-    rl.close();
   }
 }
 
