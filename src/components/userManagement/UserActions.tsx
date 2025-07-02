@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { UpdateUserDialog } from './UpdateUserDialog';
 import { ResetPasswordDialog } from './ResetPasswordDialog';
+import { DeleteUserDialog } from './DeleteUserDialog';
 import { Role } from '@prisma/client';
 
 interface User {
@@ -21,6 +22,7 @@ export function UserActions({ user }: UserActionsProps) {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
     useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleEditClick = () => {
     setIsUpdateDialogOpen(true);
@@ -30,7 +32,16 @@ export function UserActions({ user }: UserActionsProps) {
     setIsResetPasswordDialogOpen(true);
   };
 
+  const handleDeleteClick = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
   const handleUserUpdated = () => {
+    // Refresh the page to show updated data
+    window.location.reload();
+  };
+
+  const handleUserDeleted = () => {
     // Refresh the page to show updated data
     window.location.reload();
   };
@@ -44,7 +55,7 @@ export function UserActions({ user }: UserActionsProps) {
         <Button variant="outline" size="sm" onClick={handleResetPasswordClick}>
           Reset Password
         </Button>
-        <Button variant="destructive" size="sm">
+        <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
           Delete
         </Button>
       </div>
@@ -60,6 +71,13 @@ export function UserActions({ user }: UserActionsProps) {
         user={user}
         open={isResetPasswordDialogOpen}
         onOpenChange={setIsResetPasswordDialogOpen}
+      />
+
+      <DeleteUserDialog
+        user={user}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onUserDeleted={handleUserDeleted}
       />
     </>
   );
