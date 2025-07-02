@@ -5,6 +5,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 interface PriceMonitorPaginationProps {
   currentPage: number;
@@ -17,6 +18,8 @@ export function PriceMonitorPagination({
   totalPages,
   className,
 }: PriceMonitorPaginationProps) {
+  const searchParams = useSearchParams();
+
   const getVisiblePages = () => {
     const delta = 2;
     const range = [];
@@ -47,6 +50,12 @@ export function PriceMonitorPagination({
     return rangeWithDots;
   };
 
+  const createPageUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', page.toString());
+    return `/price-monitor?${params.toString()}`;
+  };
+
   const visiblePages = getVisiblePages();
 
   return (
@@ -54,7 +63,7 @@ export function PriceMonitorPagination({
       className={cn('flex items-center justify-center space-x-2', className)}
     >
       {currentPage > 1 ? (
-        <Link href={`/price-monitor?page=${currentPage - 1}`}>
+        <Link href={createPageUrl(currentPage - 1)}>
           <Button variant="outline" size="sm">
             <ChevronLeftIcon className="h-4 w-4" />
             Previous
@@ -72,7 +81,7 @@ export function PriceMonitorPagination({
           {page === '...' ? (
             <span className="px-2 py-1 text-sm text-muted-foreground">...</span>
           ) : (
-            <Link href={`/price-monitor?page=${page}`}>
+            <Link href={createPageUrl(page as number)}>
               <Button
                 variant={currentPage === page ? 'default' : 'outline'}
                 size="sm"
@@ -86,7 +95,7 @@ export function PriceMonitorPagination({
       ))}
 
       {currentPage < totalPages ? (
-        <Link href={`/price-monitor?page=${currentPage + 1}`}>
+        <Link href={createPageUrl(currentPage + 1)}>
           <Button variant="outline" size="sm">
             Next
             <ChevronRightIcon className="h-4 w-4" />

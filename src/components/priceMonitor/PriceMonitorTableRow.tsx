@@ -19,6 +19,9 @@ const PriceMonitorTableRow = ({
       <TableCell className="font-medium">
         <a href={`/price-monitor/${product.id}`}>{product.title}</a>
       </TableCell>
+      <TableCell className="font-mono text-sm text-muted-foreground">
+        {product.sku}
+      </TableCell>
       <TableCell>{product.lastCheckedAt.toLocaleDateString()}</TableCell>
       <TableCell>
         <span className="font-bold text-gray-500">

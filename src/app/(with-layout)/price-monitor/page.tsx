@@ -11,29 +11,37 @@ import {
 } from '@/components/ui/table';
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
+import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
 
 export default async function PriceMonitor({
   searchParams,
 }: {
-  searchParams: Promise<{ page: string }>;
+  searchParams: Promise<{ page: string; search?: string }>;
 }) {
-  const { page } = await searchParams;
+  const { page, search } = await searchParams;
   const pageNumber = parseInt(page || '1');
 
-  const { products, total } = await getPriceMonitorProducts(pageNumber);
+  const { products, total } = await getPriceMonitorProducts(pageNumber, search);
   const totalPages = Math.ceil(total / PRICE_MONITOR_PAGE_SIZE);
 
   return (
     <PageContainer>
       <div className="space-y-4">
+        <PriceMonitorSearch />
         <div className="border rounded bg-white">
           <Table>
             <TableCaption>
               A list of products that are being monitored.
+              {search && (
+                <span className="block text-sm text-muted-foreground mt-1">
+                  Showing results for: "{search}"
+                </span>
+              )}
             </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
+                <TableHead>SKU</TableHead>
                 <TableHead>Last Checked</TableHead>
                 <TableHead>Our Price</TableHead>
                 <TableHead>Long and McQuade Price</TableHead>
