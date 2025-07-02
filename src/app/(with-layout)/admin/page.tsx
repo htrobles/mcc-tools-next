@@ -30,14 +30,14 @@ const adminRoutes = [
     path: '/admin/user-management',
     title: 'User Management',
   },
-  {
-    path: '/admin/system-settings',
-    title: 'System Settings',
-  },
-  {
-    path: '/admin/analytics',
-    title: 'Analytics',
-  },
+  // {
+  //   path: '/admin/system-settings',
+  //   title: 'System Settings',
+  // },
+  // {
+  //   path: '/admin/analytics',
+  //   title: 'Analytics',
+  // },
 ];
 
 const AdminCard = ({ path, title }: { path: string; title: string }) => {

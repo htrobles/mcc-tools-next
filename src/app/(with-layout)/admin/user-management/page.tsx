@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { UserActions } from '@/components/userManagement/UserActions';
+import { AddUserButton } from '@/components/userManagement/AddUserButton';
 
 const USERS_PAGE_SIZE = 10;
 
@@ -38,6 +39,10 @@ export default async function UserManagementPage({
   return (
     <PageContainer>
       <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">User Management</h1>
+          <AddUserButton />
+        </div>
         <div className="border rounded bg-white">
           <Table>
             <TableHeader>
