@@ -44,6 +44,46 @@ Confirm password: MySecurePass123!
 The user can now sign in to the application.
 ```
 
+## reset-password.ts
+
+A script to reset passwords for existing users with proper validation.
+
+### Usage
+
+```bash
+npm run reset-password
+```
+
+### Features
+
+- **User Selection**: Interactive list to choose from all existing users
+- **User Information Display**: Shows email, name, and role for each user
+- **Password Requirements**: Enforces the same strong password policies as user creation
+- **Password Confirmation**: Requires password to be entered twice
+- **Secure Hashing**: Uses bcryptjs with 12 salt rounds for password hashing
+- **User-Friendly**: Interactive prompts with clear error messages
+
+### Example Output
+
+```
+=== MCC Tools Password Reset Script ===
+
+? Select a user to reset password: (Use arrow keys)
+❯ user@example.com (John Doe) - USER
+  admin@example.com (Admin User) - ADMIN
+
+? Enter new password: ********
+? Confirm new password: ********
+
+✅ Password reset successfully!
+   User ID: 507f1f77bcf86cd799439011
+   Email: user@example.com
+   Name: John Doe
+   Role: USER
+
+The user can now sign in with their new password.
+```
+
 ### Requirements
 
 - MongoDB database must be running and accessible

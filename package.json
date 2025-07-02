@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-user": "tsx scripts/create-user.ts"
+    "create-user": "tsx scripts/create-user.ts",
+    "reset-password": "tsx scripts/reset-password.ts"
   },
   "dependencies": {
     "@auth/core": "^0.40.0",
