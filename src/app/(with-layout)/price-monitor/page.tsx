@@ -12,6 +12,7 @@ import {
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
+import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
 
 export default async function PriceMonitor({
   searchParams,
@@ -27,7 +28,10 @@ export default async function PriceMonitor({
   return (
     <PageContainer>
       <div className="space-y-4">
-        <PriceMonitorSearch />
+        <div className="flex justify-between">
+          <PriceMonitorSearch />
+          <PriceMonitorAddDropdown />
+        </div>
         <div className="border rounded bg-white">
           <Table>
             <TableCaption>
