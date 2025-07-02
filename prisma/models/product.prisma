@@ -4,6 +4,7 @@ model Product {
     title         String
     price         Float?
     image         String?
+    url           String?
     category      String
     subCategory   String
     brand         String

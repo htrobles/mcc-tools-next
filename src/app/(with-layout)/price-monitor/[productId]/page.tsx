@@ -84,7 +84,7 @@ const ProductCard = ({
       <div className="flex flex-col justify-between grow">
         <div className="grow mb-4">
           {<h3 className="text-base font-bold mb-2">{storeName}</h3>}
-          {isCompetitorProduct && product.url ? (
+          {product.url ? (
             <a className="text-sm" href={product.url as string} target="_blank">
               <p className="leading-4">{product.title || 'N/A'}</p>
             </a>
