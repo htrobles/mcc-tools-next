@@ -9,19 +9,33 @@ import { twMerge } from 'tailwind-merge';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { useMemo } from 'react';
+import { User } from '@prisma/client';
 
-export default function Sidebar() {
+export default function Sidebar({
+  isAdmin,
+  user,
+}: {
+  isAdmin: boolean;
+  user: User;
+}) {
   const pathname = usePathname();
-  const { data: session } = useSession();
-  const isActive = (path: string) => pathname === path;
+
+  const isActive = (path: string) => {
+    // For the home route, only match exact path
+    if (path === '/') {
+      return pathname === '/';
+    }
+    // For other routes, check if pathname starts with the route path
+    return pathname.startsWith(path);
+  };
 
   // Memoize the filtered routes to prevent unnecessary re-renders
   const filteredRoutes = useMemo(() => {
     return routes.slice(1).filter(({ adminOnly }) => {
       // Include route if it's not admin-only or if user is admin
-      return !adminOnly || session?.user?.role === 'ADMIN';
+      return !adminOnly || isAdmin;
     });
-  }, [session?.user?.role]);
+  }, [isAdmin]);
 
   return (
     <div className="w-[250px] border-r bg-gray-50 flex flex-col">
@@ -53,7 +67,7 @@ export default function Sidebar() {
       {/* Authentication section */}
       <div className="p-4 border-t border-gray-200">
         <div className="text-sm text-gray-600 mb-2">
-          {session ? `Logged in as ${session.user?.name}` : 'Loading profile'}
+          {user ? `Logged in as ${user.name}` : 'Loading profile'}
         </div>
         <Button
           variant="outline"
