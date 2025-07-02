@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { UserActions } from '@/components/userManagement/UserActions';
 
-const USERS_PAGE_SIZE = 1;
+const USERS_PAGE_SIZE = 10;
 
 export default async function UserManagementPage({
   searchParams,
