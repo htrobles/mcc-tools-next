@@ -40,7 +40,7 @@ const PriceMonitorSearch = () => {
       <Input
         name="search"
         placeholder="Search product title or SKU..."
-        className="max-w-xs"
+        className="w-52"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />

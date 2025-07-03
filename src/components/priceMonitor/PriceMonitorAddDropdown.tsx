@@ -3,12 +3,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -18,118 +12,88 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-const addProductOptions = [
-  {
-    label: 'Add Single Product',
-    value: 'single-product',
-  },
-  {
-    label: 'Add Multiple Products',
-    value: 'multiple-products',
-  },
-];
+import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
+import addPriceMonitorProducts from '@/lib/priceMonitor/addPriceMonitorProduct';
 
 export default function PriceMonitorAddDropdown() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
-  const [sku, setSku] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const { toast } = useToast();
 
-  const handleSelect = (type: string) => {
-    if (type === 'single-product') {
-      setIsDialogOpen(true);
-    } else if (type === 'multiple-products') {
-      setIsFileDialogOpen(true);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('SKU:', sku);
-    setSku('');
-    setIsDialogOpen(false);
-  };
-
-  const handleCancel = () => {
-    setSku('');
-    setIsDialogOpen(false);
-  };
-
-  const handleFileSubmit = (e: React.FormEvent) => {
+  const handleFileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedFile) {
-      console.log('Selected file:', selectedFile);
-      console.log('File name:', selectedFile.name);
-      console.log('File size:', selectedFile.size);
-      console.log('File type:', selectedFile.type);
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      try {
+        // Simulate progress updates
+        const progressInterval = setInterval(() => {
+          setUploadProgress((prev) => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90;
+            }
+            return prev + 10;
+          });
+        }, 200);
+
+        await addPriceMonitorProducts(selectedFile);
+
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+
+        toast({
+          title: 'Success!',
+          description:
+            'Products have been successfully imported to price monitoring.',
+          variant: 'default',
+        });
+
+        // Reset form after success
+        setTimeout(() => {
+          setSelectedFile(null);
+          setIsFileDialogOpen(false);
+          setIsUploading(false);
+          setUploadProgress(0);
+        }, 1000);
+      } catch (error) {
+        setUploadProgress(0);
+        toast({
+          title: 'Upload Failed',
+          description:
+            error instanceof Error
+              ? error.message
+              : 'Failed to import products. Please try again.',
+          variant: 'destructive',
+        });
+        setIsUploading(false);
+      }
     }
-    setSelectedFile(null);
-    setIsFileDialogOpen(false);
   };
 
   const handleFileCancel = () => {
-    setSelectedFile(null);
-    setIsFileDialogOpen(false);
+    if (!isUploading) {
+      setSelectedFile(null);
+      setIsFileDialogOpen(false);
+      setUploadProgress(0);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setSelectedFile(file);
+    setUploadProgress(0);
   };
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">Add Product/s</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="start">
-          {addProductOptions.map((option) => (
-            <DropdownMenuItem
-              key={option.value}
-              onSelect={() => handleSelect(option.value)}
-            >
-              {option.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Single Product Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Single Product</DialogTitle>
-            <DialogDescription>
-              Enter the SKU of the product you want to add to price monitoring.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="sku" className="text-right">
-                  SKU
-                </Label>
-                <Input
-                  id="sku"
-                  value={sku}
-                  onChange={(e) => setSku(e.target.value)}
-                  className="col-span-3"
-                  placeholder="Enter product SKU"
-                  required
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button type="submit">Add Product</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <Button variant="outline" onClick={() => setIsFileDialogOpen(true)}>
+        Add Products
+      </Button>
 
       {/* Multiple Products File Upload Dialog */}
       <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
@@ -154,6 +118,7 @@ export default function PriceMonitorAddDropdown() {
                   className="col-span-3"
                   accept=".csv"
                   required
+                  disabled={isUploading}
                 />
               </div>
               {selectedFile && (
@@ -162,17 +127,29 @@ export default function PriceMonitorAddDropdown() {
                   {(selectedFile.size / 1024).toFixed(2)} KB)
                 </div>
               )}
+
+              {/* Progress Bar */}
+              {isUploading && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Uploading...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <Progress value={uploadProgress} className="w-full" />
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleFileCancel}
+                disabled={isUploading}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!selectedFile}>
-                Upload File
+              <Button type="submit" disabled={!selectedFile || isUploading}>
+                {isUploading ? 'Uploading...' : 'Upload File'}
               </Button>
             </DialogFooter>
           </form>
