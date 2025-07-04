@@ -1,18 +1,10 @@
 import PageContainer from '@/components/PageContainer';
-import PriceMonitorTableRow from '@/components/priceMonitor/PriceMonitorTableRow';
 import { PriceMonitorPagination } from '@/components/priceMonitor/PriceMonitorPagination';
-import {
-  Table,
-  TableCaption,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
 import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
+import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
 
 export default async function PriceMonitor({
   searchParams,
@@ -32,33 +24,8 @@ export default async function PriceMonitor({
           <PriceMonitorSearch />
           <PriceMonitorAddDropdown />
         </div>
-        <div className="border rounded bg-white">
-          <Table>
-            <TableCaption>
-              A list of products that are being monitored.
-              {search && (
-                <span className="block text-sm text-muted-foreground mt-1">
-                  Showing results for: "{search}"
-                </span>
-              )}
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Last Checked</TableHead>
-                <TableHead>Our Price</TableHead>
-                <TableHead>Long and McQuade Price</TableHead>
-                <TableHead>RedOne Music Price</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => (
-                <PriceMonitorTableRow key={product.id} product={product} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+
+        <PriceMonitorClient products={products} search={search} />
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between">

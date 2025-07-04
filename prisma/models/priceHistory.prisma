@@ -1,9 +1,11 @@
 model PriceHistory {
-    id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-    competitorProductId String   @db.ObjectId
-    price               Float
-    isInStock           Boolean  @default(true)
-    checkedAt           DateTime @default(now())
+    id                  String @id @default(auto()) @map("_id") @db.ObjectId
+    competitorProductId String @db.ObjectId
+    productId           String @db.ObjectId
+
+    price     Float
+    isInStock Boolean  @default(true)
+    checkedAt DateTime @default(now())
 
     competitorProduct CompetitorProduct @relation(fields: [competitorProductId], references: [id])
 }
