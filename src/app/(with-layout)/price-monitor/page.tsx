@@ -5,6 +5,7 @@ import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProdu
 import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
 import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
+import Link from 'next/link';
 
 export default async function PriceMonitor({
   searchParams,
@@ -20,9 +21,14 @@ export default async function PriceMonitor({
   return (
     <PageContainer>
       <div className="space-y-4">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <PriceMonitorSearch />
-          <PriceMonitorAddDropdown />
+          <div className="flex gap-4 items-center">
+            <Link href="/price-monitor/imports" className="text-sm">
+              Product Imports
+            </Link>
+            <PriceMonitorAddDropdown />
+          </div>
         </div>
 
         <PriceMonitorClient products={products} search={search} />

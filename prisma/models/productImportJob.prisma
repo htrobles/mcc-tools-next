@@ -1,0 +1,18 @@
+model ProductImportJob {
+    id                String          @id @default(auto()) @map("_id") @db.ObjectId
+    filename          String?
+    status            ImportJobStatus @default(PENDING)
+    error             String?
+    totalProducts     Int?
+    processedProducts Int             @default(0)
+    failedProducts    Int             @default(0)
+    failedProductSkus String[]
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @default(now()) @updatedAt
+}
+
+enum ImportJobStatus {
+    PENDING
+    SUCCESS
+    ERROR
+}
