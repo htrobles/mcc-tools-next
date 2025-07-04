@@ -135,7 +135,7 @@ const PriceMonitorClient = ({ products, search }: PriceMonitorClientProps) => {
                   </TableCell>
                   <TableCell>
                     <span className="font-bold text-gray-500">
-                      ${product.price?.toFixed(2)}
+                      {product.price ? `$${product.price?.toFixed(2)}` : 'N/A'}
                     </span>
                   </TableCell>
                   <TableCell>

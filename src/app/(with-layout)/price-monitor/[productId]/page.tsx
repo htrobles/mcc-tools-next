@@ -7,6 +7,7 @@ import { CompetitorProduct } from '@prisma/client';
 import Image from 'next/image';
 import { getStoreName } from '@/lib/priceMonitor/getStoreName';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';
+import { formatPrice } from '@/lib/utils';
 
 const PriceMonitorProductPage = async ({
   params,
@@ -94,9 +95,7 @@ const ProductCard = ({
             </p>
           )}
         </div>
-        <h3 className={priceColor}>
-          {product.price ? ` $${product.price?.toFixed(2)}` : 'N/A'}
-        </h3>
+        <h3 className={priceColor}>{formatPrice(product.price)}</h3>
       </div>
     </div>
   );

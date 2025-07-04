@@ -22,7 +22,7 @@ const CompetitorPrice = ({
         isPriceMissing && 'text-gray-500'
       )}
     >
-      ${competitorPrice ? competitorPrice.toFixed(2) : 'N/A'}
+      {competitorPrice ? `$${competitorPrice.toFixed(2)}` : 'N/A'}
     </span>
   );
 };
