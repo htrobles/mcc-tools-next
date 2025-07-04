@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import addPriceMonitorProducts from '@/lib/priceMonitor/addPriceMonitorProduct';
+import { useRouter } from 'next/navigation';
 
 export default function PriceMonitorAddDropdown() {
   const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function PriceMonitorAddDropdown() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleFileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +61,8 @@ export default function PriceMonitorAddDropdown() {
           setIsFileDialogOpen(false);
           setIsUploading(false);
           setUploadProgress(0);
+          // Refresh the page to show the newly added products
+          router.refresh();
         }, 1000);
       } catch (error) {
         setUploadProgress(0);

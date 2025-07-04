@@ -26,7 +26,7 @@ const PriceMonitorProductPage = async ({
       <div>
         <PriceMonitorProductHeader title={product.title} />
         <p className="text-sm text-gray-500">
-          Last checked at {product?.lastCheckedAt.toLocaleDateString()}
+          Last checked at {product?.lastCheckedAt.toLocaleString()}
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1">
