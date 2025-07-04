@@ -39,6 +39,8 @@ export default function SupplierMasterFeedPage() {
 
       await Promise.all(
         files.map(async (file) => {
+          console.log(`Processing ${file.vendor} file`);
+
           if (file.name.endsWith('.inventory')) {
             skus.push(...(await processSupplyFeedInventoryFile(file)));
           }
