@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 
 import db from '@/lib/db';
-import { Role } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient, Role } from '@prisma/client';
 import inquirer from 'inquirer';
+import bcrypt from 'bcryptjs';
 
 async function validateEmail(email: string): Promise<boolean> {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
