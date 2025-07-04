@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import PageContainer from '@/components/PageContainer';
 import Image from 'next/image';
 import mccLogo from '/public/mcc-logo.png';
 
@@ -39,6 +38,7 @@ export default function SignIn() {
         window.location.href = '/';
       }
     } catch (error) {
+      console.error(error);
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);

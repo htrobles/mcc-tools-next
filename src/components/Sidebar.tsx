@@ -6,7 +6,7 @@ import mccLogo from '/public/mcc-logo.png';
 import routes from '@/constants/routes';
 import { usePathname } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import { useSession, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { useMemo } from 'react';
 import { User } from '@prisma/client';

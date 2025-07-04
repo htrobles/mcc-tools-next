@@ -74,7 +74,7 @@ export function UpdateUserDialog({
       });
       onUserUpdated();
       onOpenChange(false);
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -109,8 +109,8 @@ export function UpdateUserDialog({
         <DialogHeader>
           <DialogTitle>Update User</DialogTitle>
           <DialogDescription>
-            Make changes to the user information here. Click save when you're
-            done.
+            Make changes to the user information here. Click save when
+            you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

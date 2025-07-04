@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import PageContainer from '@/components/PageContainer';
-import PageHeader from '@/components/PageHeader';
 import Link from 'next/link';
 
 export default async function AdminPage() {

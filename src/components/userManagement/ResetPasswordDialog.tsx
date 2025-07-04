@@ -88,7 +88,7 @@ export function ResetPasswordDialog({
         title: 'Success',
         description: 'Password has been reset successfully',
       });
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -110,7 +110,7 @@ export function ResetPasswordDialog({
 
       // Reset copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

@@ -12,10 +12,8 @@ import {
   TableRow,
   TableCell,
 } from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
 import CompetitorPrice from './CompetitorPrice';
-import { Trash2, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
 
@@ -24,12 +22,9 @@ interface PriceMonitorClientProps {
   search?: string;
 }
 
-const PriceMonitorClient = ({ products, search }: PriceMonitorClientProps) => {
+const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteProgress, setDeleteProgress] = useState(0);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { toast } = useToast();
   const router = useRouter();
 
   const handleProductSelect = (productId: string, checked: boolean) => {

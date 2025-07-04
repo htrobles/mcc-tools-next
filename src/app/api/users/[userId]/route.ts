@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 
 export async function PATCH(
   request: NextRequest,
@@ -43,7 +43,7 @@ export async function PATCH(
     }
 
     // Prepare update data - only allow role changes for admins
-    const updateData: any = {
+    const updateData: Prisma.UserUpdateInput = {
       name: name || null,
       email,
     };

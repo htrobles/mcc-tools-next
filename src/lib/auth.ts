@@ -4,6 +4,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth from 'next-auth';
 import bcrypt from 'bcryptjs';
 import db from './db';
+import type { Session, User } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(db),
@@ -14,14 +16,16 @@ export const authConfig: NextAuthConfig = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials: any) {
+      async authorize(
+        credentials: Partial<Record<'email' | 'password', unknown>>
+      ) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
         // Find user by email
         const user = await db.user.findUnique({
-          where: { email: credentials.email },
+          where: { email: credentials.email as string },
         });
 
         if (!user || !user.password) {
@@ -30,7 +34,7 @@ export const authConfig: NextAuthConfig = {
 
         // Compare password with hashed password
         const isPasswordValid = await bcrypt.compare(
-          credentials.password,
+          credentials.password as string,
           user.password
         );
 
@@ -51,16 +55,16 @@ export const authConfig: NextAuthConfig = {
     signIn: '/auth/signin',
   },
   callbacks: {
-    session: async ({ session, token }: { session: any; token: any }) => {
+    session: async ({ session, token }: { session: Session; token: JWT }) => {
       if (session?.user && token?.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
       }
       return session;
     },
-    jwt: async ({ user, token }: { user: any; token: any }) => {
+    jwt: async ({ user, token }: { user?: User; token: JWT }) => {
       if (user) {
-        token.uid = user.id;
+        token.uid = user.id as string;
         token.role = user.role;
       }
       return token;
