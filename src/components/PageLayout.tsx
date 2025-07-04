@@ -21,13 +21,13 @@ export default function PageLayout({ children }: PageLayoutProps) {
       <div className="border-b p-5 mb-5">
         <p>{pageData?.description}</p>
       </div>
-      <div className="container mx-auto p-5 lg:px-14">{children}</div>
+      {children}
     </>
   );
 }
 
 const getPageDetails = (pathName: string) => {
-  const pathKey = pathName.split('/')[1];
+  const pathKey = pathName.split('/')[1] || 'home';
 
   const pageDetails = routes.find(({ key }) => key === pathKey);
 

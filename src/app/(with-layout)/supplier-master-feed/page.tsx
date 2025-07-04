@@ -2,7 +2,7 @@
 
 import { FileList } from '@/components/FileList';
 import FileUpload from '@/components/FileUpload';
-import PageLayout from '@/components/PageLayout';
+import PageContainer from '@/components/PageContainer';
 import { Button } from '@/components/ui/button';
 import { VendorKey } from '@/constants/vendors';
 import { useToast } from '@/hooks/use-toast';
@@ -160,10 +160,10 @@ export default function SupplierMasterFeedPage() {
   );
 
   return (
-    <PageLayout>
-      <div className='mb-5 space-y-2'>
+    <PageContainer>
+      <div className="mb-5 space-y-2">
         <h4>Instructions:</h4>
-        <ol className='list-decimal ml-10'>
+        <ol className="list-decimal ml-10">
           <li>
             <p>
               Add files you wish to process by clicking the file dropzone or
@@ -181,20 +181,20 @@ export default function SupplierMasterFeedPage() {
               If you wish to create a file to delete supplier tags from products
               that are not part of the list.
             </p>
-            <ol className='list-disc ml-10'>
+            <ol className="list-disc ml-10">
               <li>Import the previous master supply feed file.</li>
               <li>Click Generate Delete File</li>
             </ol>
           </li>
         </ol>
-        <p className='text-sm italic'>
+        <p className="text-sm italic">
           If there are other brands that you want to exclude, please contact
           admin to update the excluded brands list.
         </p>
       </div>
-      <div className='space-y-5'>
+      <div className="space-y-5">
         <FileUpload addFiles={handleAddFiles} multiple />
-        <div className='border rounded bg-white'>
+        <div className="border rounded bg-white">
           <FileList
             files={files}
             onDeleteFile={deleteFile}
@@ -203,26 +203,26 @@ export default function SupplierMasterFeedPage() {
             onTestFile={handleClickTestFile}
           />
         </div>
-        <div className='flex justify-end gap-2'>
-          <Button onClick={clearFiles} size='lg' variant='outline'>
+        <div className="flex justify-end gap-2">
+          <Button onClick={clearFiles} size="lg" variant="outline">
             Clear
           </Button>
           <Button
-            variant='outline'
+            variant="outline"
             onClick={() => handleClickProcess('delete')}
-            size='lg'
+            size="lg"
           >
             Generate Delete File
           </Button>
           <Button
-            variant='default'
+            variant="default"
             onClick={() => handleClickProcess('add')}
-            size='lg'
+            size="lg"
           >
             Generate Supplies Feed File
           </Button>
         </div>
       </div>
-    </PageLayout>
+    </PageContainer>
   );
 }

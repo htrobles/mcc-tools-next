@@ -1,4 +1,19 @@
-const routes = [
+interface Route {
+  key: string;
+  path: string;
+  title: string;
+  description: string;
+  adminOnly?: boolean;
+}
+
+const routes: Route[] = [
+  {
+    key: 'home',
+    path: '/',
+    title: 'Welcome to Music City Canada Tools',
+    description:
+      'This app provides a set of tools to manage our store easier and faster.',
+  },
   {
     key: 'supplier-master-feed',
     path: '/supplier-master-feed',
@@ -18,6 +33,19 @@ const routes = [
     title: 'Product Update',
     description:
       'This tool is used to update products that have the update tags',
+  },
+  {
+    key: 'price-monitor',
+    path: '/price-monitor',
+    title: 'Price Monitor',
+    description: 'This tool is used to monitor competitor product prices',
+  },
+  {
+    key: 'admin',
+    path: '/admin',
+    title: 'Admin Panel',
+    description: 'Administrative tools and settings',
+    adminOnly: true,
   },
 ];
 

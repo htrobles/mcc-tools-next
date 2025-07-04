@@ -1,0 +1,22 @@
+model CompetitorProduct {
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
+    productId     String   @db.ObjectId
+    title         String?
+    url           String?
+    image         String?
+    price         Float?
+    isInStock     Boolean  @default(false)
+    lastCheckedAt DateTime @default(now())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    store         Store
+
+    product      Product        @relation(fields: [productId], references: [id])
+    priceHistory PriceHistory[]
+}
+
+enum Store {
+    LM
+    REDONE
+    AMAZON
+}

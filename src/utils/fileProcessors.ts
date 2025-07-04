@@ -1,6 +1,6 @@
 import { FileObj } from '@/types/fileTypes';
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { Parser } from '@json2csv/plainjs';
 
 export const readInventoryFile = (file: File): Promise<string> => {
@@ -52,27 +52,38 @@ export const readExcelFile = (
 ): Promise<string[][]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const binaryStr = e.target?.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
+    reader.onload = async (e) => {
+      try {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(arrayBuffer);
 
-      const sheetData: unknown[] = [];
+        const sheetData: string[][] = [];
 
-      sheetIndexes.forEach((sheetIndex, i) => {
-        const sheetName = workbook.SheetNames[sheetIndex];
-        const worksheet = workbook.Sheets[sheetName];
-        let jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: 1,
-          rawNumbers: true,
-        });
+        for (let i = 0; i < sheetIndexes.length; i++) {
+          const sheetIndex = sheetIndexes[i];
+          const worksheet = workbook.worksheets[sheetIndex];
 
-        if (i !== 0) {
-          jsonData = jsonData.slice(1);
+          if (!worksheet) {
+            throw new Error(`Sheet at index ${sheetIndex} not found`);
+          }
+
+          const rows: string[][] = [];
+          worksheet.eachRow((row, rowNumber) => {
+            if (i === 0 || rowNumber > 1) {
+              // Skip header row for subsequent sheets
+              const rowData = row.values as string[];
+              rows.push(rowData.slice(1)); // Remove the first element (undefined) and convert to string[]
+            }
+          });
+
+          sheetData.push(...rows);
         }
 
-        sheetData.push(...jsonData);
-      });
-      resolve(sheetData as string[][]);
+        resolve(sheetData);
+      } catch (error) {
+        reject(error);
+      }
     };
     reader.onerror = (error) => reject(error);
     reader.readAsArrayBuffer(file);

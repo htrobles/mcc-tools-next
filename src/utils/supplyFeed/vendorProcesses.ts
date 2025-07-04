@@ -10,7 +10,7 @@ export function processFenderFile(content: string[][], test = false) {
   if (!lines?.length) return [];
 
   const products = lines.reduce((prev, line) => {
-    const availability = line[16];
+    const availability = line[16].trim();
     const sku = line[1].toString();
     const brand = line[6];
 

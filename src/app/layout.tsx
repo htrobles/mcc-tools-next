@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
-import moment from 'moment';
 import { Toaster } from '@/components/ui/toaster';
+import AuthProvider from '@/components/AuthProvider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -31,18 +30,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
       >
-        <div className="flex flex-1 overflow-hidden bg-gray-50">
-          <Sidebar />
-          <div className="w-full overflow-auto">
-            {/* <PageHeader /> */}
-            {children}
-          </div>
-        </div>
-        <footer className="bg-black text-white p-4">
-          © {moment().format('YYYY')} Music City Canada | Developed and
-          maintained by Hector Robles
-        </footer>
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );
