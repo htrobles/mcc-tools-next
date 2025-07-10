@@ -1,10 +1,12 @@
 'use server';
 
-const HOST = process.env.MONITOR_PRICE_APP_HOST;
+const HOST = process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST;
 
 export default async function deletePriceMonitorProducts(productIds: string[]) {
   if (!HOST) {
-    throw new Error('MONITOR_PRICE_APP_HOST environment variable is not set');
+    throw new Error(
+      'NEXT_PUBLIC_MONITOR_PRICE_APP_HOST environment variable is not set'
+    );
   }
 
   if (!productIds?.length) {
@@ -12,7 +14,6 @@ export default async function deletePriceMonitorProducts(productIds: string[]) {
   }
 
   try {
-    // Try the bulk delete endpoint first
     const response = await fetch(`${HOST}/api/products`, {
       method: 'DELETE',
       headers: {
@@ -22,9 +23,6 @@ export default async function deletePriceMonitorProducts(productIds: string[]) {
     });
 
     if (!response.ok) {
-      // If bulk delete fails, try individual deletes
-      console.log('Bulk delete failed, trying individual deletes...');
-
       const deletePromises = productIds.map(async (productId) => {
         const individualResponse = await fetch(
           `${HOST}/api/products/${productId}`,

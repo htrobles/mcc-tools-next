@@ -20,7 +20,7 @@ interface ProductImportJobsTableProps {
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
     case 'SUCCESS':
-      return 'default';
+      return 'success';
     case 'PENDING':
       return 'secondary';
     case 'ERROR':

@@ -5,9 +5,11 @@ export default async function addPriceMonitorProducts(file: File) {
     throw new Error('No file provided');
   }
 
-  const host = process.env.MONITOR_PRICE_APP_HOST;
+  const host = process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST;
   if (!host) {
-    throw new Error('MONITOR_PRICE_APP_HOST environment variable is not set');
+    throw new Error(
+      'NEXT_PUBLIC_MONITOR_PRICE_APP_HOST environment variable is not set'
+    );
   }
 
   try {

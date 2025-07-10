@@ -14,5 +14,6 @@ model ProductImportJob {
 enum ImportJobStatus {
     PENDING
     SUCCESS
+    PARTIAL_SUCCESS
     ERROR
 }

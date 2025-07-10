@@ -1,4 +1,5 @@
 import PageContainer from '@/components/PageContainer';
+import PriceImportProgressCard from '@/components/priceMonitor/PriceImportProgressCard';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -8,16 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import db from '@/lib/db';
-import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
+import { notFound } from 'next/navigation';
 
 const JobImportDetailsPage = async ({
   params,
 }: {
-  params: { jobId: string };
+  params: Promise<{ jobId: string }>;
 }) => {
   const { jobId } = await params;
 
@@ -27,14 +26,10 @@ const JobImportDetailsPage = async ({
     },
   });
 
-  if (!job) {
-    return notFound();
-  }
-
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return 'default';
+        return 'success';
       case 'ERROR':
         return 'destructive';
       case 'PENDING':
@@ -44,23 +39,9 @@ const JobImportDetailsPage = async ({
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'SUCCESS':
-        return 'text-green-600';
-      case 'ERROR':
-        return 'text-red-600';
-      case 'PENDING':
-        return 'text-yellow-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
-
-  const calculateProgress = () => {
-    if (!job.totalProducts || job.totalProducts === 0) return 0;
-    return Math.round(((job.processedProducts || 0) / job.totalProducts) * 100);
-  };
+  if (!job) {
+    return notFound();
+  }
 
   return (
     <PageContainer>
@@ -97,7 +78,7 @@ const JobImportDetailsPage = async ({
                     Created
                   </p>
                   <p className="text-sm">
-                    {format(job.createdAt, 'MMM dd, yyyy HH:mm')}
+                    {format(new Date(job.createdAt), 'MMM dd, yyyy HH:mm')}
                   </p>
                 </div>
                 <div>
@@ -105,7 +86,7 @@ const JobImportDetailsPage = async ({
                     Updated
                   </p>
                   <p className="text-sm">
-                    {format(job.updatedAt, 'MMM dd, yyyy HH:mm')}
+                    {format(new Date(job.updatedAt), 'MMM dd, yyyy HH:mm')}
                   </p>
                 </div>
                 <div>
@@ -114,7 +95,9 @@ const JobImportDetailsPage = async ({
                   </p>
                   <p className="text-sm">
                     {Math.round(
-                      (job.updatedAt.getTime() - job.createdAt.getTime()) / 1000
+                      (new Date(job.updatedAt).getTime() -
+                        new Date(job.createdAt).getTime()) /
+                        1000
                     )}
                     s
                   </p>
@@ -124,48 +107,7 @@ const JobImportDetailsPage = async ({
           </Card>
 
           {/* Progress Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Processing Progress</CardTitle>
-              <CardDescription>
-                Current progress of the import job
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Progress</span>
-                  <span>{calculateProgress()}%</span>
-                </div>
-                <Progress value={calculateProgress()} className="h-2" />
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {job.totalProducts || 0}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Total Products
-                  </p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-green-600">
-                    {job.processedProducts || 0}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Processed</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-red-600">
-                    {job.failedProducts || 0}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Failed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PriceImportProgressCard job={job} />
         </div>
 
         {/* Error Details */}
