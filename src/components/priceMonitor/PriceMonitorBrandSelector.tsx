@@ -1,0 +1,72 @@
+'use client';
+
+import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { useState } from 'react';
+import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+
+export default function PriceMonitorBrandSelector() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
+  const { brands, loading } = usePriceMonitorAdvancedSearch();
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+          disabled={loading}
+        >
+          {value ? brands.find((brand) => brand === value) : 'Filter by brand'}
+          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search brand..." />
+          <CommandList>
+            <CommandEmpty>No brands found.</CommandEmpty>
+            <CommandGroup>
+              {brands.map((brand) => (
+                <CommandItem
+                  key={brand}
+                  value={brand}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? '' : currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  <CheckIcon
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      value === brand ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                  {brand}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

@@ -6,6 +6,11 @@ import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
 import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import PriceMonitorBrandSelector from '@/components/priceMonitor/PriceMonitorBrandSelector';
+import PriceMonitorCategorySelector from '@/components/priceMonitor/PriceMonitorCategorySelector';
+import PriceMonitorHeader from '@/components/priceMonitor/PriceMonitorHeader';
+import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
 
 export default async function PriceMonitor({
   searchParams,
@@ -20,33 +25,26 @@ export default async function PriceMonitor({
 
   return (
     <PageContainer>
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <PriceMonitorSearch />
-          <div className="flex gap-4 items-center">
-            <Link href="/price-monitor/imports" className="text-sm">
-              Product Imports
-            </Link>
-            <PriceMonitorAddDropdown />
-          </div>
-        </div>
+      <ProductMonitorAdvancedSearchContextProvider>
+        <div className="space-y-4">
+          <PriceMonitorHeader />
+          <PriceMonitorClient products={products} search={search} />
 
-        <PriceMonitorClient products={products} search={search} />
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {(pageNumber - 1) * PRICE_MONITOR_PAGE_SIZE + 1} to{' '}
-              {Math.min(pageNumber * PRICE_MONITOR_PAGE_SIZE, total)} of {total}{' '}
-              results
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Showing {(pageNumber - 1) * PRICE_MONITOR_PAGE_SIZE + 1} to{' '}
+                {Math.min(pageNumber * PRICE_MONITOR_PAGE_SIZE, total)} of{' '}
+                {total} results
+              </div>
+              <PriceMonitorPagination
+                currentPage={pageNumber}
+                totalPages={totalPages}
+              />
             </div>
-            <PriceMonitorPagination
-              currentPage={pageNumber}
-              totalPages={totalPages}
-            />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ProductMonitorAdvancedSearchContextProvider>
     </PageContainer>
   );
 }

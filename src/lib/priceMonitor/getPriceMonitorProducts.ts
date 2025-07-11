@@ -6,7 +6,9 @@ import { PRICE_MONITOR_PAGE_SIZE } from './constants';
 
 export async function getPriceMonitorProducts(
   page: number,
-  search?: string
+  search?: string,
+  brand?: string,
+  category?: string
 ): Promise<{ products: PriceMonitorProduct[]; total: number }> {
   const whereClause = search
     ? {
@@ -28,7 +30,11 @@ export async function getPriceMonitorProducts(
     : {};
 
   const products = await db.product.findMany({
-    where: whereClause,
+    where: {
+      ...whereClause,
+      brand: brand ? { equals: brand } : undefined,
+      category: category ? { equals: category } : undefined,
+    },
     skip: (page - 1) * PRICE_MONITOR_PAGE_SIZE,
     take: PRICE_MONITOR_PAGE_SIZE,
     include: {

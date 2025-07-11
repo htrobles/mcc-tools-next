@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import addPriceMonitorProducts from '@/lib/priceMonitor/addPriceMonitorProduct';
+import addPriceMonitorProducts from '@/lib/priceMonitor/addPriceMonitorProducts';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, Clock } from 'lucide-react';
 
@@ -48,12 +48,14 @@ export default function PriceMonitorAddDropdown({ label }: { label?: string }) {
 
         const result = await addPriceMonitorProducts(selectedFile);
 
+        console.log(result);
+
         clearInterval(progressInterval);
         setUploadProgress(100);
 
         // Store the job ID if returned
-        if (result && result.jobId) {
-          setJobId(result.jobId);
+        if (result && result.id) {
+          setJobId(result.id);
         }
 
         setUploadSuccess(true);
@@ -96,11 +98,11 @@ export default function PriceMonitorAddDropdown({ label }: { label?: string }) {
     }
   };
 
-  const handleViewJobs = () => {
+  const handleViewJob = () => {
     setIsFileDialogOpen(false);
     setUploadSuccess(false);
     setJobId(null);
-    router.push('/price-monitor/imports');
+    router.push(`/price-monitor/imports/${jobId}`);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,8 +221,8 @@ export default function PriceMonitorAddDropdown({ label }: { label?: string }) {
               >
                 Close
               </Button>
-              <Button type="button" onClick={handleViewJobs}>
-                View Import Jobs
+              <Button type="button" onClick={handleViewJob}>
+                View Import Job
               </Button>
             </DialogFooter>
           )}
