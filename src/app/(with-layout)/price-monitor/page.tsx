@@ -15,13 +15,27 @@ import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/cont
 export default async function PriceMonitor({
   searchParams,
 }: {
-  searchParams: Promise<{ page: string; search?: string }>;
+  searchParams: Promise<{
+    page: string;
+    search?: string;
+    brand?: string;
+    category?: string;
+  }>;
 }) {
-  const { page, search } = await searchParams;
+  const { page, search, brand, category } = await searchParams;
   const pageNumber = parseInt(page || '1');
 
-  const { products, total } = await getPriceMonitorProducts(pageNumber, search);
-  const totalPages = Math.ceil(total / PRICE_MONITOR_PAGE_SIZE);
+  const { products, total, totalPages, hasNextPage, hasPreviousPage } =
+    await getPriceMonitorProducts({
+      page: pageNumber,
+      search,
+      brand,
+      category,
+    });
+
+  // Calculate display range
+  const startItem = (pageNumber - 1) * PRICE_MONITOR_PAGE_SIZE + 1;
+  const endItem = Math.min(pageNumber * PRICE_MONITOR_PAGE_SIZE, total);
 
   return (
     <PageContainer>
@@ -33,9 +47,7 @@ export default async function PriceMonitor({
           {totalPages > 1 && (
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                Showing {(pageNumber - 1) * PRICE_MONITOR_PAGE_SIZE + 1} to{' '}
-                {Math.min(pageNumber * PRICE_MONITOR_PAGE_SIZE, total)} of{' '}
-                {total} results
+                Showing {startItem} to {endItem} of {total} results
               </div>
               <PriceMonitorPagination
                 currentPage={pageNumber}

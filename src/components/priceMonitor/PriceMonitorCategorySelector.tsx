@@ -22,8 +22,8 @@ import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/Price
 
 export default function PriceMonitorCategorySelector() {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
-  const { categories, loading } = usePriceMonitorAdvancedSearch();
+  const { categories, loading, selectedCategory, setSelectedCategory } =
+    usePriceMonitorAdvancedSearch();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,8 +35,8 @@ export default function PriceMonitorCategorySelector() {
           className="w-[200px] justify-between"
           disabled={loading}
         >
-          {value
-            ? categories.find((category) => category === value)
+          {selectedCategory
+            ? categories.find((category) => category === selectedCategory)
             : 'Filter by category'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -52,14 +52,16 @@ export default function PriceMonitorCategorySelector() {
                   key={category}
                   value={category}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
+                    setSelectedCategory(currentValue);
                     setOpen(false);
                   }}
                 >
                   <CheckIcon
                     className={cn(
                       'mr-2 h-4 w-4',
-                      value === category ? 'opacity-100' : 'opacity-0'
+                      selectedCategory === category
+                        ? 'opacity-100'
+                        : 'opacity-0'
                     )}
                   />
                   {category}

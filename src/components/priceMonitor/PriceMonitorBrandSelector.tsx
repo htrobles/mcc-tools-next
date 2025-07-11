@@ -22,8 +22,8 @@ import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/Price
 
 export default function PriceMonitorBrandSelector() {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
-  const { brands, loading } = usePriceMonitorAdvancedSearch();
+  const { brands, loading, selectedBrand, setSelectedBrand } =
+    usePriceMonitorAdvancedSearch();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,7 +35,9 @@ export default function PriceMonitorBrandSelector() {
           className="w-[200px] justify-between"
           disabled={loading}
         >
-          {value ? brands.find((brand) => brand === value) : 'Filter by brand'}
+          {selectedBrand
+            ? brands.find((brand) => brand === selectedBrand)
+            : 'Filter by brand'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -50,14 +52,14 @@ export default function PriceMonitorBrandSelector() {
                   key={brand}
                   value={brand}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
+                    setSelectedBrand(currentValue);
                     setOpen(false);
                   }}
                 >
                   <CheckIcon
                     className={cn(
                       'mr-2 h-4 w-4',
-                      value === brand ? 'opacity-100' : 'opacity-0'
+                      selectedBrand === brand ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                   {brand}

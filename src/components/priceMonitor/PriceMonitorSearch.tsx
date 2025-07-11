@@ -5,35 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Search } from 'lucide-react';
+import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
 
 const PriceMonitorSearch = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams(searchParams);
-
-    if (search.trim()) {
-      params.set('search', search.trim());
-    } else {
-      params.delete('search');
-    }
-
-    // Reset to page 1 when searching
-    params.delete('page');
-
-    router.push(`/price-monitor?${params.toString()}`);
-  };
-
-  const handleClear = () => {
-    setSearch('');
-    const params = new URLSearchParams(searchParams);
-    params.delete('search');
-    params.delete('page');
-    router.push(`/price-monitor?${params.toString()}`);
-  };
+  const { search, setSearch, handleSearch, handleClearSearch } =
+    usePriceMonitorAdvancedSearch();
 
   return (
     <form onSubmit={handleSearch} className="flex gap-2">
@@ -48,7 +24,7 @@ const PriceMonitorSearch = () => {
         <Search size={14} /> <span>Search</span>
       </Button>
       {search && (
-        <Button type="button" variant="outline" onClick={handleClear}>
+        <Button type="button" variant="outline" onClick={handleClearSearch}>
           Clear
         </Button>
       )}
