@@ -4,7 +4,7 @@ import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
 import PriceMonitorHeader from '@/components/priceMonitor/PriceMonitorHeader';
-import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
+import PriceMonitorSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 export default async function PriceMonitor({
   searchParams,
@@ -14,9 +14,11 @@ export default async function PriceMonitor({
     search?: string;
     brand?: string;
     category?: string;
+    withCompetitorPricesOnly?: string;
   }>;
 }) {
-  const { page, search, brand, category } = await searchParams;
+  const { page, search, brand, category, withCompetitorPricesOnly } =
+    await searchParams;
   const pageNumber = parseInt(page || '1');
 
   const { products, total, totalPages } = await getPriceMonitorProducts({
@@ -24,6 +26,7 @@ export default async function PriceMonitor({
     search,
     brand,
     category,
+    withCompetitorPricesOnly: withCompetitorPricesOnly === 'true',
   });
 
   // Calculate display range
@@ -32,7 +35,7 @@ export default async function PriceMonitor({
 
   return (
     <PageContainer>
-      <ProductMonitorAdvancedSearchContextProvider>
+      <PriceMonitorSearchContextProvider>
         <div className="space-y-4">
           <PriceMonitorHeader />
           <PriceMonitorClient products={products} search={search} />
@@ -49,7 +52,7 @@ export default async function PriceMonitor({
             </div>
           )}
         </div>
-      </ProductMonitorAdvancedSearchContextProvider>
+      </PriceMonitorSearchContextProvider>
     </PageContainer>
   );
 }

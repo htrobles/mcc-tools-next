@@ -11,6 +11,7 @@ export interface PriceMonitorSearchParams {
   search?: string;
   brand?: string;
   category?: string;
+  withCompetitorPricesOnly?: boolean;
 }
 
 export interface PriceMonitorProductsResult {
@@ -44,7 +45,7 @@ function validateSearchParams(params: PriceMonitorSearchParams): void {
 function buildWhereClause(
   params: PriceMonitorSearchParams
 ): Prisma.ProductWhereInput {
-  const { search, brand, category } = params;
+  const { search, brand, category, withCompetitorPricesOnly } = params;
 
   const whereClause: Prisma.ProductWhereInput = {};
 
@@ -75,6 +76,10 @@ function buildWhereClause(
   // Add category filter
   if (category?.trim()) {
     whereClause.category = { equals: category.trim() };
+  }
+
+  if (withCompetitorPricesOnly) {
+    whereClause.competitorsHavePrice = true;
   }
 
   return whereClause;

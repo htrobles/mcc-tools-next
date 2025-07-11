@@ -38,9 +38,6 @@ export default function PriceMonitorSearchContextProvider({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(
-    !!searchParams.size
-  );
   const [categories, setCategories] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,6 +72,12 @@ export default function PriceMonitorSearchContextProvider({
       params.set('category', selectedCategory);
     } else {
       params.delete('category');
+    }
+
+    if (withCompetitorPricesOnly) {
+      params.set('withCompetitorPricesOnly', 'true');
+    } else {
+      params.delete('withCompetitorPricesOnly');
     }
 
     // Reset to page 1 when searching
