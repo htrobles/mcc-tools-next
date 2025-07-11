@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 import { ImportJobStatus, ProductImportJob } from '@prisma/client';
 
 const socket = io(process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST);
@@ -35,9 +35,10 @@ export function useProductImportProgress(job: ProductImportJob) {
       return;
     }
 
-    // Handler for progress updates
-    const handleProgress = (data: any) => {
-      if (data?.error) {
+    const handleProgress = (
+      data: ProductImportJobProgress & { error?: string }
+    ) => {
+      if (data && typeof data.error === 'string') {
         setError(data.error);
         setStatus(ImportJobStatus.ERROR);
       } else {
@@ -59,7 +60,7 @@ export function useProductImportProgress(job: ProductImportJob) {
       socket.off('import-job-progress', handleProgress);
       setLoading(false);
     };
-  }, [job.id]);
+  }, [job]);
 
   return { progress, status, error, loading };
 }

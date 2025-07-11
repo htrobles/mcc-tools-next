@@ -7,9 +7,7 @@ import PriceMonitorCategorySelector from './PriceMonitorCategorySelector';
 import PriceMonitorSearch from './PriceMonitorSearch';
 import { Switch } from '../ui/switch';
 import { twMerge } from 'tailwind-merge';
-import ProductMonitorAdvancedSearchContextProvider, {
-  usePriceMonitorAdvancedSearch,
-} from '../../lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+import { usePriceMonitorAdvancedSearch } from '../../lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
 const PriceMonitorHeader = () => {
   const { showAdvancedSearch, handleToggleAdvancedSearch } =
     usePriceMonitorAdvancedSearch();

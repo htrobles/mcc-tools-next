@@ -2,13 +2,7 @@ import PageContainer from '@/components/PageContainer';
 import { PriceMonitorPagination } from '@/components/priceMonitor/PriceMonitorPagination';
 import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
-import PriceMonitorSearch from '@/components/priceMonitor/PriceMonitorSearch';
-import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import PriceMonitorBrandSelector from '@/components/priceMonitor/PriceMonitorBrandSelector';
-import PriceMonitorCategorySelector from '@/components/priceMonitor/PriceMonitorCategorySelector';
 import PriceMonitorHeader from '@/components/priceMonitor/PriceMonitorHeader';
 import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
 
@@ -25,13 +19,12 @@ export default async function PriceMonitor({
   const { page, search, brand, category } = await searchParams;
   const pageNumber = parseInt(page || '1');
 
-  const { products, total, totalPages, hasNextPage, hasPreviousPage } =
-    await getPriceMonitorProducts({
-      page: pageNumber,
-      search,
-      brand,
-      category,
-    });
+  const { products, total, totalPages } = await getPriceMonitorProducts({
+    page: pageNumber,
+    search,
+    brand,
+    category,
+  });
 
   // Calculate display range
   const startItem = (pageNumber - 1) * PRICE_MONITOR_PAGE_SIZE + 1;
