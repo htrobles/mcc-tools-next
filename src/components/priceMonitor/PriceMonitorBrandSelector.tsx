@@ -18,12 +18,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useState } from 'react';
-import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 export default function PriceMonitorBrandSelector() {
   const [open, setOpen] = useState(false);
   const { brands, loading, selectedBrand, setSelectedBrand } =
-    usePriceMonitorAdvancedSearch();
+    usePriceMonitorSearch();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,7 +35,7 @@ export default function PriceMonitorBrandSelector() {
           className="w-[200px] justify-between"
           disabled={loading}
         >
-          {selectedBrand
+          {selectedBrand && !loading
             ? brands.find((brand) => brand === selectedBrand)
             : 'Filter by brand'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

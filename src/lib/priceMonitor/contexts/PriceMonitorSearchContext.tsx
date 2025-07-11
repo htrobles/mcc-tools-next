@@ -11,26 +11,26 @@ import {
   useState,
 } from 'react';
 
-type ProductMonitorAdvancedSearchContextType = {
-  showAdvancedSearch: boolean;
+type PriceMonitorSearchContextType = {
   search: string;
   brands: string[];
   categories: string[];
   loading: boolean;
   selectedBrand?: string;
   selectedCategory?: string;
-  handleToggleAdvancedSearch: () => void;
+  withCompetitorPricesOnly: boolean;
   setSearch: (search: string) => void;
   handleSearch: (e: React.FormEvent) => void;
   handleClearSearch: () => void;
   setSelectedBrand: (brand: string) => void;
   setSelectedCategory: (category: string) => void;
+  setWithCompetitorPricesOnly: (withCompetitorPricesOnly: boolean) => void;
 };
 
-export const ProductMonitorAdvancedSearchContext =
-  createContext<ProductMonitorAdvancedSearchContextType | null>(null);
+export const PriceMonitorSearchContext =
+  createContext<PriceMonitorSearchContextType | null>(null);
 
-export default function ProductMonitorAdvancedSearchContextProvider({
+export default function PriceMonitorSearchContextProvider({
   children,
 }: {
   children: ReactNode;
@@ -44,9 +44,16 @@ export default function ProductMonitorAdvancedSearchContextProvider({
   const [categories, setCategories] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBrand, setSelectedBrand] = useState<string>();
-  const [selectedCategory, setSelectedCategory] = useState<string>();
+  const [selectedBrand, setSelectedBrand] = useState<string>(
+    searchParams.get('brand') || ''
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    searchParams.get('category') || ''
+  );
   const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [withCompetitorPricesOnly, setWithCompetitorPricesOnly] = useState(
+    searchParams.get('withCompetitorPricesOnly') === 'true'
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,20 +85,16 @@ export default function ProductMonitorAdvancedSearchContextProvider({
 
   const handleClearSearch = () => {
     setSearch('');
+    setSelectedBrand('');
+    setSelectedCategory('');
+    setWithCompetitorPricesOnly(false);
+
     const params = new URLSearchParams(searchParams);
     params.delete('search');
     params.delete('page');
     params.delete('brand');
     params.delete('category');
     router.push(`/price-monitor?${params.toString()}`);
-  };
-
-  const handleToggleAdvancedSearch = () => {
-    setShowAdvancedSearch(!showAdvancedSearch);
-    if (!showAdvancedSearch) {
-      setSelectedBrand(undefined);
-      setSelectedCategory(undefined);
-    }
   };
 
   const initiate = async () => {
@@ -108,16 +111,16 @@ export default function ProductMonitorAdvancedSearchContextProvider({
   }, []);
 
   return (
-    <ProductMonitorAdvancedSearchContext.Provider
+    <PriceMonitorSearchContext.Provider
       value={{
-        showAdvancedSearch,
         brands,
         categories,
         loading,
         search,
         selectedBrand,
         selectedCategory,
-        handleToggleAdvancedSearch,
+        withCompetitorPricesOnly,
+        setWithCompetitorPricesOnly,
         setSearch,
         handleSearch,
         handleClearSearch,
@@ -126,16 +129,16 @@ export default function ProductMonitorAdvancedSearchContextProvider({
       }}
     >
       {children}
-    </ProductMonitorAdvancedSearchContext.Provider>
+    </PriceMonitorSearchContext.Provider>
   );
 }
 
-export function usePriceMonitorAdvancedSearch() {
-  const context = useContext(ProductMonitorAdvancedSearchContext);
+export function usePriceMonitorSearch() {
+  const context = useContext(PriceMonitorSearchContext);
 
   if (!context) {
     throw new Error(
-      'usePriceMonitorAdvancedSearch must be used within a ProductMonitorAdvancedSearchContextProvider'
+      'usePriceMonitorSearch must be used within a PriceMonitorSearchContextProvider'
     );
   }
 

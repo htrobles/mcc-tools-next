@@ -3,11 +3,19 @@
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Search } from 'lucide-react';
-import { usePriceMonitorAdvancedSearch } from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 const PriceMonitorSearch = () => {
-  const { search, setSearch, handleSearch, handleClearSearch } =
-    usePriceMonitorAdvancedSearch();
+  const {
+    search,
+    setSearch,
+    handleSearch,
+    handleClearSearch,
+    selectedBrand,
+    selectedCategory,
+  } = usePriceMonitorSearch();
+
+  const showClearButton = search || selectedBrand || selectedCategory;
 
   return (
     <form onSubmit={handleSearch} className="flex gap-2">
@@ -21,7 +29,7 @@ const PriceMonitorSearch = () => {
       <Button type="submit" className="space-x-2">
         <Search size={14} /> <span>Search</span>
       </Button>
-      {search && (
+      {showClearButton && (
         <Button type="button" variant="outline" onClick={handleClearSearch}>
           Clear
         </Button>

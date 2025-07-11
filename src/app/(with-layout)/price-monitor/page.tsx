@@ -4,7 +4,7 @@ import { PRICE_MONITOR_PAGE_SIZE } from '@/lib/priceMonitor/constants';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
 import PriceMonitorHeader from '@/components/priceMonitor/PriceMonitorHeader';
-import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+import ProductMonitorAdvancedSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 export default async function PriceMonitor({
   searchParams,

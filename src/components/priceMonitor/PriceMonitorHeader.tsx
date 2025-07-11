@@ -6,23 +6,23 @@ import PriceMonitorBrandSelector from './PriceMonitorBrandSelector';
 import PriceMonitorCategorySelector from './PriceMonitorCategorySelector';
 import PriceMonitorSearch from './PriceMonitorSearch';
 import { Switch } from '../ui/switch';
-import { twMerge } from 'tailwind-merge';
-import { usePriceMonitorAdvancedSearch } from '../../lib/priceMonitor/contexts/PriceMonitorAdvancedSearchContext';
+import { usePriceMonitorSearch } from '../../lib/priceMonitor/contexts/PriceMonitorSearchContext';
 const PriceMonitorHeader = () => {
-  const { showAdvancedSearch, handleToggleAdvancedSearch } =
-    usePriceMonitorAdvancedSearch();
+  const { withCompetitorPricesOnly, setWithCompetitorPricesOnly } =
+    usePriceMonitorSearch();
 
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
         <div className="flex gap-x-2">
           <PriceMonitorSearch />
+
           <div className="flex items-center gap-x-2">
             <Switch
-              checked={showAdvancedSearch}
-              onCheckedChange={handleToggleAdvancedSearch}
+              checked={withCompetitorPricesOnly}
+              onCheckedChange={setWithCompetitorPricesOnly}
             />
-            Advanced search
+            With competitor prices only
           </div>
         </div>
         <div className="flex gap-4 items-center">
@@ -32,7 +32,7 @@ const PriceMonitorHeader = () => {
           <PriceMonitorAddDropdown />
         </div>
       </div>
-      <div className={twMerge('flex gap-x-2', !showAdvancedSearch && 'hidden')}>
+      <div className="flex gap-x-2">
         <PriceMonitorBrandSelector />
         <PriceMonitorCategorySelector />
       </div>
