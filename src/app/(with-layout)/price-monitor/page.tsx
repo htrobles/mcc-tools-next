@@ -19,6 +19,7 @@ export default async function PriceMonitor({
 }) {
   const { page, search, brand, category, withCompetitorPricesOnly } =
     await searchParams;
+
   const pageNumber = parseInt(page || '1');
 
   const { products, total, totalPages } = await getPriceMonitorProducts({

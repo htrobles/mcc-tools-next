@@ -60,7 +60,11 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.sub;
         session.user.role = token.role;
       }
-      return session;
+      // Include the token in the session
+      return {
+        ...session,
+        token: token,
+      };
     },
     jwt: async ({ user, token }: { user?: User; token: JWT }) => {
       if (user) {
