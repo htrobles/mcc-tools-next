@@ -48,8 +48,6 @@ export default function PriceMonitorAddDropdown({ label }: { label?: string }) {
 
         const result = await addPriceMonitorProducts(selectedFile);
 
-        console.log(result);
-
         clearInterval(progressInterval);
         setUploadProgress(100);
 
