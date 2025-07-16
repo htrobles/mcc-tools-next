@@ -1,6 +1,5 @@
 'use client';
 
-import { useProductImportProgress } from '@/lib/priceMonitor/hooks/useProductImportProgress';
 import {
   Card,
   CardContent,
@@ -11,7 +10,7 @@ import {
 import { Progress } from '../ui/progress';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
-import { ProductImportJob } from '@prisma/client';
+import { usePriceMonitorProductImportDetails } from '@/lib/priceMonitor/contexts/PriceMonitorProductImportDetailsContext';
 
 const calculateProgress = (
   totalProducts: number,
@@ -21,8 +20,9 @@ const calculateProgress = (
   return Math.round(((processedProducts || 0) / totalProducts) * 100);
 };
 
-const PriceImportProgressCard = ({ job }: { job: ProductImportJob }) => {
-  const { progress, loading } = useProductImportProgress(job);
+const PriceImportProgressCard = () => {
+  const { loading, processedProducts, failedProducts, totalProducts } =
+    usePriceMonitorProductImportDetails();
 
   if (loading) {
     return (
@@ -64,8 +64,8 @@ const PriceImportProgressCard = ({ job }: { job: ProductImportJob }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Processing Progress</CardTitle>
-        <CardDescription>Current progress of the import job</CardDescription>
+        <CardTitle>Import Status</CardTitle>
+        <CardDescription>Current status of the import job</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -73,16 +73,16 @@ const PriceImportProgressCard = ({ job }: { job: ProductImportJob }) => {
             <span>Progress</span>
             <span>
               {calculateProgress(
-                progress.totalProducts,
-                progress.processedProducts + progress.failedProducts
+                totalProducts,
+                processedProducts + failedProducts
               )}
               %
             </span>
           </div>
           <Progress
             value={calculateProgress(
-              progress.totalProducts,
-              progress.processedProducts + progress.failedProducts
+              totalProducts,
+              processedProducts + failedProducts
             )}
             className="h-2"
           />
@@ -93,19 +93,19 @@ const PriceImportProgressCard = ({ job }: { job: ProductImportJob }) => {
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-2xl font-bold text-blue-600">
-              {progress.totalProducts || 0}
+              {totalProducts || 0}
             </p>
             <p className="text-xs text-muted-foreground">Total Products</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-green-600">
-              {progress.processedProducts || 0}
+              {processedProducts || 0}
             </p>
             <p className="text-xs text-muted-foreground">Processed</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-red-600">
-              {progress.failedProducts || 0}
+              {failedProducts || 0}
             </p>
             <p className="text-xs text-muted-foreground">Failed</p>
           </div>

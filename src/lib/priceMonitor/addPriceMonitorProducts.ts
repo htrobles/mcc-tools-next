@@ -17,7 +17,7 @@ export default async function addPriceMonitorProducts(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${host}/api/products/import`, {
+    const response = await fetch(`${host}/api/products/imports`, {
       method: 'POST',
       body: formData,
       headers: getPriceMonitorHeaders(),
