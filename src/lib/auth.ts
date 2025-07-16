@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import db from './db';
 import type { Session, User } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
+import { getToken } from 'next-auth/jwt';
 
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(db),
@@ -68,7 +69,8 @@ export const authConfig: NextAuthConfig = {
     },
     jwt: async ({ user, token }: { user?: User; token: JWT }) => {
       if (user) {
-        token.uid = user.id as string;
+        token.ui;
+        user.id as string;
         token.role = user.role;
       }
       return token;
@@ -80,3 +82,9 @@ export const authConfig: NextAuthConfig = {
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+
+// Function to get the raw JWT token
+export async function getRawToken(req: Request) {
+  const token = await getToken({ req });
+  return token;
+}

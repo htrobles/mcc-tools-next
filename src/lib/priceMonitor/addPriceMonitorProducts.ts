@@ -1,5 +1,7 @@
 'use server';
 
+import { getPriceMonitorHeaders } from '../utils';
+
 export default async function addPriceMonitorProducts(file: File) {
   if (!file) {
     throw new Error('No file provided');
@@ -20,6 +22,7 @@ export default async function addPriceMonitorProducts(file: File) {
     const response = await fetch(`${host}/api/products/import`, {
       method: 'POST',
       body: formData,
+      headers: getPriceMonitorHeaders(),
     });
 
     if (!response.ok) {

@@ -1,5 +1,7 @@
 'use server';
 
+import { getPriceMonitorHeaders } from '../utils';
+
 const HOST = process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST;
 
 export default async function deletePriceMonitorProducts(productIds: string[]) {
@@ -18,6 +20,7 @@ export default async function deletePriceMonitorProducts(productIds: string[]) {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        ...getPriceMonitorHeaders(),
       },
       body: JSON.stringify({ productIds }),
     });
