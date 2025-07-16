@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 const PriceMonitorSearch = () => {
-  const { search, setSearch, handleSearch } = usePriceMonitorSearch();
+  const { search, setSearch } = usePriceMonitorSearch();
 
   return (
     <Input

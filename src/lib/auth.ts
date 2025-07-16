@@ -69,8 +69,6 @@ export const authConfig: NextAuthConfig = {
     },
     jwt: async ({ user, token }: { user?: User; token: JWT }) => {
       if (user) {
-        token.ui;
-        user.id as string;
         token.role = user.role;
       }
       return token;

@@ -6,9 +6,9 @@
     "schema": "./prisma"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server.ts",
     "build": "npx prisma generate &&next build",
-    "start": "next start",
+    "start": "NODE_ENV=production tsx server.ts",
     "lint": "next lint",
     "create-user": "tsx scripts/create-user.ts",
     "reset-password": "tsx scripts/reset-password.ts"
@@ -48,6 +48,7 @@
     "papaparse": "^5.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"

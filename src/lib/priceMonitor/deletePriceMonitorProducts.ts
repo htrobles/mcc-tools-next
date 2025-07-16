@@ -2,13 +2,11 @@
 
 import { getPriceMonitorHeaders } from '../utils';
 
-const HOST = process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST;
+const HOST = process.env.MONITOR_PRICE_APP_HOST;
 
 export default async function deletePriceMonitorProducts(productIds: string[]) {
   if (!HOST) {
-    throw new Error(
-      'NEXT_PUBLIC_MONITOR_PRICE_APP_HOST environment variable is not set'
-    );
+    throw new Error('MONITOR_PRICE_APP_HOST environment variable is not set');
   }
 
   if (!productIds?.length) {

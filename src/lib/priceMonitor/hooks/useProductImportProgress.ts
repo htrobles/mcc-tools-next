@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { ImportJobStatus, ProductImportJob } from '@prisma/client';
 
-const socket = io(process.env.NEXT_PUBLIC_MONITOR_PRICE_APP_HOST);
+// Connect to our local WebSocket server
+const socket = io(process.env.NEXTAUTH_URL || 'http://localhost:3000');
 
 type ProductImportJobProgress = {
   processedProducts: number;
@@ -57,7 +58,7 @@ export function useProductImportProgress(job: ProductImportJob) {
     socket.on(`import-job-${job.id}`, handleProgress);
 
     return () => {
-      socket.off('import-job-progress', handleProgress);
+      socket.off(`import-job-${job.id}`, handleProgress);
       setLoading(false);
     };
   }, [job]);
