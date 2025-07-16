@@ -32,24 +32,6 @@ export function useProductImportProgress(job: ProductImportJob) {
       return;
     }
 
-    const handleProgress = (
-      data: ProductImportJobProgress & { error?: string }
-    ) => {
-      if (data && typeof data.error === 'string') {
-        setError(data.error);
-        setStatus(ImportJobStatus.ERROR);
-      } else {
-        setProgress({
-          processedProducts: data.processedProducts ?? 0,
-          failedProducts: data.failedProducts ?? 0,
-          totalProducts: data.totalProducts ?? 0,
-        });
-        setStatus(ImportJobStatus.PENDING);
-        setError(null);
-        setLoading(false);
-      }
-    };
-
     // Use Server-Sent Events instead of WebSocket
     const eventSource = new EventSource(`/api/jobs/${job.id}/progress`);
 

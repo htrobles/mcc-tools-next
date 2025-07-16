@@ -4,6 +4,13 @@ import { auth } from '@/lib/auth';
 import db from '@/lib/db';
 import { ImportJobStatus } from '@prisma/client';
 
+type ProgressData = {
+  processedProducts?: number;
+  failedProducts?: number;
+  totalProducts?: number;
+  error?: string;
+};
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ jobId: string }> }
@@ -102,7 +109,7 @@ export async function GET(
         externalSocket.emit('join-import-job', jobId);
 
         // Listen for progress updates
-        const handleProgress = (data: any) => {
+        const handleProgress = (data: ProgressData) => {
           console.log('Received progress update:', data);
           if (data && typeof data.error === 'string') {
             const errorData = {
@@ -137,7 +144,7 @@ export async function GET(
           console.log('Connected to external service for job:', jobId);
         });
 
-        externalSocket.on('connect_error', (error: any) => {
+        externalSocket.on('connect_error', (error: Error) => {
           console.error('External service connection error:', error);
           controller.enqueue(
             encoder.encode(
@@ -156,7 +163,7 @@ export async function GET(
         });
 
         // Handle socket errors
-        externalSocket.on('error', (error: any) => {
+        externalSocket.on('error', (error: Error) => {
           console.error('Socket error:', error);
           controller.enqueue(
             encoder.encode(
@@ -167,7 +174,7 @@ export async function GET(
         });
 
         // Handle socket disconnect
-        externalSocket.on('disconnect', (reason: any) => {
+        externalSocket.on('disconnect', (reason: string) => {
           console.log('Socket disconnected:', reason);
           controller.close();
         });
