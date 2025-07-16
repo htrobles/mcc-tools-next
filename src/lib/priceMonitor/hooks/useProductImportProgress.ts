@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 import { ImportJobStatus, ProductImportJob } from '@prisma/client';
-
-// Connect to our local WebSocket server
-const socket = io(process.env.NEXTAUTH_URL || 'http://localhost:3000');
 
 type ProductImportJobProgress = {
   processedProducts: number;
@@ -36,29 +32,50 @@ export function useProductImportProgress(job: ProductImportJob) {
       return;
     }
 
-    const handleProgress = (
-      data: ProductImportJobProgress & { error?: string }
-    ) => {
-      if (data && typeof data.error === 'string') {
-        setError(data.error);
+    // Use Server-Sent Events instead of WebSocket
+    const eventSource = new EventSource(`/api/jobs/${job.id}/progress`);
+
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data.error) {
+          setError(data.error);
+          setStatus(ImportJobStatus.ERROR);
+          eventSource.close();
+        } else {
+          setProgress({
+            processedProducts: data.processedProducts ?? 0,
+            failedProducts: data.failedProducts ?? 0,
+            totalProducts: data.totalProducts ?? 0,
+          });
+          setStatus(data.status || ImportJobStatus.PENDING);
+          setError(null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error parsing SSE data:', error);
+        setError('Failed to parse progress data');
         setStatus(ImportJobStatus.ERROR);
-      } else {
-        setProgress({
-          processedProducts: data.processedProducts ?? 0,
-          failedProducts: data.failedProducts ?? 0,
-          totalProducts: data.totalProducts ?? 0,
-        });
-        setStatus(ImportJobStatus.PENDING);
-        setError(null);
-        setLoading(false);
+        eventSource.close();
       }
     };
 
-    socket.emit('join-import-job', job.id);
-    socket.on(`import-job-${job.id}`, handleProgress);
+    const handleError = (event: Event) => {
+      console.error('SSE error:', event);
+      setError('Connection error');
+      setStatus(ImportJobStatus.ERROR);
+      setLoading(false);
+      eventSource.close();
+    };
+
+    eventSource.addEventListener('message', handleMessage);
+    eventSource.addEventListener('error', handleError);
 
     return () => {
-      socket.off(`import-job-${job.id}`, handleProgress);
+      eventSource.removeEventListener('message', handleMessage);
+      eventSource.removeEventListener('error', handleError);
+      eventSource.close();
       setLoading(false);
     };
   }, [job]);
