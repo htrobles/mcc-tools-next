@@ -1,5 +1,7 @@
 'use server';
 
+import { getPriceMonitorHeaders } from '../utils';
+
 const HOST = process.env.MONITOR_PRICE_APP_HOST;
 
 export default async function deletePriceMonitorProducts(productIds: string[]) {
@@ -12,19 +14,16 @@ export default async function deletePriceMonitorProducts(productIds: string[]) {
   }
 
   try {
-    // Try the bulk delete endpoint first
     const response = await fetch(`${HOST}/api/products`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        ...getPriceMonitorHeaders(),
       },
       body: JSON.stringify({ productIds }),
     });
 
     if (!response.ok) {
-      // If bulk delete fails, try individual deletes
-      console.log('Bulk delete failed, trying individual deletes...');
-
       const deletePromises = productIds.map(async (productId) => {
         const individualResponse = await fetch(
           `${HOST}/api/products/${productId}`,

@@ -10,3 +10,9 @@ export function formatPrice(price: number | null | undefined) {
 
   return `$${price.toFixed(2)}`;
 }
+
+export function getPriceMonitorHeaders() {
+  return {
+    'X-API-Key': process.env.PRICE_MONITOR_API_KEY || '',
+  };
+}

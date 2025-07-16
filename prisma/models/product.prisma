@@ -1,16 +1,17 @@
 model Product {
-    id            String   @id @default(auto()) @map("_id") @db.ObjectId
-    sku           String   @unique
-    title         String
-    price         Float?
-    image         String?
-    url           String?
-    category      String
-    subCategory   String
-    brand         String
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    lastCheckedAt DateTime @default(now())
+    id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+    sku                  String   @unique
+    title                String
+    price                Float?
+    competitorsHavePrice Boolean  @default(false)
+    image                String?
+    url                  String?
+    category             String
+    subCategory          String
+    brand                String
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+    lastCheckedAt        DateTime @default(now())
 
     competitorProducts CompetitorProduct[]
 }
