@@ -5,18 +5,54 @@ import Link from 'next/link';
 import mccLogo from '/public/mcc-logo.png';
 import routes from '@/constants/routes';
 import { usePathname } from 'next/navigation';
-import { twMerge } from 'tailwind-merge';
 import { signOut } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { useMemo } from 'react';
 import { User } from '@prisma/client';
+import { useMemo } from 'react';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import {
+  HomeIcon,
+  PackageIcon,
+  DollarSignIcon,
+  BarChart3Icon,
+  SettingsIcon,
+  UserIcon,
+  LogOutIcon,
+} from 'lucide-react';
 
-export default function Sidebar({
+// Icon mapping for navigation items
+const iconMap = {
+  home: HomeIcon,
+  'supplier-master-feed': PackageIcon,
+  'price-update': DollarSignIcon,
+  'product-update': PackageIcon,
+  'price-monitor': BarChart3Icon,
+  admin: SettingsIcon,
+};
+
+export default function SidebarComponent({
   isAdmin,
   user,
+  children,
 }: {
   isAdmin: boolean;
   user: User;
+  children: React.ReactNode;
 }) {
   const pathname = usePathname();
 
@@ -38,58 +74,79 @@ export default function Sidebar({
   }, [isAdmin]);
 
   return (
-    <div className="w-[250px] border-r bg-gray-50 flex flex-col">
-      <div className="p-4 border-b h-[80px]">
-        <Link href="/">
-          <Image
-            src={mccLogo}
-            alt="Music City Canada logo"
-            className="object-contain h-full"
-          />
-        </Link>
-      </div>
-      <ul className="flex-1">
-        {filteredRoutes.map(({ path, title }) => (
-          <li key={path} className="">
-            <Link
-              href={path}
-              className={twMerge(
-                'block text-gray-600 font-semibold px-4 py-2 hover:bg-gray-200 transition-all duration-300',
-                isActive(path) && 'bg-gray-300'
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader className="border-b border-border p-4 h-[80px]">
+          <Link href="/" className="flex items-center h-full">
+            <Image
+              src={mccLogo}
+              alt="Music City Canada logo"
+              className="w-auto object-contain h-full"
+            />
+          </Link>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarInset>
+            <SidebarGroup>
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {filteredRoutes.map(({ key, path, title }) => {
+                    const IconComponent =
+                      iconMap[key as keyof typeof iconMap] || HomeIcon;
+                    return (
+                      <SidebarMenuItem key={path}>
+                        <SidebarMenuButton asChild isActive={isActive(path)}>
+                          <Link href={path} className="flex items-center gap-2">
+                            <IconComponent className="h-4 w-4" />
+                            <span>{title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarInset>
+        </SidebarContent>
+        <SidebarFooter className="border-t border-border p-4">
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground">
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <UserIcon className="h-4 w-4" />
+                  <span>
+                    Logged in as{' '}
+                    <Link
+                      href="/profile"
+                      className="hover:text-foreground hover:underline transition-colors cursor-pointer font-medium"
+                    >
+                      {user.name}
+                    </Link>
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <UserIcon className="h-4 w-4" />
+                  <span>Loading profile</span>
+                </div>
               )}
+            </div>
+            <Separator />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => signOut()}
+              className="w-full justify-start gap-2"
             >
-              {title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      {/* Authentication section */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-sm text-gray-600 mb-2">
-          {user ? (
-            <>
-              Logged in as{' '}
-              <Link
-                href="/profile"
-                className="hover:text-blue-600 hover:underline transition-colors cursor-pointer"
-              >
-                {user.name}
-              </Link>
-            </>
-          ) : (
-            'Loading profile'
-          )}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => signOut()}
-          className="w-full"
-        >
-          Sign Out
-        </Button>
-      </div>
-    </div>
+              <LogOutIcon className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+      {children}
+    </SidebarProvider>
   );
 }
