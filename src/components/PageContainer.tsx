@@ -8,7 +8,7 @@ const PageContainer = ({
   className?: string;
 }) => {
   return (
-    <div className={cn('container mx-auto p-5 lg:px-14', className)}>
+    <div className={cn('container mx-auto p-8 lg:px-14', className)}>
       {children}
     </div>
   );

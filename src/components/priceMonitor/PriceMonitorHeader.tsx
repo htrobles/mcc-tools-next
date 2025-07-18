@@ -24,12 +24,6 @@ const PriceMonitorHeader = () => {
 
   return (
     <div className="space-y-4">
-      <div className="text-right">
-        <Link href="/price-monitor/imports" className="text-sm">
-          Product Imports
-        </Link>
-      </div>
-      <hr />
       <form onSubmit={handleSearch} className="flex gap-2">
         <div className="space-y-2">
           <div className="flex justify-between items-center">

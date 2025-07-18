@@ -4,10 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import mccLogo from '/public/mcc-logo.png';
 import routes from '@/constants/routes';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { User } from '@prisma/client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -21,10 +21,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
   HomeIcon,
   PackageIcon,
@@ -33,6 +37,7 @@ import {
   SettingsIcon,
   UserIcon,
   LogOutIcon,
+  ChevronDownIcon,
 } from 'lucide-react';
 
 // Icon mapping for navigation items
@@ -55,6 +60,7 @@ export default function SidebarComponent({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (path: string) => {
     // For the home route, only match exact path
@@ -62,7 +68,24 @@ export default function SidebarComponent({
       return pathname === '/';
     }
     // For other routes, check if pathname starts with the route path
-    return pathname.startsWith(path);
+    return pathname === path;
+  };
+
+  const isSubmenuActive = (submenu: any[]) => {
+    return submenu.some((item) => isActive(item.path));
+  };
+
+  const isMenuExpanded = (key: string, submenu: any[]) => {
+    // Menu is expanded if we're on the parent route or any submenu route
+    const parentRoute = routes.find((route) => route.key === key);
+    if (!parentRoute) return false;
+
+    return isActive(parentRoute.path) || isSubmenuActive(submenu);
+  };
+
+  const handleParentMenuClick = (path: string) => {
+    // Simply navigate to the parent page
+    router.push(path);
   };
 
   // Memoize the filtered routes to prevent unnecessary re-renders
@@ -91,9 +114,62 @@ export default function SidebarComponent({
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {filteredRoutes.map(({ key, path, title }) => {
+                  {filteredRoutes.map(({ key, path, title, submenu }) => {
                     const IconComponent =
                       iconMap[key as keyof typeof iconMap] || HomeIcon;
+                    const expanded = submenu
+                      ? isMenuExpanded(key, submenu)
+                      : false;
+                    const hasActiveSubmenu =
+                      submenu && isSubmenuActive(submenu);
+
+                    if (submenu) {
+                      return (
+                        <SidebarMenuItem key={path}>
+                          <Collapsible open={expanded}>
+                            <CollapsibleTrigger asChild>
+                              <SidebarMenuButton
+                                isActive={isActive(path)}
+                                onClick={(e) => {
+                                  // Prevent the default Collapsible behavior
+                                  e.preventDefault();
+                                  // Handle navigation
+                                  handleParentMenuClick(path);
+                                }}
+                              >
+                                <IconComponent className="h-4 w-4" />
+                                <span>{title}</span>
+                                <ChevronDownIcon
+                                  className={`h-4 w-4 ml-auto transition-transform ${
+                                    expanded ? 'rotate-180' : ''
+                                  }`}
+                                />
+                              </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <SidebarMenu>
+                                {submenu.map((subItem) => (
+                                  <SidebarMenuItem key={subItem.path}>
+                                    <SidebarMenuButton
+                                      asChild
+                                      isActive={isActive(subItem.path)}
+                                    >
+                                      <Link
+                                        href={subItem.path}
+                                        className="pl-6"
+                                      >
+                                        {subItem.title}
+                                      </Link>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                                ))}
+                              </SidebarMenu>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </SidebarMenuItem>
+                      );
+                    }
+
                     return (
                       <SidebarMenuItem key={path}>
                         <SidebarMenuButton asChild isActive={isActive(path)}>
