@@ -1,4 +1,3 @@
-import PageLayout from '@/components/PageLayout';
 import SidebarComponent from '@/components/Sidebar';
 import { auth } from '@/lib/auth';
 import { Role, User } from '@prisma/client';

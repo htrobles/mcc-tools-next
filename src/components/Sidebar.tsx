@@ -7,7 +7,7 @@ import routes from '@/constants/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { User } from '@prisma/client';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -71,11 +71,11 @@ export default function SidebarComponent({
     return pathname === path;
   };
 
-  const isSubmenuActive = (submenu: any[]) => {
+  const isSubmenuActive = (submenu: { path: string }[]) => {
     return submenu.some((item) => isActive(item.path));
   };
 
-  const isMenuExpanded = (key: string, submenu: any[]) => {
+  const isMenuExpanded = (key: string, submenu: { path: string }[]) => {
     // Menu is expanded if we're on the parent route or any submenu route
     const parentRoute = routes.find((route) => route.key === key);
     if (!parentRoute) return false;
@@ -120,8 +120,6 @@ export default function SidebarComponent({
                     const expanded = submenu
                       ? isMenuExpanded(key, submenu)
                       : false;
-                    const hasActiveSubmenu =
-                      submenu && isSubmenuActive(submenu);
 
                     if (submenu) {
                       return (

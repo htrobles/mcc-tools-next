@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 import PriceMonitorBrandSelector from './PriceMonitorBrandSelector';
 import PriceMonitorCategorySelector from './PriceMonitorCategorySelector';
 import PriceMonitorSearch from './PriceMonitorSearch';
