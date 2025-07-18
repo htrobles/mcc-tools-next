@@ -12,7 +12,8 @@ export default function PriceUpdatePage() {
 
   return (
     <PriceUpdateContextProvider>
-      <PageContainer>
+      <PageContainer className="space-y-4">
+        <p>This tool is used to update product prices</p>
         {step === 1 && <PriceUpdateStep1 />}
         {step === 2 && <PriceUpdateStep2 />}
         <PriceUpdateFooterNav step={step} onUpdateStep={setStep} />

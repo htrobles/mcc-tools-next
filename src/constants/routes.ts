@@ -4,6 +4,11 @@ interface Route {
   title: string;
   description: string;
   adminOnly?: boolean;
+  submenu?: {
+    key: string;
+    path: string;
+    title: string;
+  }[];
 }
 
 const routes: Route[] = [
@@ -39,6 +44,13 @@ const routes: Route[] = [
     path: '/price-monitor',
     title: 'Price Monitor',
     description: 'This tool is used to monitor competitor product prices',
+    submenu: [
+      {
+        key: 'price-monitor-imports',
+        path: '/price-monitor/imports',
+        title: 'Imports',
+      },
+    ],
   },
   {
     key: 'admin',

@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 import PriceMonitorBrandSelector from './PriceMonitorBrandSelector';
 import PriceMonitorCategorySelector from './PriceMonitorCategorySelector';
 import PriceMonitorSearch from './PriceMonitorSearch';
@@ -24,13 +22,6 @@ const PriceMonitorHeader = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 items-center">
-        <Link href="/price-monitor/imports" className="text-sm">
-          Product Imports
-        </Link>
-        <PriceMonitorAddDropdown />
-      </div>
-      <hr />
       <form onSubmit={handleSearch} className="flex gap-2">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
