@@ -24,11 +24,10 @@ const PriceMonitorHeader = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 items-center">
+      <div className="text-right">
         <Link href="/price-monitor/imports" className="text-sm">
           Product Imports
         </Link>
-        <PriceMonitorAddDropdown />
       </div>
       <hr />
       <form onSubmit={handleSearch} className="flex gap-2">

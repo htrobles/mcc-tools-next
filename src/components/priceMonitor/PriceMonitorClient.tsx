@@ -16,6 +16,7 @@ import CompetitorPrice from './CompetitorPrice';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
+import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 
 interface PriceMonitorClientProps {
   products: PriceMonitorProduct[];
@@ -63,21 +64,23 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground">
+      <div className="flex items-center justify-between gap-x-2">
+        <span className="text-sm text-muted-foreground">
           Monitored Products ({selectedProducts.length} selected)
-        </div>
-        <div className="flex gap-1 h-9">
+        </span>
+        <div className="flex gap-x-2">
           {!!selectedProducts.length && (
             <Button
               onClick={handleDeleteSelected}
               disabled={selectedProducts.length === 0}
               variant="destructive"
+              size="sm"
             >
               <Trash2 className="mr-2" size={14} />
               Delete Selected ({selectedProducts.length})
             </Button>
           )}
+          <PriceMonitorAddDropdown />
         </div>
       </div>
 
