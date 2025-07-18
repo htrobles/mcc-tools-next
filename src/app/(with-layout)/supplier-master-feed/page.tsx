@@ -161,7 +161,11 @@ export default function SupplierMasterFeedPage() {
 
   return (
     <PageContainer>
-      <div className="mb-5 space-y-2">
+      <div className="mb-5 space-y-4">
+        <p>
+          This tool creates a Master Supplies Feed CSV file using the data from
+          the suppliers.
+        </p>
         <h4>Instructions:</h4>
         <ol className="list-decimal ml-10">
           <li>
