@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { getStoreName } from '@/lib/priceMonitor/getStoreName';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';
 import { formatPrice } from '@/lib/utils';
+import { STORES } from '@/lib/stores';
 
 const PriceMonitorProductPage = async ({
   params,
@@ -58,7 +59,7 @@ const ProductCard = ({
   // Only show store name for competitor products
   const isCompetitorProduct = 'store' in product;
   const storeName = isCompetitorProduct
-    ? getStoreName(product.store)
+    ? STORES[product.store].name
     : 'Music City Canada';
 
   let priceColor;
