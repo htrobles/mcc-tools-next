@@ -17,6 +17,10 @@ import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
 import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
+import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
+import { STORES } from '@/lib/stores';
+import { Store } from '@prisma/client';
+import PriceMonitorTableRow from './PriceMonitorTableRow';
 
 interface PriceMonitorClientProps {
   products: PriceMonitorProduct[];
@@ -81,6 +85,7 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
             </Button>
           )}
           <PriceMonitorAddDropdown />
+          <PriceMonitorManualSyncBtn />
         </div>
       </div>
 
@@ -97,60 +102,23 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
               </TableHead>
               <TableHead>Product</TableHead>
               <TableHead>SKU</TableHead>
-              <TableHead>Last Checked</TableHead>
               <TableHead>Our Price</TableHead>
-              <TableHead>Long and McQuade Price</TableHead>
-              <TableHead>RedOne Music Price</TableHead>
+              {Object.keys(STORES).map((storeKey) => (
+                <TableHead key={storeKey}>
+                  {STORES[storeKey as Store].name}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => {
-              const lmPrice = product.competitorProducts.find(
-                (cp) => cp.store === 'LM'
-              )?.price;
-              const redOnePrice = product.competitorProducts.find(
-                (cp) => cp.store === 'REDONE'
-              )?.price;
-
-              return (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedProducts.includes(product.id)}
-                      onCheckedChange={(checked) =>
-                        handleProductSelect(product.id, checked as boolean)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <a href={`/price-monitor/${product.id}`}>{product.title}</a>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
-                    {product.sku}
-                  </TableCell>
-                  <TableCell>
-                    {product.lastCheckedAt.toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-bold text-gray-500">
-                      {product.price ? `$${product.price?.toFixed(2)}` : 'N/A'}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <CompetitorPrice
-                      ourPrice={product.price}
-                      competitorPrice={lmPrice}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <CompetitorPrice
-                      ourPrice={product.price}
-                      competitorPrice={redOnePrice}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {products.map((product) => (
+              <PriceMonitorTableRow
+                key={product.id}
+                product={product}
+                isSelected={selectedProducts.includes(product.id)}
+                onSelect={handleProductSelect}
+              />
+            ))}
           </TableBody>
         </Table>
       </div>

@@ -5,7 +5,6 @@ import {
 } from '@/lib/priceMonitor/getPriceMonitorProduct';
 import { CompetitorProduct } from '@prisma/client';
 import Image from 'next/image';
-import { getStoreName } from '@/lib/priceMonitor/getStoreName';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';
 import { formatPrice } from '@/lib/utils';
 import { STORES } from '@/lib/stores';
@@ -17,7 +16,6 @@ const PriceMonitorProductPage = async ({
 }) => {
   const { productId } = await params;
   const product = await getPriceMonitorProduct(productId);
-  const competitorProducts = product?.competitorProducts;
 
   if (!product) {
     return <div>Product not found</div>;
@@ -33,17 +31,27 @@ const PriceMonitorProductPage = async ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1">
         <ProductCard product={product as PriceMonitorProduct} />
-        {competitorProducts?.map((competitorProduct) => (
-          <ProductCard
-            key={competitorProduct.id}
-            product={competitorProduct}
-            isCheaper={
-              competitorProduct.price && product?.price
-                ? competitorProduct.price < product.price
-                : false
-            }
-          />
-        ))}
+        {Object.keys(STORES).map((storeKey) => {
+          const competitorProduct = product.competitorProducts.find(
+            (cp) => cp.store === storeKey
+          );
+
+          if (!competitorProduct) {
+            return null;
+          }
+
+          return (
+            <ProductCard
+              key={storeKey}
+              product={competitorProduct}
+              isCheaper={
+                competitorProduct.price && product?.price
+                  ? competitorProduct.price < product.price
+                  : false
+              }
+            />
+          );
+        })}
       </div>
     </PageContainer>
   );
