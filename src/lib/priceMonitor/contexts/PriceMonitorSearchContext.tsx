@@ -25,6 +25,7 @@ type PriceMonitorSearchContextType = {
   setSelectedBrand: (brand: string) => void;
   setSelectedCategory: (category: string) => void;
   setWithCompetitorPricesOnly: (withCompetitorPricesOnly: boolean) => void;
+  handleCompetitorPricesToggle: (checked: boolean) => void;
 };
 
 export const PriceMonitorSearchContext =
@@ -52,8 +53,7 @@ export default function PriceMonitorSearchContextProvider({
     searchParams.get('withCompetitorPricesOnly') === 'true'
   );
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const updateSearchParams = (newWithCompetitorPricesOnly?: boolean) => {
     const params = new URLSearchParams(searchParams);
 
     if (search.trim()) {
@@ -74,7 +74,12 @@ export default function PriceMonitorSearchContextProvider({
       params.delete('category');
     }
 
-    if (withCompetitorPricesOnly) {
+    const competitorPricesValue =
+      newWithCompetitorPricesOnly !== undefined
+        ? newWithCompetitorPricesOnly
+        : withCompetitorPricesOnly;
+
+    if (competitorPricesValue) {
       params.set('withCompetitorPricesOnly', 'true');
     } else {
       params.delete('withCompetitorPricesOnly');
@@ -84,6 +89,16 @@ export default function PriceMonitorSearchContextProvider({
     params.delete('page');
 
     router.push(`/price-monitor?${params.toString()}`);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateSearchParams();
+  };
+
+  const handleCompetitorPricesToggle = (checked: boolean) => {
+    setWithCompetitorPricesOnly(checked);
+    updateSearchParams(checked);
   };
 
   const handleClearSearch = () => {
@@ -129,6 +144,7 @@ export default function PriceMonitorSearchContextProvider({
         handleClearSearch,
         setSelectedBrand,
         setSelectedCategory,
+        handleCompetitorPricesToggle,
       }}
     >
       {children}

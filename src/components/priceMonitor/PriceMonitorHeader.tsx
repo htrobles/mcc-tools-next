@@ -10,7 +10,7 @@ import { Search } from 'lucide-react';
 const PriceMonitorHeader = () => {
   const {
     withCompetitorPricesOnly,
-    setWithCompetitorPricesOnly,
+    handleCompetitorPricesToggle,
     handleClearSearch,
     handleSearch,
     search,
@@ -48,7 +48,7 @@ const PriceMonitorHeader = () => {
             <div className="flex items-center gap-x-2">
               <Switch
                 checked={withCompetitorPricesOnly}
-                onCheckedChange={setWithCompetitorPricesOnly}
+                onCheckedChange={handleCompetitorPricesToggle}
               />
               With competitor prices only
             </div>
