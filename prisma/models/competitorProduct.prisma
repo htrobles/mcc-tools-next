@@ -20,5 +20,6 @@ enum Store {
     REDONE
     ACCLAIM
     DRUMLAND
+    THE_ARTS
     // AMAZON
 }
