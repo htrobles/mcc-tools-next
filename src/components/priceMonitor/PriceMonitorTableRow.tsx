@@ -2,7 +2,6 @@ import { PriceMonitorProduct } from '@/lib/priceMonitor/getPriceMonitorProduct';
 import { TableCell, TableRow } from '../ui/table';
 import CompetitorPrice from './CompetitorPrice';
 import { STORES } from '@/lib/stores';
-import { Store } from '@prisma/client';
 import { Checkbox } from '../ui/checkbox';
 
 const PriceMonitorTableRow = ({
@@ -14,13 +13,6 @@ const PriceMonitorTableRow = ({
   isSelected: boolean;
   onSelect: (productId: string, checked: boolean) => void;
 }) => {
-  const lmPrice = product.competitorProducts.find(
-    (cp) => cp.store === 'LM'
-  )?.price;
-  const redOnePrice = product.competitorProducts.find(
-    (cp) => cp.store === 'REDONE'
-  )?.price;
-
   return (
     <TableRow key={product.id}>
       <TableCell>

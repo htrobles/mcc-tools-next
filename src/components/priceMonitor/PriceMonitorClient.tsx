@@ -10,9 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableCell,
 } from '@/components/ui/table';
-import CompetitorPrice from './CompetitorPrice';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
