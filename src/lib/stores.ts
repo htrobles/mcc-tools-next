@@ -20,13 +20,18 @@ export const STORES: Record<
   },
   ACCLAIM: {
     name: 'Accclaim',
-    url: 'https://www.acclaim-music.com/',
+    url: 'https://www.acclaim-music.com',
     imageHost: 'www.acclaim-music.com',
   },
   DRUMLAND: {
     name: 'Drumland',
     url: 'https://www.drumland.com',
     imageHost: 'drumland.com',
+  },
+  THE_ARTS: {
+    name: 'The Arts',
+    url: 'https://shop.theartsmusicstore.com',
+    imageHost: 'https://cdn.shopify.com',
   },
   // AMAZON: {
   //   name: 'Amazon',
