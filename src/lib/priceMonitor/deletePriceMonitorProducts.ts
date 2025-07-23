@@ -14,8 +14,8 @@ export default async function deletePriceMonitorProducts(productIds: string[]) {
   }
 
   try {
-    const response = await fetch(`${HOST}/api/products`, {
-      method: 'DELETE',
+    const response = await fetch(`${HOST}/api/products/bulk-delete`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...getPriceMonitorHeaders(),
