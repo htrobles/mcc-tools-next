@@ -47,6 +47,21 @@ export default function PriceMonitorCategorySelector() {
           <CommandList>
             <CommandEmpty>No categories found.</CommandEmpty>
             <CommandGroup>
+              <CommandItem
+                value="all"
+                onSelect={() => {
+                  setSelectedCategory('');
+                  setOpen(false);
+                }}
+              >
+                <CheckIcon
+                  className={cn(
+                    'mr-2 h-4 w-4',
+                    !selectedCategory ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+                All
+              </CommandItem>
               {categories.map((category) => (
                 <CommandItem
                   key={category}

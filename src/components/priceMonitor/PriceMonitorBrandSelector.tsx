@@ -47,6 +47,21 @@ export default function PriceMonitorBrandSelector() {
           <CommandList>
             <CommandEmpty>No brands found.</CommandEmpty>
             <CommandGroup>
+              <CommandItem
+                value="all"
+                onSelect={() => {
+                  setSelectedBrand('');
+                  setOpen(false);
+                }}
+              >
+                <CheckIcon
+                  className={cn(
+                    'mr-2 h-4 w-4',
+                    !selectedBrand ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+                All
+              </CommandItem>
               {brands.map((brand) => (
                 <CommandItem
                   key={brand}
