@@ -19,5 +19,6 @@ enum Store {
     LM
     REDONE
     ACCLAIM
+    DRUMLAND
     // AMAZON
 }

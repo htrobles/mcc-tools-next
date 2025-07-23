@@ -23,8 +23,14 @@ export const STORES: Record<
     url: 'https://www.acclaim-music.com/',
     imageHost: 'www.acclaim-music.com',
   },
-  //   AMAZON: {
-  //     name: 'Amazon',
-  //     url: 'https://www.amazon.com',
-  //   },
+  DRUMLAND: {
+    name: 'Drumland',
+    url: 'https://www.drumland.com',
+    imageHost: 'drumland.com',
+  },
+  // AMAZON: {
+  //   name: 'Amazon',
+  //   url: 'https://www.amazon.com',
+  //   imageHost: 'amazon.com',
+  // },
 };
