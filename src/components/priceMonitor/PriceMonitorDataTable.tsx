@@ -45,8 +45,6 @@ import { STORES } from '@/lib/stores';
 import { Store } from '@prisma/client';
 import CompetitorPrice from './CompetitorPrice';
 import DeleteProductsButton from './DeleteProductsButton';
-import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
-import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 import PriceMonitorColumnSelector from './PriceMonitorColumnSelector';
 
 export type PriceMonitorTableData = PriceMonitorProduct;

@@ -16,10 +16,7 @@ interface PriceMonitorFiltersProps {
   className?: string;
 }
 
-const PriceMonitorFilters = ({
-  showClearButton = true,
-  className = '',
-}: PriceMonitorFiltersProps) => {
+const PriceMonitorFilters = ({ className = '' }: PriceMonitorFiltersProps) => {
   const { filters, hasActiveFilters } = usePriceMonitorFilters();
   const { handleCompetitorPricesToggle, handleClearSearch, handleSearch } =
     usePriceMonitorFilterActions();
