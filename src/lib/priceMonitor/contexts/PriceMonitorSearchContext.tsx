@@ -26,6 +26,7 @@ export interface PriceMonitorSearchState {
   categories: string[];
   loading: boolean;
   hasActiveFilters: boolean;
+  selectedProducts: string[];
 }
 
 export interface PriceMonitorSearchActions {
@@ -37,6 +38,7 @@ export interface PriceMonitorSearchActions {
   handleClearSearch: () => void;
   handleCompetitorPricesToggle: (checked: boolean) => void;
   updateFilters: (filters: Partial<PriceMonitorFilters>) => void;
+  setSelectedProducts: (products: string[]) => void;
 }
 
 type PriceMonitorSearchContextType = PriceMonitorSearchState &
@@ -57,7 +59,7 @@ export default function PriceMonitorSearchContextProvider({
   const [categories, setCategories] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   // Filters state
   const [filters, setFilters] = useState<PriceMonitorFilters>({
     search: searchParams.get('search') || '',
@@ -85,8 +87,9 @@ export default function PriceMonitorSearchContextProvider({
       categories,
       loading,
       hasActiveFilters,
+      selectedProducts,
     }),
-    [filters, brands, categories, loading, hasActiveFilters]
+    [filters, brands, categories, loading, hasActiveFilters, selectedProducts]
   );
 
   // URL update function
@@ -204,6 +207,7 @@ export default function PriceMonitorSearchContextProvider({
       handleClearSearch,
       handleCompetitorPricesToggle,
       updateFilters,
+      setSelectedProducts,
     }),
     [
       setSearch,
@@ -214,6 +218,7 @@ export default function PriceMonitorSearchContextProvider({
       handleClearSearch,
       handleCompetitorPricesToggle,
       updateFilters,
+      setSelectedProducts,
     ]
   );
 
@@ -284,6 +289,7 @@ export function usePriceMonitorFilterActions() {
     handleClearSearch,
     handleCompetitorPricesToggle,
     updateFilters,
+    setSelectedProducts,
   } = usePriceMonitorSearch();
 
   return {
@@ -295,5 +301,6 @@ export function usePriceMonitorFilterActions() {
     handleClearSearch,
     handleCompetitorPricesToggle,
     updateFilters,
+    setSelectedProducts,
   };
 }

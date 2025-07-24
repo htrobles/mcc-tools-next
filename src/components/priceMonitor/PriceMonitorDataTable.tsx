@@ -53,6 +53,10 @@ import {
 import { STORES } from '@/lib/stores';
 import { Store } from '@prisma/client';
 import CompetitorPrice from './CompetitorPrice';
+import { getColumnDisplayName } from '@/utils/helpers';
+import DeleteProductsButton from './DeleteProductsButton';
+import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
+import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 
 export type PriceMonitorTableData = PriceMonitorProduct;
 
@@ -298,55 +302,103 @@ export function PriceMonitorDataTable({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto" size="sm">
-              <Settings2 className="mr-2 h-4 w-4" />
-              Columns
+      <div className="flex justify-between items-center py-4">
+        <div className="flex items-center space-x-6 lg:space-x-8">
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="hidden size-8 lg:flex"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Go to first page</span>
+              <ChevronsLeft className="h-4 w-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id === 'title'
-                      ? 'Product'
-                      : column.id === 'sku'
-                        ? 'SKU'
-                        : column.id === 'price'
-                          ? 'Our Price'
-                          : column.id.startsWith('competitor_')
-                            ? STORES[
-                                column.id.replace('competitor_', '') as Store
-                              ]?.name || column.id
-                            : column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Go to previous page</span>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+              Page {table.getState().pagination.pageIndex + 1} of{' '}
+              {table.getPageCount()}
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Go to next page</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="hidden size-8 lg:flex"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Go to last page</span>
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-x-2">
+          <DeleteProductsButton />
+          <PriceMonitorAddDropdown />
+          <PriceMonitorManualSyncBtn />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto" size="sm">
+                <Settings2 className="mr-2 h-4 w-4" />
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {getColumnDisplayName(column.id)}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={index > 2 ? 'min-w-20' : ''}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -361,12 +413,13 @@ export function PriceMonitorDataTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
                   data-state={
                     selectedProducts.includes(row.original.id) && 'selected'
                   }
+                  className={index > 2 ? 'min-w-20' : ''}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -391,79 +444,28 @@ export function PriceMonitorDataTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between px-2 py-4">
-        <div className="text-sm text-muted-foreground">
-          {selectedProducts.length} of {total} row(s) selected.
-        </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
-            <Select
-              value={`${currentPageSize || PRICE_MONITOR_PAGE_SIZE}`}
-              onValueChange={(value) => {
-                table.setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue
-                  placeholder={currentPageSize || PRICE_MONITOR_PAGE_SIZE}
-                />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {PAGE_SIZE_OPTIONS.map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="hidden size-8 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to first page</span>
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to previous page</span>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to next page</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="hidden size-8 lg:flex"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to last page</span>
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          </div>
+      <div className="flex items-center justify-end py-4">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm font-medium">Rows per page</p>
+          <Select
+            value={`${currentPageSize || PRICE_MONITOR_PAGE_SIZE}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger className="h-8 w-[70px]">
+              <SelectValue
+                placeholder={currentPageSize || PRICE_MONITOR_PAGE_SIZE}
+              />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {PAGE_SIZE_OPTIONS.map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

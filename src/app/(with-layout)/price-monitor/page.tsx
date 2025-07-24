@@ -1,8 +1,8 @@
 import PageContainer from '@/components/PageContainer';
 import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProducts';
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
-import PriceMonitorHeader from '@/components/priceMonitor/PriceMonitorHeader';
 import PriceMonitorSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
+import PriceMonitorFilters from '@/components/priceMonitor/PriceMonitorFilters';
 
 export default async function PriceMonitor({
   searchParams,
@@ -35,7 +35,7 @@ export default async function PriceMonitor({
     <PageContainer>
       <PriceMonitorSearchContextProvider>
         <div className="space-y-4">
-          <PriceMonitorHeader />
+          <PriceMonitorFilters />
           <PriceMonitorClient
             products={products}
             search={search}

@@ -29,7 +29,7 @@ const PriceMonitorFilters = ({
       <form onSubmit={handleSearch} className="flex gap-2">
         <div className="space-y-2 w-full">
           <div className="flex justify-between items-center">
-            <div className="flex gap-x-2 flex-wrap">
+            <div className="flex gap-x-2">
               <PriceMonitorSearch />
               <PriceMonitorBrandSelector />
               <PriceMonitorCategorySelector />

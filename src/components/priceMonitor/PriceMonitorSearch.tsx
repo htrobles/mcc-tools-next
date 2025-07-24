@@ -14,7 +14,7 @@ const PriceMonitorSearch = () => {
     <Input
       name="search"
       placeholder="Search product title or SKU..."
-      className="w-52"
+      className="w-96"
       value={filters.search}
       onChange={(e) => setSearch(e.target.value)}
     />

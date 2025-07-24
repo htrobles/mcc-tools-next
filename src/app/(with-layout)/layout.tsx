@@ -24,7 +24,9 @@ export default async function Layout({
           </div>
 
           {/* Main content area with overflow */}
-          <div className="flex-1 overflow-auto bg-background">{children}</div>
+          <div className="flex-1 overflow-y-scroll bg-background">
+            {children}
+          </div>
 
           <footer className="bg-black text-white p-4 sticky bottom-0">
             © {moment().format('YYYY')} Music City Canada | Developed and
