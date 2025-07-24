@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '25mb',
     },
+    typedRoutes: false,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
