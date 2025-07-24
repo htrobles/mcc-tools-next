@@ -3,6 +3,15 @@ import { getPriceMonitorProducts } from '@/lib/priceMonitor/getPriceMonitorProdu
 import PriceMonitorClient from '@/components/priceMonitor/PriceMonitorClient';
 import PriceMonitorSearchContextProvider from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 import PriceMonitorFilters from '@/components/priceMonitor/PriceMonitorFilters';
+import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
+import PriceMonitorManualSyncBtn from '@/components/priceMonitor/PriceMonitorManualSyncBtn';
+
+export const headerActions = () => (
+  <div className="flex gap-2 justify-end">
+    <PriceMonitorAddDropdown />
+    <PriceMonitorManualSyncBtn />
+  </div>
+);
 
 export default async function PriceMonitor({
   searchParams,
@@ -35,7 +44,9 @@ export default async function PriceMonitor({
     <PageContainer>
       <PriceMonitorSearchContextProvider>
         <div className="space-y-4">
-          <PriceMonitorFilters />
+          <div className="p-2 rounded-md border">
+            <PriceMonitorFilters />
+          </div>
           <PriceMonitorClient
             products={products}
             search={search}

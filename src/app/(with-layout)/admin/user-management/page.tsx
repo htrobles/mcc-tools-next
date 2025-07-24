@@ -15,6 +15,12 @@ import { AddUserButton } from '@/components/userManagement/AddUserButton';
 
 const USERS_PAGE_SIZE = 10;
 
+export const headerActions = () => (
+  <div className="flex gap-2 justify-end">
+    <AddUserButton />
+  </div>
+);
+
 export default async function UserManagementPage({
   searchParams,
 }: {
@@ -41,7 +47,6 @@ export default async function UserManagementPage({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">User Management</h1>
-          <AddUserButton />
         </div>
         <div className="border rounded bg-white">
           <Table>

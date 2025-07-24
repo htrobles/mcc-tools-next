@@ -26,38 +26,34 @@ const PriceMonitorFilters = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <div className="space-y-2 w-full">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-x-2">
-              <PriceMonitorSearch />
-              <PriceMonitorBrandSelector />
-              <PriceMonitorCategorySelector />
-              <Button type="submit" className="space-x-2">
-                <Search size={14} /> <span>Search</span>
-              </Button>
-
-              {showClearButton && hasActiveFilters && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleClearSearch}
-                >
-                  Clear
-                </Button>
-              )}
-            </div>
+      <form onSubmit={handleSearch} className="space-y-2">
+        <div className="flex gap-2 items-center">
+          <div className="flex-1">
+            <PriceMonitorSearch className="w-full" />
           </div>
-          <div className="flex gap-x-2">
-            <div className="flex items-center gap-x-2">
-              <Switch
-                checked={filters.withCompetitorPricesOnly}
-                onCheckedChange={handleCompetitorPricesToggle}
-              />
-              <span className="text-sm text-muted-foreground">
-                With competitor prices only
-              </span>
-            </div>
+          <PriceMonitorBrandSelector />
+          <PriceMonitorCategorySelector />
+          <Button type="submit" className="space-x-2">
+            <Search size={14} /> <span>Search</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClearSearch}
+            disabled={!hasActiveFilters}
+          >
+            Clear
+          </Button>
+        </div>
+        <div className="flex gap-x-2">
+          <div className="flex items-center gap-x-2">
+            <Switch
+              checked={filters.withCompetitorPricesOnly}
+              onCheckedChange={handleCompetitorPricesToggle}
+            />
+            <span className="text-sm text-muted-foreground">
+              With competitor prices only
+            </span>
           </div>
         </div>
       </form>

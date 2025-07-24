@@ -1,13 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { PriceMonitorProduct } from '@/lib/priceMonitor/getPriceMonitorProduct';
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DeleteProductsDialog } from './DeleteProductsDialog';
-import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
-import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
 import { PriceMonitorDataTable } from './PriceMonitorDataTable';
 import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
@@ -59,12 +53,6 @@ const PriceMonitorClient = ({
     setSelectedProducts(Array.from(newSelected));
   };
 
-  const handleProductsDeleted = () => {
-    // Clear selection and refresh the page
-    setSelectedProducts([]);
-    router.refresh();
-  };
-
   const handlePageChange = (page: number) => {
     const url = new URL(window.location.href);
     url.searchParams.set('page', page.toString());
@@ -78,19 +66,12 @@ const PriceMonitorClient = ({
     router.push(url.toString());
   };
 
-  const isAllSelected =
-    products.length > 0 && selectedProducts.length === products.length;
-  const isIndeterminate =
-    selectedProducts.length > 0 && selectedProducts.length < products.length;
-
   return (
     <PriceMonitorDataTable
       products={products}
       selectedProducts={selectedProducts}
       onProductSelect={handleProductSelect}
       onSelectAll={handleSelectAll}
-      isAllSelected={isAllSelected}
-      isIndeterminate={isIndeterminate}
       currentPage={currentPage}
       totalPages={totalPages}
       total={total}

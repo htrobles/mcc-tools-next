@@ -13,7 +13,6 @@ import {
 } from '@tanstack/react-table';
 import {
   ArrowUpDown,
-  Settings2,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -22,14 +21,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -53,10 +44,10 @@ import {
 import { STORES } from '@/lib/stores';
 import { Store } from '@prisma/client';
 import CompetitorPrice from './CompetitorPrice';
-import { getColumnDisplayName } from '@/utils/helpers';
 import DeleteProductsButton from './DeleteProductsButton';
 import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
 import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
+import PriceMonitorColumnSelector from './PriceMonitorColumnSelector';
 
 export type PriceMonitorTableData = PriceMonitorProduct;
 
@@ -218,8 +209,6 @@ interface PriceMonitorDataTableProps {
   selectedProducts: string[];
   onProductSelect: (productId: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
-  isAllSelected: boolean;
-  isIndeterminate: boolean;
   currentPage: number;
   totalPages: number;
   total: number;
@@ -233,8 +222,6 @@ export function PriceMonitorDataTable({
   selectedProducts,
   onProductSelect,
   onSelectAll,
-  isAllSelected,
-  isIndeterminate,
   currentPage,
   totalPages,
   total,
@@ -301,8 +288,8 @@ export function PriceMonitorDataTable({
   });
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center py-4">
+    <div className="w-full space-y-4">
+      <div className="flex justify-between items-center">
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
             <Button
@@ -354,38 +341,11 @@ export function PriceMonitorDataTable({
           </div>
         </div>
         <div className="flex items-center justify-between gap-x-2">
+          <div className="text-sm text-muted-foreground">
+            {selectedProducts.length} of {total} row(s) selected.
+          </div>
           <DeleteProductsButton />
-          <PriceMonitorAddDropdown />
-          <PriceMonitorManualSyncBtn />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto" size="sm">
-                <Settings2 className="mr-2 h-4 w-4" />
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {getColumnDisplayName(column.id)}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <PriceMonitorColumnSelector table={table} />
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
@@ -444,7 +404,7 @@ export function PriceMonitorDataTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end py-4">
+      <div className="flex items-center justify-end">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import React from 'react';
 import BreadcrumbNav from '@/components/BreadcrumbNav';
+import HeaderActions from '@/components/HeaderActions';
 
 export default async function Layout({
   children,
@@ -18,9 +19,12 @@ export default async function Layout({
     <>
       <SidebarComponent isAdmin={isAdmin} user={session?.user as User}>
         <div className="flex flex-1 flex-col bg-gray-50 relative">
-          <div className="flex items-center h-[80px] gap-2 p-4 border-b bg-background sticky top-0 z-10 bg-gray-50">
-            <SidebarTrigger />
-            <BreadcrumbNav />
+          <div className="flex items-center justify-between h-[80px] gap-2 p-4 border-b bg-background sticky top-0 z-10 bg-gray-50">
+            <div className="flex gap-x-2">
+              <SidebarTrigger />
+              <BreadcrumbNav />
+            </div>
+            <HeaderActions />
           </div>
 
           {/* Main content area with overflow */}

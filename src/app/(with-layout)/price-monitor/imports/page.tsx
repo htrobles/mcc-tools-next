@@ -5,6 +5,12 @@ import { getProductImportJobs } from '@/lib/priceMonitor/getProductImportJobs';
 import PriceMonitorProductHeader from '@/components/priceMonitor/PriceMonitorProductHeader';
 import PriceMonitorAddDropdown from '@/components/priceMonitor/PriceMonitorAddDropdown';
 
+export const headerActions = () => (
+  <div className="flex gap-2 justify-end">
+    <PriceMonitorAddDropdown label="Import Products" />
+  </div>
+);
+
 export default async function ProductImportsPage({
   searchParams,
 }: {
@@ -26,7 +32,6 @@ export default async function ProductImportsPage({
             <p className="text-muted-foreground">
               View the status and details of product import jobs.
             </p>
-            <PriceMonitorAddDropdown label="Import Products" />
           </div>
         </div>
 
