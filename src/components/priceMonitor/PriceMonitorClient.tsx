@@ -3,29 +3,29 @@
 import { useState } from 'react';
 import { PriceMonitorProduct } from '@/lib/priceMonitor/getPriceMonitorProduct';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
 import PriceMonitorAddDropdown from './PriceMonitorAddDropdown';
 import PriceMonitorManualSyncBtn from './PriceMonitorManualSyncBtn';
-import { STORES } from '@/lib/stores';
-import { Store } from '@prisma/client';
-import PriceMonitorTableRow from './PriceMonitorTableRow';
+import { PriceMonitorDataTable } from './PriceMonitorDataTable';
 
 interface PriceMonitorClientProps {
   products: PriceMonitorProduct[];
   search?: string;
+  currentPage: number;
+  totalPages: number;
+  total: number;
+  currentPageSize?: number;
 }
 
-const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
+const PriceMonitorClient = ({
+  products,
+  currentPage,
+  totalPages,
+  total,
+  currentPageSize,
+}: PriceMonitorClientProps) => {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
@@ -41,11 +41,22 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
   };
 
   const handleSelectAll = (checked: boolean) => {
+    const currentPageProductIds = products.map((p) => p.id);
+    const newSelected = new Set(selectedProducts);
+
     if (checked) {
-      setSelectedProducts(products.map((p) => p.id));
+      // Add all current page products to selection
+      currentPageProductIds.forEach((id) => {
+        newSelected.add(id);
+      });
     } else {
-      setSelectedProducts([]);
+      // Remove all current page products from selection
+      currentPageProductIds.forEach((id) => {
+        newSelected.delete(id);
+      });
     }
+
+    setSelectedProducts(Array.from(newSelected));
   };
 
   const handleDeleteSelected = () => {
@@ -59,6 +70,19 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
     router.refresh();
   };
 
+  const handlePageChange = (page: number) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', page.toString());
+    router.push(url.toString());
+  };
+
+  const handlePageSizeChange = (pageSize: number) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('pageSize', pageSize.toString());
+    url.searchParams.set('page', '1'); // Reset to first page when changing page size
+    router.push(url.toString());
+  };
+
   const isAllSelected =
     products.length > 0 && selectedProducts.length === products.length;
   const isIndeterminate =
@@ -67,9 +91,6 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-x-2">
-        <span className="text-sm text-muted-foreground">
-          Monitored Products ({selectedProducts.length} selected)
-        </span>
         <div className="flex gap-x-2">
           {!!selectedProducts.length && (
             <Button
@@ -87,39 +108,20 @@ const PriceMonitorClient = ({ products }: PriceMonitorClientProps) => {
         </div>
       </div>
 
-      <div className="border rounded bg-white">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  className={isIndeterminate ? 'border-2' : ''}
-                />
-              </TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Our Price</TableHead>
-              {Object.keys(STORES).map((storeKey) => (
-                <TableHead key={storeKey}>
-                  {STORES[storeKey as Store].name}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <PriceMonitorTableRow
-                key={product.id}
-                product={product}
-                isSelected={selectedProducts.includes(product.id)}
-                onSelect={handleProductSelect}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <PriceMonitorDataTable
+        products={products}
+        selectedProducts={selectedProducts}
+        onProductSelect={handleProductSelect}
+        onSelectAll={handleSelectAll}
+        isAllSelected={isAllSelected}
+        isIndeterminate={isIndeterminate}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        total={total}
+        currentPageSize={currentPageSize}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+      />
 
       <DeleteProductsDialog
         productIds={selectedProducts}

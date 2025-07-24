@@ -17,20 +17,21 @@ export default async function Layout({
   return (
     <>
       <SidebarComponent isAdmin={isAdmin} user={session?.user as User}>
-        <div className="flex flex-1 flex-col overflow-hidden bg-gray-50">
-          <div className="flex-1 overflow-auto bg-background">
-            <div className="flex items-center h-[80px] gap-2 p-4 border-b">
-              <SidebarTrigger />
-              <BreadcrumbNav />
-            </div>
-            {children}
+        <div className="flex flex-1 flex-col bg-gray-50 relative">
+          <div className="flex items-center h-[80px] gap-2 p-4 border-b bg-background sticky top-0 z-10 bg-gray-50">
+            <SidebarTrigger />
+            <BreadcrumbNav />
           </div>
+
+          {/* Main content area with overflow */}
+          <div className="flex-1 overflow-auto bg-background">{children}</div>
+
+          <footer className="bg-black text-white p-4 sticky bottom-0">
+            © {moment().format('YYYY')} Music City Canada | Developed and
+            maintained by Hector Robles
+          </footer>
         </div>
       </SidebarComponent>
-      <footer className="bg-black text-white p-4">
-        © {moment().format('YYYY')} Music City Canada | Developed and
-        maintained by Hector Robles
-      </footer>
     </>
   );
 }

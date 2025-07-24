@@ -9,24 +9,38 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
+  useMemo,
 } from 'react';
 
-type PriceMonitorSearchContextType = {
+export interface PriceMonitorFilters {
   search: string;
+  brand?: string;
+  category?: string;
+  withCompetitorPricesOnly: boolean;
+}
+
+export interface PriceMonitorSearchState {
+  filters: PriceMonitorFilters;
   brands: string[];
   categories: string[];
   loading: boolean;
-  selectedBrand?: string;
-  selectedCategory?: string;
-  withCompetitorPricesOnly: boolean;
+  hasActiveFilters: boolean;
+}
+
+export interface PriceMonitorSearchActions {
   setSearch: (search: string) => void;
+  setBrand: (brand: string) => void;
+  setCategory: (category: string) => void;
+  setWithCompetitorPricesOnly: (enabled: boolean) => void;
   handleSearch: (e: React.FormEvent) => void;
   handleClearSearch: () => void;
-  setSelectedBrand: (brand: string) => void;
-  setSelectedCategory: (category: string) => void;
-  setWithCompetitorPricesOnly: (withCompetitorPricesOnly: boolean) => void;
   handleCompetitorPricesToggle: (checked: boolean) => void;
-};
+  updateFilters: (filters: Partial<PriceMonitorFilters>) => void;
+}
+
+type PriceMonitorSearchContextType = PriceMonitorSearchState &
+  PriceMonitorSearchActions;
 
 export const PriceMonitorSearchContext =
   createContext<PriceMonitorSearchContextType | null>(null);
@@ -39,114 +53,204 @@ export default function PriceMonitorSearchContextProvider({
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // State
   const [categories, setCategories] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBrand, setSelectedBrand] = useState<string>(
-    searchParams.get('brand') || ''
+
+  // Filters state
+  const [filters, setFilters] = useState<PriceMonitorFilters>({
+    search: searchParams.get('search') || '',
+    brand: searchParams.get('brand') || undefined,
+    category: searchParams.get('category') || undefined,
+    withCompetitorPricesOnly:
+      searchParams.get('withCompetitorPricesOnly') === 'true',
+  });
+
+  // Computed values
+  const hasActiveFilters = useMemo(() => {
+    return !!(
+      filters.search.trim() ||
+      filters.brand ||
+      filters.category ||
+      filters.withCompetitorPricesOnly
+    );
+  }, [filters]);
+
+  // Memoized state object
+  const searchState = useMemo<PriceMonitorSearchState>(
+    () => ({
+      filters,
+      brands,
+      categories,
+      loading,
+      hasActiveFilters,
+    }),
+    [filters, brands, categories, loading, hasActiveFilters]
   );
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    searchParams.get('category') || ''
+
+  // URL update function
+  const updateSearchParams = useCallback(
+    (newFilters?: Partial<PriceMonitorFilters>) => {
+      const params = new URLSearchParams(searchParams);
+      const updatedFilters = { ...filters, ...newFilters };
+
+      // Update search param
+      if (updatedFilters.search.trim()) {
+        params.set('search', updatedFilters.search.trim());
+      } else {
+        params.delete('search');
+      }
+
+      // Update brand param
+      if (updatedFilters.brand) {
+        params.set('brand', updatedFilters.brand);
+      } else {
+        params.delete('brand');
+      }
+
+      // Update category param
+      if (updatedFilters.category) {
+        params.set('category', updatedFilters.category);
+      } else {
+        params.delete('category');
+      }
+
+      // Update competitor prices param
+      if (updatedFilters.withCompetitorPricesOnly) {
+        params.set('withCompetitorPricesOnly', 'true');
+      } else {
+        params.delete('withCompetitorPricesOnly');
+      }
+
+      // Reset to page 1 when filters change
+      params.delete('page');
+
+      router.push(`/price-monitor?${params.toString()}`);
+    },
+    [filters, searchParams, router]
   );
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [withCompetitorPricesOnly, setWithCompetitorPricesOnly] = useState(
-    searchParams.get('withCompetitorPricesOnly') === 'true'
+
+  // Filter setters
+  const setSearch = useCallback((search: string) => {
+    setFilters((prev) => ({ ...prev, search }));
+  }, []);
+
+  const setBrand = useCallback((brand: string) => {
+    setFilters((prev) => ({ ...prev, brand: brand || undefined }));
+  }, []);
+
+  const setCategory = useCallback((category: string) => {
+    setFilters((prev) => ({ ...prev, category: category || undefined }));
+  }, []);
+
+  const setWithCompetitorPricesOnly = useCallback((enabled: boolean) => {
+    setFilters((prev) => ({ ...prev, withCompetitorPricesOnly: enabled }));
+  }, []);
+
+  // Action handlers
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      updateSearchParams();
+    },
+    [updateSearchParams]
   );
 
-  const updateSearchParams = (newWithCompetitorPricesOnly?: boolean) => {
-    const params = new URLSearchParams(searchParams);
+  const handleCompetitorPricesToggle = useCallback(
+    (checked: boolean) => {
+      setWithCompetitorPricesOnly(checked);
+      updateSearchParams({ withCompetitorPricesOnly: checked });
+    },
+    [setWithCompetitorPricesOnly, updateSearchParams]
+  );
 
-    if (search.trim()) {
-      params.set('search', search.trim());
-    } else {
-      params.delete('search');
-    }
+  const handleClearSearch = useCallback(() => {
+    const clearedFilters: PriceMonitorFilters = {
+      search: '',
+      brand: undefined,
+      category: undefined,
+      withCompetitorPricesOnly: false,
+    };
 
-    if (selectedBrand) {
-      params.set('brand', selectedBrand);
-    } else {
-      params.delete('brand');
-    }
-
-    if (selectedCategory) {
-      params.set('category', selectedCategory);
-    } else {
-      params.delete('category');
-    }
-
-    const competitorPricesValue =
-      newWithCompetitorPricesOnly !== undefined
-        ? newWithCompetitorPricesOnly
-        : withCompetitorPricesOnly;
-
-    if (competitorPricesValue) {
-      params.set('withCompetitorPricesOnly', 'true');
-    } else {
-      params.delete('withCompetitorPricesOnly');
-    }
-
-    // Reset to page 1 when searching
-    params.delete('page');
-
-    router.push(`/price-monitor?${params.toString()}`);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSearchParams();
-  };
-
-  const handleCompetitorPricesToggle = (checked: boolean) => {
-    setWithCompetitorPricesOnly(checked);
-    updateSearchParams(checked);
-  };
-
-  const handleClearSearch = () => {
-    setSearch('');
-    setSelectedBrand('');
-    setSelectedCategory('');
-    setWithCompetitorPricesOnly(false);
+    setFilters(clearedFilters);
 
     const params = new URLSearchParams(searchParams);
     params.delete('search');
-    params.delete('page');
     params.delete('brand');
     params.delete('category');
+    params.delete('withCompetitorPricesOnly');
+    params.delete('page');
+
     router.push(`/price-monitor?${params.toString()}`);
-  };
+  }, [searchParams, router]);
 
-  const initiate = async () => {
-    const brandsData = await getProductBrabds();
-    const categoriesData = await getProductCategories();
+  const updateFilters = useCallback(
+    (newFilters: Partial<PriceMonitorFilters>) => {
+      setFilters((prev) => ({ ...prev, ...newFilters }));
+      updateSearchParams(newFilters);
+    },
+    [updateSearchParams]
+  );
 
-    setBrands(brandsData);
-    setCategories(categoriesData);
-    setLoading(false);
-  };
+  // Memoized actions object
+  const searchActions = useMemo<PriceMonitorSearchActions>(
+    () => ({
+      setSearch,
+      setBrand,
+      setCategory,
+      setWithCompetitorPricesOnly,
+      handleSearch,
+      handleClearSearch,
+      handleCompetitorPricesToggle,
+      updateFilters,
+    }),
+    [
+      setSearch,
+      setBrand,
+      setCategory,
+      setWithCompetitorPricesOnly,
+      handleSearch,
+      handleClearSearch,
+      handleCompetitorPricesToggle,
+      updateFilters,
+    ]
+  );
+
+  // Data fetching
+  const initiate = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [brandsData, categoriesData] = await Promise.all([
+        getProductBrabds(),
+        getProductCategories(),
+      ]);
+
+      setBrands(brandsData);
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error('Failed to load filter data:', error);
+      // You might want to add error state handling here
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     initiate();
-  }, []);
+  }, [initiate]);
+
+  // Context value
+  const contextValue = useMemo<PriceMonitorSearchContextType>(
+    () => ({
+      ...searchState,
+      ...searchActions,
+    }),
+    [searchState, searchActions]
+  );
 
   return (
-    <PriceMonitorSearchContext.Provider
-      value={{
-        brands,
-        categories,
-        loading,
-        search,
-        selectedBrand,
-        selectedCategory,
-        withCompetitorPricesOnly,
-        setWithCompetitorPricesOnly,
-        setSearch,
-        handleSearch,
-        handleClearSearch,
-        setSelectedBrand,
-        setSelectedCategory,
-        handleCompetitorPricesToggle,
-      }}
-    >
+    <PriceMonitorSearchContext.Provider value={contextValue}>
       {children}
     </PriceMonitorSearchContext.Provider>
   );
@@ -162,4 +266,34 @@ export function usePriceMonitorSearch() {
   }
 
   return context;
+}
+
+// Convenience hooks for specific filter types
+export function usePriceMonitorFilters() {
+  const { filters, hasActiveFilters } = usePriceMonitorSearch();
+  return { filters, hasActiveFilters };
+}
+
+export function usePriceMonitorFilterActions() {
+  const {
+    setSearch,
+    setBrand,
+    setCategory,
+    setWithCompetitorPricesOnly,
+    handleSearch,
+    handleClearSearch,
+    handleCompetitorPricesToggle,
+    updateFilters,
+  } = usePriceMonitorSearch();
+
+  return {
+    setSearch,
+    setBrand,
+    setCategory,
+    setWithCompetitorPricesOnly,
+    handleSearch,
+    handleClearSearch,
+    handleCompetitorPricesToggle,
+    updateFilters,
+  };
 }

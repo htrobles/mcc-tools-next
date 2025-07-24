@@ -18,12 +18,17 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useState } from 'react';
-import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
+import {
+  usePriceMonitorFilterActions,
+  usePriceMonitorFilters,
+  usePriceMonitorSearch,
+} from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 export default function PriceMonitorCategorySelector() {
   const [open, setOpen] = useState(false);
-  const { categories, loading, selectedCategory, setSelectedCategory } =
-    usePriceMonitorSearch();
+  const { categories, loading } = usePriceMonitorSearch();
+  const { filters } = usePriceMonitorFilters();
+  const { setCategory } = usePriceMonitorFilterActions();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,8 +40,10 @@ export default function PriceMonitorCategorySelector() {
           className="w-[200px] justify-between"
           disabled={loading}
         >
-          {selectedCategory && !loading
-            ? categories.find((category) => category === selectedCategory)
+          {filters.category && !loading
+            ? categories.find(
+                (category: string) => category === filters.category
+              )
             : 'Filter by category'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -50,31 +57,31 @@ export default function PriceMonitorCategorySelector() {
               <CommandItem
                 value="all"
                 onSelect={() => {
-                  setSelectedCategory('');
+                  setCategory('');
                   setOpen(false);
                 }}
               >
                 <CheckIcon
                   className={cn(
                     'mr-2 h-4 w-4',
-                    !selectedCategory ? 'opacity-100' : 'opacity-0'
+                    !filters.category ? 'opacity-100' : 'opacity-0'
                   )}
                 />
                 All
               </CommandItem>
-              {categories.map((category) => (
+              {categories.map((category: string) => (
                 <CommandItem
                   key={category}
                   value={category}
                   onSelect={(currentValue) => {
-                    setSelectedCategory(currentValue);
+                    setCategory(currentValue);
                     setOpen(false);
                   }}
                 >
                   <CheckIcon
                     className={cn(
                       'mr-2 h-4 w-4',
-                      selectedCategory === category
+                      filters.category === category
                         ? 'opacity-100'
                         : 'opacity-0'
                     )}

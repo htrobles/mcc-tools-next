@@ -8,6 +8,7 @@ import { PRICE_MONITOR_PAGE_SIZE } from './constants';
 // Define proper types for better type safety
 export interface PriceMonitorSearchParams {
   page: number;
+  pageSize?: number;
   search?: string;
   brand?: string;
   category?: string;
@@ -109,18 +110,18 @@ export async function getPriceMonitorProducts(
     // Validate input parameters
     validateSearchParams(searchParams);
 
-    const { page } = searchParams;
+    const { page, pageSize = PRICE_MONITOR_PAGE_SIZE } = searchParams;
     const whereClause = buildWhereClause(searchParams);
 
     // Calculate pagination
-    const skip = (page - 1) * PRICE_MONITOR_PAGE_SIZE;
+    const skip = (page - 1) * pageSize;
 
     // Execute database queries in parallel for better performance
     const [products, total] = await Promise.all([
       db.product.findMany({
         where: whereClause,
         skip,
-        take: PRICE_MONITOR_PAGE_SIZE,
+        take: pageSize,
         include: {
           competitorProducts: true,
         },
@@ -137,7 +138,7 @@ export async function getPriceMonitorProducts(
     const paginationMetadata = calculatePaginationMetadata(
       total,
       page,
-      PRICE_MONITOR_PAGE_SIZE
+      pageSize
     );
 
     return {

@@ -1,17 +1,21 @@
 'use client';
 
 import { Input } from '../ui/input';
-import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
+import {
+  usePriceMonitorFilterActions,
+  usePriceMonitorFilters,
+} from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 
 const PriceMonitorSearch = () => {
-  const { search, setSearch } = usePriceMonitorSearch();
+  const { filters } = usePriceMonitorFilters();
+  const { setSearch } = usePriceMonitorFilterActions();
 
   return (
     <Input
       name="search"
       placeholder="Search product title or SKU..."
       className="w-52"
-      value={search}
+      value={filters.search}
       onChange={(e) => setSearch(e.target.value)}
     />
   );
