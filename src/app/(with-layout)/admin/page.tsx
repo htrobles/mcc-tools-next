@@ -30,6 +30,10 @@ const adminRoutes = [
     path: '/admin/user-management',
     title: 'User Management',
   },
+  {
+    path: '/admin/price-monitor-health',
+    title: 'Price Monitor Health',
+  },
   // {
   //   path: '/admin/system-settings',
   //   title: 'System Settings',
