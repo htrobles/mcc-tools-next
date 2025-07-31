@@ -29,6 +29,31 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Additional patterns for common image hosting domains
+      {
+        protocol: 'https',
+        hostname: 'www.drumland.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'drumland.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'shop.theartsmusicstore.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'musicredone.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   experimental: {

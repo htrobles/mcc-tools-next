@@ -26,12 +26,12 @@ export const STORES: Record<
   DRUMLAND: {
     name: 'Drumland',
     url: 'https://www.drumland.com',
-    imageHost: 'drumland.com',
+    imageHost: 'www.drumland.com',
   },
   THE_ARTS: {
     name: 'The Arts',
     url: 'https://shop.theartsmusicstore.com',
-    imageHost: 'https://cdn.shopify.com',
+    imageHost: 'shop.theartsmusicstore.com',
   },
   // AMAZON: {
   //   name: 'Amazon',
