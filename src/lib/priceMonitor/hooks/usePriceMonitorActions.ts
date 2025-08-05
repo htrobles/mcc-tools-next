@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 const usePriceMonitorActions = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { selectedProducts, setSelectedProducts } = usePriceMonitorSearch();
+  const hasSelectedProducts = selectedProducts.length > 0;
   const router = useRouter();
 
   const handleDeleteSelected = () => {
@@ -23,6 +24,7 @@ const usePriceMonitorActions = () => {
     setShowDeleteDialog,
     handleDeleteSelected,
     handleProductsDeleted,
+    hasSelectedProducts,
   };
 };
 
