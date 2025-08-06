@@ -44,7 +44,6 @@ import {
 import { STORES } from '@/lib/stores';
 import { Store } from '@prisma/client';
 import CompetitorPrice from './CompetitorPrice';
-import DeleteProductsButton from './DeleteProductsButton';
 import PriceMonitorColumnSelector from './PriceMonitorColumnSelector';
 import PriceMonitorActions from './PriceMonitorActions';
 
