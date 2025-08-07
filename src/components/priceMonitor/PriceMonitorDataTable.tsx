@@ -44,8 +44,8 @@ import {
 import { STORES } from '@/lib/stores';
 import { Store } from '@prisma/client';
 import CompetitorPrice from './CompetitorPrice';
-import DeleteProductsButton from './DeleteProductsButton';
 import PriceMonitorColumnSelector from './PriceMonitorColumnSelector';
+import PriceMonitorActions from './PriceMonitorActions';
 
 export type PriceMonitorTableData = PriceMonitorProduct;
 
@@ -342,8 +342,8 @@ export function PriceMonitorDataTable({
           <div className="text-sm text-muted-foreground">
             {selectedProducts.length} of {total} row(s) selected.
           </div>
-          <DeleteProductsButton />
           <PriceMonitorColumnSelector table={table} />
+          <PriceMonitorActions />
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
