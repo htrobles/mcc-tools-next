@@ -342,7 +342,6 @@ export function PriceMonitorDataTable({
           <div className="text-sm text-muted-foreground">
             {selectedProducts.length} of {total} row(s) selected.
           </div>
-          {/* <DeleteProductsButton /> */}
           <PriceMonitorColumnSelector table={table} />
           <PriceMonitorActions />
         </div>
