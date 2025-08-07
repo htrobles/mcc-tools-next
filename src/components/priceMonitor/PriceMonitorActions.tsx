@@ -10,12 +10,16 @@ import { DropdownMenuItem } from '../ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { usePriceMonitorSearch } from '@/lib/priceMonitor/contexts/PriceMonitorSearchContext';
 import { DeleteProductsDialog } from './DeleteProductsDialog';
+import { PriceMatchDialog } from './PriceMatchDialog';
 import usePriceMonitorActions from '@/lib/priceMonitor/hooks/usePriceMonitorActions';
 import { exportPriceMonitorProducts } from '@/lib/priceMonitor/exportPriceMonitorProducts';
 import { downloadCsv } from '@/lib/priceMonitor/downloadCsv';
+import { useState } from 'react';
+import { priceMatchProducts } from '@/lib/priceMonitor/priceMatchProducts';
 
 const PriceMonitorActions = () => {
   const { selectedProducts } = usePriceMonitorSearch();
+  const [showMatchDialog, setShowMatchDialog] = useState(false);
 
   const {
     showDeleteDialog,
@@ -47,6 +51,53 @@ const PriceMonitorActions = () => {
     }
   };
 
+  const handleMatchProductPrices = () => {
+    setShowMatchDialog(true);
+  };
+
+  const handleConfirmMatchProductPrices = async (
+    matchType: 'percentage' | 'flat',
+    value: number
+  ) => {
+    try {
+      const result = await priceMatchProducts(
+        selectedProducts,
+        matchType,
+        value
+      );
+      if (result.success && result.csvData) {
+        downloadCsv(result.csvData);
+      }
+    } catch (error) {
+      console.error('Failed to match product prices:', error);
+    }
+  };
+
+  const actions = [
+    {
+      label: 'Export selected products',
+      onClick: handleExportSelectedProducts,
+      disabled: !hasSelectedProducts,
+    },
+    {
+      label: 'Export all products',
+      onClick: handleExportAllProducts,
+    },
+    {
+      label: 'Match product prices',
+      onClick: handleMatchProductPrices,
+      disabled: !hasSelectedProducts,
+    },
+    {
+      divider: true,
+    },
+    {
+      label: 'Delete selected products',
+      onClick: handleDeleteSelected,
+      disabled: !hasSelectedProducts,
+    },
+  ];
+
   return (
     <>
       <DropdownMenu>
@@ -58,27 +109,20 @@ const PriceMonitorActions = () => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            disabled={!hasSelectedProducts}
-            onSelect={handleExportSelectedProducts}
-            className="cursor-pointer"
-          >
-            Export selected products
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={handleExportAllProducts}
-            className="cursor-pointer"
-          >
-            Export all products
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onSelect={handleDeleteSelected}
-            disabled={!hasSelectedProducts}
-            className="text-destructive cursor-pointer"
-          >
-            Delete selected products
-          </DropdownMenuItem>
+          {actions.map((action, index) => {
+            if (action.divider) {
+              return <DropdownMenuSeparator key={`divider-${index}`} />;
+            }
+            return (
+              <DropdownMenuItem
+                key={action.label}
+                onSelect={action.onClick}
+                disabled={action.disabled}
+              >
+                {action.label}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
       <DeleteProductsDialog
@@ -87,6 +131,12 @@ const PriceMonitorActions = () => {
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         onProductsDeleted={handleProductsDeleted}
+      />
+      <PriceMatchDialog
+        open={showMatchDialog}
+        onOpenChange={setShowMatchDialog}
+        onConfirm={handleConfirmMatchProductPrices}
+        selectedProductsCount={selectedProducts.length}
       />
     </>
   );
